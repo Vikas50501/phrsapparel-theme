@@ -273,21 +273,35 @@
     line-height: 1;
   }
 
-  /* ── Mobile overrides ─────────────────────────────── */
+  /* ── Mobile overrides — modern 2-up swipe carousel ─── */
   @media (max-width: 749px) {
-    .tsp-track-{{ section.id }} {
-      align-items: flex-start;
-    }
+    .tsp-inner-{{ section.id }} { padding: 0 16px; }
 
+    /* Heading scales down so it sits well above 2-up cards */
+    .tsp-heading-{{ section.id }} { font-size: 25px; line-height: 1.2; }
+    .tsp-header-{{ section.id }} { gap: 16px; }
+
+    .tsp-track-{{ section.id }} { align-items: flex-start; }
+
+    /* Two cards per view, with a small peek of the next */
     .tsp-card-{{ section.id }} {
       flex-shrink: 0;
-      width: 72vw !important;
-      max-width: 280px;
+      width: 45vw !important;
+      max-width: none;
     }
 
     .tsp-card-img-{{ section.id }} {
-      height: 220px !important;
+      height: auto !important;
+      aspect-ratio: 3 / 4;
     }
+
+    /* Tighter, theme-matched typography for the smaller cards */
+    .tsp-card-title-{{ section.id }} { font-size: 14px; line-height: 1.25; }
+    .tsp-card-price-{{ section.id }} { font-size: 14px; }
+    .tsp-card-rating-{{ section.id }} { font-size: 12px; }
+
+    /* Keep arrows comfortably tappable */
+    .tsp-arrow-{{ section.id }} { width: 40px; height: 40px; }
   }
 {%- endstyle -%}
 
@@ -412,7 +426,7 @@
 
   function isMobile() { return window.innerWidth < 750; }
 
-  function visibleCount() { return isMobile() ? 1 : VISIBLE; }
+  function visibleCount() { return isMobile() ? 2 : VISIBLE; }
 
   function maxIdx() { return Math.max(0, total - visibleCount()); }
 
