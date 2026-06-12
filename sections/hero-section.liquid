@@ -384,9 +384,18 @@
                   <p class="hero-{{ section.id }}-script" style="color: {{ block.settings.script_color }};">{{ block.settings.script_text }}</p>
                 {%- endif -%}
 
-                {%- if block.settings.heading != blank -%}
-                  <h2 class="hero-{{ section.id }}-heading">{{ block.settings.heading }}</h2>
-                {%- endif -%}
+                {% if block.settings.heading_logo != blank %}
+  <img
+    class="hero-{{ section.id }}-logo"
+    src="{{ block.settings.heading_logo | image_url: width: 800 }}"
+    alt="{{ shop.name }}"
+    loading="lazy"
+  >
+{% elsif block.settings.heading != blank %}
+  <h2 class="hero-{{ section.id }}-heading">
+    {{ block.settings.heading }}
+  </h2>
+{% endif %}
 
                 {%- if block.settings.description != blank -%}
                   <p class="hero-{{ section.id }}-description">{{ block.settings.description }}</p>
