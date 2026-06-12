@@ -1218,6 +1218,7 @@
         "button_label": "Get My Discount",
         "fineprint": "By signing up you agree to receive marketing emails. Unsubscribe anytime.",
         "image": "shopify://shop_images/3.webp",
+        "mobile_image": "shopify://shop_images/image00585.webp",
         "discount_code": "WELCOME10",
         "success_heading": "Your Discount is Ready!",
         "success_message": "Use the code below at checkout to get 10% off your first order.",
