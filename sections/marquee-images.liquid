@@ -111,6 +111,25 @@
     object-position: center;
     display: block;
   }
+
+  /* ── Mobile overrides ─────────────────────────────── */
+  @media (max-width: 749px) {
+    .mq-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+    .mq-row-{{ section.id }} { height: {{ section.settings.row_height_mobile }}px; }
+    .mq-track-{{ section.id }} { gap: {{ section.settings.item_gap_mobile }}px; }
+    .mq-text-{{ section.id }} {
+      font-size: {{ section.settings.text_size_mobile }}px;
+      letter-spacing: {{ section.settings.text_spacing_mobile | divided_by: 100.0 }}em;
+    }
+    .mq-img-{{ section.id }} {
+      width: {{ section.settings.img_width_mobile }}px;
+      height: {{ section.settings.img_height_mobile }}px;
+    }
+    .mq-sep-{{ section.id }} { font-size: {{ section.settings.sep_size_mobile }}px; }
+  }
 {%- endstyle -%}
 
 {%- comment -%} Grab row 1 and row 2 blocks {%- endcomment -%}
@@ -329,6 +348,45 @@
       "min": 0, "max": 4, "step": 1, "unit": "px", "default": 1
     },
     { "type": "color", "id": "border_color", "label": "Border colour", "default": "#e5e5e5" },
+
+    { "type": "header", "content": "Mobile view (≤ 749px)" },
+    {
+      "type": "range", "id": "text_size_mobile", "label": "Text size",
+      "min": 12, "max": 64, "step": 1, "unit": "px", "default": 28
+    },
+    {
+      "type": "range", "id": "text_spacing_mobile", "label": "Letter spacing",
+      "min": 0, "max": 50, "step": 1, "unit": "em", "default": 8,
+      "info": "Divided by 100 (8 = 0.08em)"
+    },
+    {
+      "type": "range", "id": "row_height_mobile", "label": "Row height",
+      "min": 28, "max": 140, "step": 2, "unit": "px", "default": 52
+    },
+    {
+      "type": "range", "id": "item_gap_mobile", "label": "Gap between items",
+      "min": 6, "max": 80, "step": 2, "unit": "px", "default": 24
+    },
+    {
+      "type": "range", "id": "img_width_mobile", "label": "Image width",
+      "min": 16, "max": 140, "step": 2, "unit": "px", "default": 48
+    },
+    {
+      "type": "range", "id": "img_height_mobile", "label": "Image height",
+      "min": 16, "max": 120, "step": 2, "unit": "px", "default": 34
+    },
+    {
+      "type": "range", "id": "sep_size_mobile", "label": "Separator size",
+      "min": 6, "max": 32, "step": 1, "unit": "px", "default": 11
+    },
+    {
+      "type": "range", "id": "padding_top_mobile", "label": "Top padding",
+      "min": 0, "max": 60, "step": 2, "unit": "px", "default": 0
+    },
+    {
+      "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding",
+      "min": 0, "max": 60, "step": 2, "unit": "px", "default": 0
+    },
 
     { "type": "header", "content": "Background & padding" },
     { "type": "color", "id": "bg_color",       "label": "Background",    "default": "#f0efed" },
