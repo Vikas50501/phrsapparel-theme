@@ -1208,10 +1208,9 @@
     },
     "popup_discount_XdWmaA": {
       "type": "popup-discount",
-      "disabled": true,
       "name": "Popup Discount",
       "settings": {
-        "heading": "🎉 Get 10% Off Your First Order",
+        "heading": "Get 20% Off Your First Order",
         "subheading": "Join our community and receive an exclusive discount code instantly.",
         "button_label": "Get My Discount",
         "fineprint": "By signing up you agree to receive marketing emails. Unsubscribe anytime.",
@@ -1221,7 +1220,7 @@
         "success_message": "Use the code below at checkout to get 10% off your first order.",
         "success_button_label": "Continue Shopping",
         "delay_seconds": 5,
-        "frequency_days": 7,
+        "frequency_days": 0,
         "color_scheme": "",
         "enable_custom_colors": false,
         "popup_bg": "#ffffff",
