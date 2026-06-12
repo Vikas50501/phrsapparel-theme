@@ -1208,6 +1208,7 @@
     },
     "popup_discount_XdWmaA": {
       "type": "popup-discount",
+      "disabled": true,
       "name": "Popup Discount",
       "settings": {
         "heading": "🎉 Get 10% Off Your First Order",
