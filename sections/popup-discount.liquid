@@ -258,11 +258,13 @@
       transform: translateY(100%);
     }
     #pd-{{ uid }}.is-open .pd-modal { transform: translateY(0); }
-    #pd-{{ uid }} .pd-media { aspect-ratio: 4 / 3; }
-    #pd-{{ uid }} .pd-body { max-height: none; overflow: visible; padding: 22px 22px 26px; }
-    #pd-{{ uid }} .pd-heading { font-size: 22px; }
-    #pd-{{ uid }} .pd-sub { margin-bottom: 16px; }
-    #pd-{{ uid }} .pd-field { margin-bottom: 10px; }
+    /* Landscape image, kept slim so it doesn't dominate the screen */
+    #pd-{{ uid }} .pd-media { aspect-ratio: 16 / 9; max-height: 30vh; }
+    #pd-{{ uid }} .pd-body { max-height: none; overflow: visible; padding: 18px 20px 22px; }
+    #pd-{{ uid }} .pd-heading { font-size: 21px; margin-bottom: 8px; }
+    #pd-{{ uid }} .pd-sub { font-size: 14px; margin-bottom: 14px; }
+    #pd-{{ uid }} .pd-field { margin-bottom: 9px; }
+    #pd-{{ uid }} .pd-fineprint { margin-top: 10px; }
     #pd-{{ uid }} .pd-code { flex-direction: column; }
   }
 
