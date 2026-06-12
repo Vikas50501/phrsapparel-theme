@@ -250,8 +250,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: flex-start;
-    text-align: left;
+    align-items: flex-end;
+    text-align: right;
     padding: {{ section.settings.content_pad_y }}px {{ section.settings.content_pad_x }}px;
     pointer-events: none;
   }
@@ -273,13 +273,13 @@
     gap: {{ section.settings.content_gap }}px;
     pointer-events: none;
   }
-  /* Reserve room so long headings never sit under the arrow button */
-  .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size | plus: 24 }}px; }
+  /* Reserve room so long headings never sit under the arrow button (bottom-left) */
+  .mr-corner-text-{{ section.id }} { padding-left: {{ section.settings.corner_btn_size | plus: 24 }}px; }
 
   .mr-arrow-btn-{{ section.id }} {
     position: absolute;
     z-index: 3;
-    right: {{ section.settings.corner_btn_offset }}px;
+    left: {{ section.settings.corner_btn_offset }}px;
     bottom: {{ section.settings.corner_btn_offset }}px;
     width: {{ section.settings.corner_btn_size }}px;
     height: {{ section.settings.corner_btn_size }}px;
@@ -322,10 +322,10 @@
     .mr-arrow-btn-{{ section.id }} {
       width: {{ section.settings.corner_btn_size_mobile }}px;
       height: {{ section.settings.corner_btn_size_mobile }}px;
-      right: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
+      left: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
       bottom: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
     }
-    .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
+    .mr-corner-text-{{ section.id }} { padding-left: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
   }
 {%- endstyle -%}
 
@@ -766,7 +766,7 @@
     {
       "type": "select", "id": "content_layout", "label": "Layout style",
       "options": [
-        { "value": "corner",  "label": "Corner — text bottom-left, ↗ arrow button bottom-right" },
+        { "value": "corner",  "label": "Corner — ↗ arrow button bottom-left, heading bottom-right" },
         { "value": "overlay", "label": "Overlay — text + buttons (uses position settings)" }
       ],
       "default": "corner",
