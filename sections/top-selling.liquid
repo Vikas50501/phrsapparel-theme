@@ -283,10 +283,10 @@
 
     .tsp-track-{{ section.id }} { align-items: flex-start; }
 
-    /* Two cards per view, with a small peek of the next */
+    /* Exactly two cards per screen (inner padding 16px each side + the card gap) */
     .tsp-card-{{ section.id }} {
       flex-shrink: 0;
-      width: 45vw !important;
+      width: calc((100vw - 32px - {{ section.settings.card_gap }}px) / 2) !important;
       max-width: none;
     }
 
