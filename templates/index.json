@@ -1279,6 +1279,30 @@
     "1780565161339aef59": {
       "type": "_blocks",
       "settings": {}
+    },
+    "popup_discount_XdWmaA": {
+      "type": "popup-discount",
+      "name": "Popup Discount",
+      "settings": {
+        "heading": "🎉 Get 10% Off Your First Order",
+        "subheading": "Join our community and receive an exclusive discount code instantly.",
+        "button_label": "Get My Discount",
+        "fineprint": "By signing up you agree to receive marketing emails. Unsubscribe anytime.",
+        "image": "shopify://shop_images/3.webp",
+        "discount_code": "WELCOME10",
+        "success_heading": "🎉 Your Discount is Ready!",
+        "success_message": "Use the code below at checkout to get 10% off your first order.",
+        "success_button_label": "Continue Shopping",
+        "delay_seconds": 5,
+        "frequency_days": 7,
+        "color_scheme": "",
+        "enable_custom_colors": false,
+        "popup_bg": "#ffffff",
+        "text_color": "#1c1c22",
+        "heading_color": "#111111",
+        "button_color": "#111111",
+        "button_text_color": "#ffffff"
+      }
     }
   },
   "order": [
@@ -1299,6 +1323,7 @@
     "media_row_zRnCzC",
     "image_duo_TgL8NX",
     "1777010956d8398faa",
-    "1780565161339aef59"
+    "1780565161339aef59",
+    "popup_discount_XdWmaA"
   ]
 }
