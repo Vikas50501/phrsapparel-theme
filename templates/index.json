@@ -169,77 +169,81 @@
         "padding_bottom": 36
       }
     },
+    "image_duo_TgL8NX": {
+      "type": "image-duo",
+      "blocks": {
+        "card_KLnyC9": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/6_Phareligions_2_b9c439a1-ba53-4798-a0bb-ff8c179e8da6.jpg",
+            "title": "Man",
+            "link_label": "SHOP THE LOOK",
+            "link": ""
+          }
+        },
+        "card_n7T6D3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/1_Phareligions_1.jpg",
+            "title": "Women",
+            "link_label": "SHOP THE LOOK",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_KLnyC9",
+        "card_n7T6D3"
+      ],
+      "disabled": true,
+      "name": "Image Duo",
+      "settings": {
+        "heading": "Products featuring the thing you love by an artist who loves it too.",
+        "heading_size": 42,
+        "heading_weight": "400",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_line_height": 125,
+        "heading_max_width": 900,
+        "heading_color": "#111111",
+        "heading_gap": 8,
+        "show_wave": true,
+        "wave_width": 80,
+        "wave_stroke": 2,
+        "wave_color": "#111111",
+        "wave_gap_top": 8,
+        "wave_gap_bottom": 40,
+        "columns": 2,
+        "grid_gap": 24,
+        "image_aspect": "4/3",
+        "image_radius": 4,
+        "image_hover_scale": 104,
+        "image_placeholder_bg": "#f0efed",
+        "card_title_size": 30,
+        "card_title_weight": "400",
+        "card_title_spacing": 0,
+        "card_title_color": "#111111",
+        "link_size": 13,
+        "link_weight": "500",
+        "link_transform": "uppercase",
+        "link_spacing": 10,
+        "link_color": "#111111",
+        "link_color_hover": "#666666",
+        "link_underline_thickness": 1,
+        "link_underline_color": "#111111",
+        "link_underline_color_hover": "#666666",
+        "info_gap": 24,
+        "title_link_gap": 14,
+        "bg_color": "#f0efed",
+        "max_width": 1400,
+        "side_padding": 40,
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
     "hero_section_4GaPbK": {
       "type": "hero-section",
       "blocks": {
-        "slide_7QRwDx": {
-          "type": "slide",
-          "disabled": true,
-          "settings": {
-            "image_desktop": "shopify://shop_images/HERO_SLIDER.png",
-            "image_focal_point": "center top",
-            "script_text": "HOT TRENDINGS",
-            "script_color": "#121212",
-            "heading": "COUPLE COLLECTION",
-            "text_color": "#ffffff",
-            "description": "",
-            "button_label": "SHOP NOW",
-            "button_link": "",
-            "button_bg": "#121212",
-            "button_text_color": "",
-            "button_border_color": "#121212",
-            "button_bg_hover": "#ffffff",
-            "button_text_hover": "#121212",
-            "button2_label": "",
-            "button2_link": "",
-            "button2_bg": "",
-            "button2_text_color": "",
-            "button2_border_color": "",
-            "content_box_bg": "#ffffff",
-            "content_box_opacity": 30,
-            "content_box_pad_y": 24,
-            "content_box_pad_x": 32,
-            "content_box_radius": 0,
-            "content_box_blur": 0,
-            "align_h": "center",
-            "align_v": "middle",
-            "content_width": "auto"
-          }
-        },
-        "slide_KHExFi": {
-          "type": "slide",
-          "disabled": true,
-          "settings": {
-            "image_desktop": "shopify://shop_images/WO.png",
-            "image_focal_point": "",
-            "script_text": "New Arrival",
-            "script_color": "#121212",
-            "heading": "SS 2025 NEW ARRIVAL",
-            "text_color": "#ffffff",
-            "description": "",
-            "button_label": "Discover",
-            "button_link": "",
-            "button_bg": "#121212",
-            "button_text_color": "",
-            "button_border_color": "#121212",
-            "button_bg_hover": "#ffffff",
-            "button_text_hover": "#121212",
-            "button2_label": "",
-            "button2_link": "",
-            "button2_bg": "",
-            "button2_text_color": "",
-            "button2_border_color": "",
-            "content_box_bg": "#ffffff",
-            "content_box_opacity": 30,
-            "content_box_pad_y": 24,
-            "content_box_pad_x": 32,
-            "content_box_radius": 0,
-            "content_box_blur": 0,
-            "align_h": "center",
-            "align_v": "middle",
-            "content_width": "auto"
-          }
-        },
         "slide_4Eft4F": {
           "type": "slide",
           "settings": {
@@ -277,8 +281,6 @@
         }
       },
       "block_order": [
-        "slide_7QRwDx",
-        "slide_KHExFi",
         "slide_4Eft4F"
       ],
       "name": "Hero Carousel",
@@ -1183,78 +1185,6 @@
         "side_padding": 28
       }
     },
-    "image_duo_TgL8NX": {
-      "type": "image-duo",
-      "blocks": {
-        "card_KLnyC9": {
-          "type": "card",
-          "settings": {
-            "image": "shopify://shop_images/6_Phareligions_2_b9c439a1-ba53-4798-a0bb-ff8c179e8da6.jpg",
-            "title": "Man",
-            "link_label": "SHOP THE LOOK",
-            "link": ""
-          }
-        },
-        "card_n7T6D3": {
-          "type": "card",
-          "settings": {
-            "image": "shopify://shop_images/1_Phareligions_1.jpg",
-            "title": "Women",
-            "link_label": "SHOP THE LOOK",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "card_KLnyC9",
-        "card_n7T6D3"
-      ],
-      "disabled": true,
-      "name": "Image Duo",
-      "settings": {
-        "heading": "Products featuring the thing you love by an artist who loves it too.",
-        "heading_size": 42,
-        "heading_weight": "400",
-        "heading_transform": "none",
-        "heading_spacing": 0,
-        "heading_line_height": 125,
-        "heading_max_width": 900,
-        "heading_color": "#111111",
-        "heading_gap": 8,
-        "show_wave": true,
-        "wave_width": 80,
-        "wave_stroke": 2,
-        "wave_color": "#111111",
-        "wave_gap_top": 8,
-        "wave_gap_bottom": 40,
-        "columns": 2,
-        "grid_gap": 24,
-        "image_aspect": "4/3",
-        "image_radius": 4,
-        "image_hover_scale": 104,
-        "image_placeholder_bg": "#f0efed",
-        "card_title_size": 30,
-        "card_title_weight": "400",
-        "card_title_spacing": 0,
-        "card_title_color": "#111111",
-        "link_size": 13,
-        "link_weight": "500",
-        "link_transform": "uppercase",
-        "link_spacing": 10,
-        "link_color": "#111111",
-        "link_color_hover": "#666666",
-        "link_underline_thickness": 1,
-        "link_underline_color": "#111111",
-        "link_underline_color_hover": "#666666",
-        "info_gap": 24,
-        "title_link_gap": 14,
-        "bg_color": "#f0efed",
-        "max_width": 1400,
-        "side_padding": 40,
-        "padding_top": 72,
-        "padding_bottom": 72
-      }
-    },
     "1777010956d8398faa": {
       "type": "apps",
       "blocks": {
@@ -1275,11 +1205,6 @@
       "settings": {
         "include_margins": false
       }
-    },
-    "1780565161339aef59": {
-      "type": "_blocks",
-      "disabled": true,
-      "settings": {}
     },
     "popup_discount_XdWmaA": {
       "type": "popup-discount",
@@ -1313,6 +1238,7 @@
     "featured_collection",
     "rich_text_cBkjPH",
     "featured_collection_f6Yz4b",
+    "image_duo_TgL8NX",
     "hero_section_4GaPbK",
     "circle_category_Dzgfaw",
     "top_selling_XgWzRw",
@@ -1322,9 +1248,7 @@
     "lookbook_WqjCKQ",
     "media_row_c9GWpV",
     "media_row_zRnCzC",
-    "image_duo_TgL8NX",
     "1777010956d8398faa",
-    "1780565161339aef59",
     "popup_discount_XdWmaA"
   ]
 }
