@@ -1,0 +1,647 @@
+{%- comment -%}
+  Section: Kushi Product Page
+  Design: Pixel-perfect rebuild of kushi-product-page_5.html
+  Font: Helvetica Neue, Helvetica, Arial, sans-serif (hardcoded)
+  CSS: Scoped via body.template-product prefix in product-page.css
+{%- endcomment -%}
+
+{{ 'product-page.css' | asset_url | stylesheet_tag }}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured_image = product.featured_image -%}
+
+{%- comment -%} Product JSON for JS variant switching {%- endcomment -%}
+<script id="kushi-product-json" type="application/json">
+  {{ product | json }}
+</script>
+<script>
+  window.kushiCurrencySymbol = {{ cart.currency.symbol | json }};
+  window.kushiInventory = {
+    {%- for v in product.variants -%}
+      {{ v.id | json }}: { qty: {{ v.inventory_quantity | default: 0 }}, tracked: {% if v.inventory_management != blank %}true{% else %}false{% endif %} }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  };
+</script>
+
+{%- comment -%}
+  Root scope wrapper: all CSS in product-page.css is prefixed with
+  `.template-product`. This wrapper provides that scope without editing
+  layout/theme.liquid (the theme body has no template-product class).
+{%- endcomment -%}
+<div class="template-product">
+
+{%- comment -%} ===== BREADCRUMB ===== {%- endcomment -%}
+<div class="kushi-page-width">
+  <nav class="kushi-breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span class="kushi-breadcrumb__sep"><svg viewBox="0 0 24 24"><path d="M 7.75 1.34375 L 6.25 2.65625 L 14.65625 12 L 6.25 21.34375 L 7.75 22.65625 L 16.75 12.65625 L 17.34375 12 L 16.75 11.34375 Z"/></svg></span>
+    {%- if product.collections.first -%}
+      <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+      <span class="kushi-breadcrumb__sep"><svg viewBox="0 0 24 24"><path d="M 7.75 1.34375 L 6.25 2.65625 L 14.65625 12 L 6.25 21.34375 L 7.75 22.65625 L 16.75 12.65625 L 17.34375 12 L 16.75 11.34375 Z"/></svg></span>
+    {%- endif -%}
+    <span>{{ product.title }}</span>
+  </nav>
+</div>
+
+{%- comment -%} ===== MAIN PRODUCT ===== {%- endcomment -%}
+<section class="kushi-product-section">
+  <div class="kushi-page-width">
+    <div class="kushi-product-grid">
+
+      {%- comment -%} LEFT: Media Gallery {%- endcomment -%}
+      <div class="kushi-media-wrapper">
+        <div class="kushi-media-gallery">
+          <div class="kushi-media-gallery__main">
+            {%- if featured_image -%}
+              <img
+                id="kushi-main-image"
+                src="{{ featured_image | image_url: width: 800 }}"
+                alt="{{ featured_image.alt | default: product.title | escape }}"
+                width="{{ featured_image.width }}"
+                height="{{ featured_image.height }}"
+                loading="eager"
+              >
+            {%- else -%}
+              <img id="kushi-main-image" src="" alt="{{ product.title | escape }}">
+            {%- endif -%}
+          </div>
+          {%- if product.images.size > 1 -%}
+            <div class="kushi-thumbnail-slider">
+              {%- for image in product.images -%}
+                <div
+                  class="kushi-thumbnail-slider__item{% if forloop.first %} active{% endif %}"
+                  data-image-id="{{ image.id }}"
+                  data-full="{{ image | image_url: width: 800 }}"
+                  onclick="kushiChangeImage(this, '{{ image | image_url: width: 800 }}')"
+                >
+                  <img
+                    src="{{ image | image_url: width: 200 }}"
+                    alt="{{ image.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    width="200"
+                    height="250"
+                  >
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} RIGHT: Product Info {%- endcomment -%}
+      <div class="kushi-info-wrapper">
+        <div class="kushi-info-container">
+
+          {%- comment -%} Title {%- endcomment -%}
+          <div class="kushi-product-title">
+            <h2>{{ product.title }}</h2>
+          </div>
+
+          {%- comment -%} Judge.me review stars {%- endcomment -%}
+          <div class="kushi-review-badge">
+            <!-- Start of Judge.me code -->
+            <div style='{{ jm_style }}' class='jdgm-widget jdgm-preview-badge' data-id='{{ product.id }}' data-auto-install='false'>
+              {{ product.metafields.judgeme.badge }}
+            </div>
+            <!-- End of Judge.me code -->
+          </div>
+
+          {%- comment -%} Price {%- endcomment -%}
+          <div class="kushi-price-wrapper">
+            <div class="kushi-price__sale">
+              <span class="kushi-price-item--sale" id="kushi-price-sale">{{ product.price | money }}</span>
+              {%- if product.compare_at_price > product.price -%}
+                <span class="kushi-price-item--regular" id="kushi-price-regular">{{ product.compare_at_price | money }}</span>
+                {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+                <span class="kushi-badge--sale" id="kushi-price-badge">-{{ discount_pct }}%</span>
+              {%- else -%}
+                <span class="kushi-price-item--regular" id="kushi-price-regular" style="display:none;"></span>
+                <span class="kushi-badge--sale" id="kushi-price-badge" style="display:none;"></span>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%} SKU {%- endcomment -%}
+          {%- if current_variant.sku != blank -%}
+            <div class="kushi-sku">
+              <p class="kushi-product-label">SKU : <span class="kushi-attributes-value" id="kushi-sku-value">{{ current_variant.sku }}</span></p>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Description (short) {%- endcomment -%}
+          {%- if product.description != blank -%}
+            <p class="kushi-product-text">{{ product.description | strip_html | truncatewords: 30 }}</p>
+          {%- endif -%}
+
+          {%- comment -%} Product Form {%- endcomment -%}
+          {%- form 'product', product, id: 'kushi-product-form' -%}
+            <input type="hidden" name="id" id="kushi-variant-id" value="{{ current_variant.id }}">
+
+            {%- unless product.has_only_default_variant -%}
+              {%- for option in product.options_with_values -%}
+                {%- assign option_name = option.name -%}
+                {%- assign option_handle = option.name | handleize -%}
+                {%- assign is_color = false -%}
+                {%- if option_name == 'Color' or option_name == 'color' or option_name == 'Colour' or option_name == 'colour' -%}
+                  {%- assign is_color = true -%}
+                {%- endif -%}
+                {%- assign is_size = false -%}
+                {%- if option_name == 'Size' or option_name == 'size' -%}
+                  {%- assign is_size = true -%}
+                {%- endif -%}
+
+                <fieldset class="kushi-form-input">
+                  {%- if is_size and product.metafields.custom.size_guide_chart.value != blank -%}
+                    <div class="kushi-form-label-row">
+                      <label class="kushi-form-label" data-option-name="{{ option_name }}">{{ option_name }} : <span>{{ option.selected_value }}</span></label>
+                      <button type="button" class="kushi-size-chart-btn" onclick="kushiOpenSizeChart()" aria-haspopup="dialog">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8l13 13 5-5L8 3z"/><path d="M8 7l2 2M11 10l2 2M14 13l2 2"/></svg>
+                        Size Chart
+                      </button>
+                    </div>
+                  {%- else -%}
+                    <label class="kushi-form-label" data-option-name="{{ option_name }}">{{ option_name }} : <span>{{ option.selected_value }}</span></label>
+                  {%- endif -%}
+
+                  {%- if is_color -%}
+                    {%- comment -%} Color Swatches {%- endcomment -%}
+                    <div class="kushi-swatch-group">
+                      {%- for value in option.values -%}
+                        {%- assign color_hex = value | handleize -%}
+                        {%- assign swatch_bg = '#cccccc' -%}
+                        {%- case color_hex -%}
+                          {%- when 'black' -%}{%- assign swatch_bg = '#000000' -%}
+                          {%- when 'white' -%}{%- assign swatch_bg = '#f2f2f2' -%}
+                          {%- when 'blue' -%}{%- assign swatch_bg = '#a8bcd4' -%}
+                          {%- when 'red' -%}{%- assign swatch_bg = '#cc0000' -%}
+                          {%- when 'green' -%}{%- assign swatch_bg = '#2e7d32' -%}
+                          {%- when 'grey' or 'gray' -%}{%- assign swatch_bg = '#cccccc' -%}
+                          {%- when 'navy' -%}{%- assign swatch_bg = '#1a237e' -%}
+                          {%- when 'pink' -%}{%- assign swatch_bg = '#e91e63' -%}
+                          {%- when 'brown' -%}{%- assign swatch_bg = '#795548' -%}
+                          {%- when 'beige' or 'sandal' -%}{%- assign swatch_bg = '#a89166' -%}
+                          {%- when 'yellow' -%}{%- assign swatch_bg = '#fdd835' -%}
+                          {%- when 'orange' -%}{%- assign swatch_bg = '#ef6c00' -%}
+                          {%- when 'purple' -%}{%- assign swatch_bg = '#7b1fa2' -%}
+                          {%- when 'cream' or 'ivory' -%}{%- assign swatch_bg = '#fffdd0' -%}
+                          {%- when 'olive' -%}{%- assign swatch_bg = '#6b8e23' -%}
+                          {%- when 'burgundy' or 'maroon' -%}{%- assign swatch_bg = '#800020' -%}
+                          {%- when 'tan' or 'khaki' -%}{%- assign swatch_bg = '#c2b280' -%}
+                        {%- endcase -%}
+
+                        {%- comment -%} Find this color's variant image (option1/2/3 by position) {%- endcomment -%}
+                        {%- assign swatch_img = '' -%}
+                        {%- for variant in product.variants -%}
+                          {%- case option.position -%}
+                            {%- when 1 -%}{%- assign v_opt = variant.option1 -%}
+                            {%- when 2 -%}{%- assign v_opt = variant.option2 -%}
+                            {%- when 3 -%}{%- assign v_opt = variant.option3 -%}
+                          {%- endcase -%}
+                          {%- if v_opt == value and variant.image != blank -%}
+                            {%- assign swatch_img = variant.image | image_url: width: 120 -%}
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+
+                        <div
+                          class="kushi-swatch-element{% if swatch_img != blank %} has-image{% endif %}{% if value == option.selected_value %} active{% endif %}"
+                          data-value="{{ value | escape }}"
+                          onclick="kushiActivateSwatch(this)"
+                        >
+                          {%- if swatch_img != blank -%}
+                            <span class="kushi-swatch-img" style="background-image: url('{{ swatch_img }}');" role="img" aria-label="{{ value | escape }}"></span>
+                          {%- else -%}
+                            <span class="kushi-swatch-color" style="background-color: {{ swatch_bg }};{% if color_hex == 'white' %} border: 1px solid #e3e0e0;{% endif %}"></span>
+                          {%- endif -%}
+                          <span class="kushi-tooltip">{{ value }}</span>
+                        </div>
+                      {%- endfor -%}
+                    </div>
+
+                  {%- else -%}
+                    {%- comment -%} Size / Other Pills {%- endcomment -%}
+                    <div class="kushi-variant-pills">
+                      {%- for value in option.values -%}
+                        {%- assign is_available = false -%}
+                        {%- for variant in product.variants -%}
+                          {%- case option.position -%}
+                            {%- when 1 -%}{%- assign opt_val = variant.option1 -%}
+                            {%- when 2 -%}{%- assign opt_val = variant.option2 -%}
+                            {%- when 3 -%}{%- assign opt_val = variant.option3 -%}
+                          {%- endcase -%}
+                          {%- if opt_val == value and variant.available -%}
+                            {%- assign is_available = true -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        <button
+                          type="button"
+                          class="kushi-variant-pill{% if value == option.selected_value %} active{% endif %}{% unless is_available %} disabled{% endunless %}"
+                          data-value="{{ value | escape }}"
+                          onclick="kushiActivatePill(this)"
+                          {% unless is_available %}disabled{% endunless %}
+                        >{{ value }}</button>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </fieldset>
+              {%- endfor -%}
+            {%- endunless -%}
+
+            {%- comment -%} Quantity + Add to Cart {%- endcomment -%}
+            <div class="kushi-buttons-row">
+              <div class="kushi-quantity">
+                <button type="button" class="kushi-quantity__button" onclick="kushiChangeQty(-1)">
+                  <svg viewBox="0 0 10 2"><path d="M.5 1h9" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+                </button>
+                <input class="kushi-quantity__input" type="number" id="kushi-qty-input" name="quantity" value="1" min="1">
+                <button type="button" class="kushi-quantity__button" onclick="kushiChangeQty(1)">
+                  <svg viewBox="0 0 10 10"><path d="M5 .5v9M.5 5h9" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+                </button>
+              </div>
+              <button type="button" class="kushi-btn-atc" id="kushi-btn-atc" onclick="kushiAddToCart()" {% unless product.available %}disabled{% endunless %}>
+                {%- if product.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+              </button>
+            </div>
+
+            {%- comment -%} Buy Now (dynamic checkout) {%- endcomment -%}
+            <div class="kushi-payment-buttons">
+              {{ form | payment_button }}
+            </div>
+
+          {%- endform -%}
+
+          {%- comment -%} Shipping Info {%- endcomment -%}
+          <div class="kushi-html-section">
+            <svg width="28" height="28" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#a)">
+                <path d="M19.195 0c-3.93 0-7.684 1.137-10.889 3.254l.21-1.522a1.524 1.524 0 00-3.018-.395L4.76 6.67a1.523 1.523 0 001.756 1.572c.586.292 1.293.176 1.755-.287C11.282 4.79 15.49 3.047 19.967 3.047c9.261 0 16.757 7.495 16.757 16.758a1.524 1.524 0 003.047 0C39.771 8.86 30.914 0 19.967 0h-.772z" fill="currentColor"/>
+                <path d="M33.409 30.758a1.524 1.524 0 00-1.755.287c-3.165 3.165-7.373 4.908-11.85 4.908-9.261 0-16.757-7.495-16.757-16.758a1.524 1.524 0 00-3.047 0c0 10.945 8.858 19.805 19.805 19.805 3.929 0 7.684-1.137 10.888-3.254l-.21 1.522a1.524 1.524 0 003.018.395l.74-5.354a1.524 1.524 0 00-.832-1.551z" fill="currentColor"/>
+                <path d="M25.594 30.164a4.574 4.574 0 004.57-4.57V13.406a4.574 4.574 0 00-4.57-4.57H13.406a4.574 4.574 0 00-4.57 4.57v12.188a4.574 4.574 0 004.57 4.57h12.188zm-13.71-4.57V13.406a1.526 1.526 0 011.522-1.523h4.57v4.57a1.524 1.524 0 003.048 0v-4.57h4.57a1.526 1.526 0 011.523 1.523v12.188a1.526 1.526 0 01-1.523 1.523H13.406a1.526 1.526 0 01-1.523-1.523z" fill="currentColor"/>
+              </g>
+            </svg>
+            <p>Free return within <b>30 days</b> of purchase. $79</p>
+          </div>
+
+          <div class="kushi-html-section">
+            <svg width="28" height="28" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M35.953 19.762V17.977a4.574 4.574 0 00-4.57-4.57h-4.57V8.835a4.574 4.574 0 00-4.57-4.57H4.57A4.574 4.574 0 000 8.836v21.328a1.524 1.524 0 001.523 1.524h1.786a4.572 4.572 0 008.617 0h15.149a4.572 4.572 0 008.616 0h1.786A1.524 1.524 0 0039 30.164v-6.094a4.574 4.574 0 00-3.047-4.308zM31.383 16.453a1.526 1.526 0 011.523 1.524v1.523h-6.094v-3.047h4.57zM3.047 8.836a1.526 1.526 0 011.524-1.524h17.671a1.526 1.526 0 011.524 1.524v19.805H11.926a4.572 4.572 0 00-8.617 0H3.047V8.836zm4.57 22.851a1.526 1.526 0 01-1.523-1.523 1.526 1.526 0 011.524-1.523 1.526 1.526 0 011.523 1.523 1.526 1.526 0 01-1.523 1.523zm23.766 0a1.526 1.526 0 01-1.524-1.523 1.526 1.526 0 011.524-1.523 1.526 1.526 0 011.523 1.523 1.526 1.526 0 01-1.523 1.523zm4.57-3.046h-.262a4.572 4.572 0 00-8.617 0h-.261V22.547h7.617a1.526 1.526 0 011.524 1.523v4.57z" fill="currentColor"/>
+              <path d="M7.617 13.406h6.094a1.524 1.524 0 000-3.047H7.617a1.524 1.524 0 000 3.047z" fill="currentColor"/>
+              <path d="M9.14 17.977a1.524 1.524 0 001.524 1.523h6.094a1.524 1.524 0 000-3.047h-6.094a1.524 1.524 0 00-1.523 1.524z" fill="currentColor"/>
+              <path d="M12.188 24.07a1.524 1.524 0 001.523 1.524h6.094a1.524 1.524 0 000-3.047H13.71a1.524 1.524 0 00-1.523 1.524z" fill="currentColor"/>
+            </svg>
+            <p><span>Estimate delivery times:</span> <b>12-26 days</b> (International)</p>
+          </div>
+
+          {%- comment -%} Payment Badges {%- endcomment -%}
+          <div class="kushi-payment">
+            <ul class="kushi-list-payment">
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#142688"/><path d="M15 19.21V13h3.27c.97 0 1.69.22 2.16.66.47.44.7 1.06.7 1.86 0 .8-.24 1.43-.7 1.87-.47.44-1.19.66-2.16.66H16.5v1.16H15zm1.5-2.5h1.77c.57 0 .99-.12 1.27-.37.28-.24.42-.6.42-1.06 0-.47-.14-.83-.42-1.07-.28-.24-.7-.37-1.27-.37H16.5v2.87z" fill="#fff"/></svg>
+              </li>
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><circle fill="#EB001B" cx="15" cy="12" r="7"/><circle fill="#F79E1B" cx="23" cy="12" r="7"/><path fill="#FF5F00" d="M22 12c0-2.4-1.2-4.5-3-5.7-1.8 1.3-3 3.4-3 5.7s1.2 4.5 3 5.7c1.8-1.2 3-3.3 3-5.7z"/></svg>
+              </li>
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#006FCF"/><path d="M8.971 10.268l.774 1.876H8.203l.768-1.876zm16.075.078h-2.977v1.078h2.937v1.238h-2.937v1.177h2.977v.867l1.754-2.192-1.754-2.17v.002zm-14.063-2.39h2.525l.859 1.873.86-1.873h2.533v5.074l-2.164-5.074h-2.181l-2.313 5.345H7.703l-.427-1.04h-2.57l-.41 1.04H2.556l2.427-5.345zm14.063 0h4.848l1.356 1.738 1.4-1.738h1.814l-2.26 2.622L35 15.303h-1.883l-1.397-1.753-1.428 1.753h-4.874V7.956z" fill="#fff"/></svg>
+              </li>
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#1A1F71"/><path d="M13.63 16.49h-2.24l1.4-8.65h2.24l-1.4 8.65zm10.34-8.43c-.44-.17-1.14-.36-2.01-.36-2.22 0-3.78 1.18-3.79 2.87-.02 1.25 1.12 1.95 1.97 2.36.88.43 1.17.7 1.17 1.08-.01.58-.7.85-1.35.85-.9 0-1.38-.13-2.12-.45l-.29-.14-.32 1.95c.53.24 1.5.45 2.51.46 2.36 0 3.89-1.16 3.91-2.97.01-.99-.59-1.74-1.89-2.36-.79-.4-1.27-.67-1.27-1.08.01-.37.41-.75 1.3-.75.74-.01 1.28.16 1.7.34l.2.1.31-1.9zm5.85.22h-1.73c-.54 0-.94.15-1.17.72l-3.33 7.94h2.36l.47-1.3h2.88l.27 1.3h2.08l-1.83-8.66zm-2.77 5.6l.89-2.42c-.01.02.18-.5.3-.83l.15.75.52 2.5h-1.86zM12.79 7.84l-2.2 5.9-.24-1.2c-.41-1.38-1.68-2.88-3.1-3.62l2.01 7.55h2.38l3.54-8.63h-2.39z" fill="#fff"/><path d="M8.44 7.84H4.81l-.03.18c2.82.72 4.68 2.46 5.45 4.55l-.79-3.99c-.14-.55-.53-.72-1-.74z" fill="#F2AE14"/></svg>
+              </li>
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M21.382 9.713c0 1.668-1.177 2.858-2.821 2.858h-1.549a.283.283 0 00-.283.283v2.29a.283.283 0 01-.283.284h-1.089a.283.283 0 01-.283-.283V6.856c0-.156.126-.283.283-.283h3.204c1.644 0 2.821 1.19 2.821 2.858v.282zm-2.077-.088c0-.636-.474-1.148-1.06-1.148h-1.233a.283.283 0 00-.283.283v1.787c0 .157.126.283.283.283h1.233c.586 0 1.06-.512 1.06-1.147v-.058z" fill="#009CDE"/></svg>
+              </li>
+              <li class="kushi-list-payment__item">
+                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path fill="#000" d="M17.714 10.595h2.548v2.81h-2.548z"/><path d="M18.057 12a1.8 1.8 0 01.687-1.419 1.79 1.79 0 100 2.838A1.8 1.8 0 0118.057 12z" fill="#FF5F00"/><path d="M21.57 12a1.79 1.79 0 01-2.896 1.419 1.79 1.79 0 000-2.838A1.79 1.79 0 0121.57 12z" fill="#EB001B"/></svg>
+              </li>
+            </ul>
+            <p class="kushi-payment-text">100% Secured Payment</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} Bottom Product Tabs {%- endcomment -%}
+    <div class="kushi-tabs-section">
+      <div class="kushi-tabs__nav">
+        <button class="kushi-tabs__btn active" onclick="kushiSwitchTab('description', this)">Product Description</button>
+        <button class="kushi-tabs__btn" onclick="kushiSwitchTab('shipping', this)">Shipping Policy</button>
+        <button class="kushi-tabs__btn" onclick="kushiSwitchTab('reviews', this)">Reviews</button>
+      </div>
+
+      {%- comment -%} Tab: Product Description {%- endcomment -%}
+      {%- comment -%}
+        Metafield-driven content with graceful fallback:
+        - custom.item_features (rich_text)               → Item Features body, falls back to product.description
+        - custom.material_features (list.single_line)    → "Material Texture" checklist
+        - custom.washing_instructions (list.single_line) → "Washing Instructions" list
+        - custom.product_quality (rich_text)             → "Product Quality" body
+      {%- endcomment -%}
+      {%- assign mf_item_features = product.metafields.custom.item_features -%}
+      {%- assign mf_material = product.metafields.custom.material_features.value -%}
+      {%- assign mf_washing = product.metafields.custom.washing_instructions.value -%}
+      {%- assign mf_quality = product.metafields.custom.product_quality -%}
+      <div class="kushi-tabs__panel active" id="kushi-tab-description">
+        <div class="kushi-desc-layout">
+          <div class="kushi-desc-layout__content">
+
+            {%- comment -%} Item Features — metafield, fallback to product.description {%- endcomment -%}
+            {%- if mf_item_features != blank or product.description != blank -%}
+              <h3 class="kushi-desc-heading">Item Features</h3>
+              <div class="kushi-desc-text">
+                {%- if mf_item_features != blank -%}
+                  {{ product.metafields.custom.item_features | metafield_tag }}
+                {%- else -%}
+                  {{ product.description }}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- comment -%} Two-column lists — only render if at least one metafield has data {%- endcomment -%}
+            {%- if mf_material != blank or mf_washing != blank -%}
+              <div class="kushi-desc-two-col">
+                {%- if mf_material != blank -%}
+                  <div>
+                    <h4 class="kushi-desc-two-col__heading">Material Texture</h4>
+                    <ul class="kushi-desc-icon-list">
+                      {%- for item in mf_material -%}
+                        <li>
+                          <svg class="kushi-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                          {{ item }}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+                {%- if mf_washing != blank -%}
+                  <div>
+                    <h4 class="kushi-desc-two-col__heading">Washing Instructions</h4>
+                    <ul class="kushi-desc-icon-list">
+                      {%- for item in mf_washing -%}
+                        {%- assign wi = item | downcase -%}
+                        <li>
+                          {%- if wi contains 'bleach' -%}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 4l8 16H4z"/><line x1="8.5" y1="12.5" x2="15.5" y2="19.5"/></svg>
+                          {%- elsif wi contains 'iron' -%}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 16c0-4.5 3.5-7 9-7h7l-2 7z"/><line x1="4" y1="19.5" x2="16" y2="19.5"/></svg>
+                          {%- elsif wi contains 'tumble' or wi contains 'lay flat' or wi contains 'dry' -%}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="5.5"/></svg>
+                          {%- elsif wi contains 'wash' or wi contains 'rinse' or wi contains 'water' -%}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M3 4h18l-1.5 15.2a2 2 0 01-2 1.8H6.5a2 2 0 01-2-1.8z"/><path d="M5 8c2.2 2 4.3 2 6.5 0s4.3-2 6.5 0"/></svg>
+                          {%- else -%}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M5 8l7-3 7 3v11H5z"/></svg>
+                          {%- endif -%}
+                          {{ item }}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- comment -%} Product Quality — metafield only {%- endcomment -%}
+            {%- if mf_quality != blank -%}
+              <div class="kushi-desc-quality">
+                <h3 class="kushi-desc-heading">Product Quality</h3>
+                <div class="kushi-desc-text">{{ product.metafields.custom.product_quality | metafield_tag }}</div>
+              </div>
+            {%- endif -%}
+
+          </div>
+          {%- comment -%} Right-side image: metafield first, then last product image {%- endcomment -%}
+          {%- assign desc_img = product.metafields.custom.description_image.value -%}
+          {%- if desc_img != blank -%}
+            <div class="kushi-desc-layout__image">
+              <img
+                src="{{ desc_img | image_url: width: 600 }}"
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+              >
+            </div>
+          {%- elsif product.images.size > 1 -%}
+            <div class="kushi-desc-layout__image">
+              <img
+                src="{{ product.images.last | image_url: width: 500 }}"
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+              >
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Tab: Shipping Policy {%- endcomment -%}
+      <div class="kushi-tabs__panel" id="kushi-tab-shipping">
+        <div class="kushi-shipping-content">
+          <p>We offer free standard shipping on all orders over $79. Delivery typically takes 5-7 business days for domestic orders and 12-26 business days for international orders.</p>
+          <p>Express shipping options are available at checkout. All orders are shipped with tracking information provided via email.</p>
+          <p>For returns, you have 30 days from the date of purchase to return your item. Products must be in original condition with tags attached. Return shipping is free for domestic orders.</p>
+        </div>
+      </div>
+
+      {%- comment -%} Tab: Reviews {%- endcomment -%}
+      <div class="kushi-tabs__panel" id="kushi-tab-reviews">
+        <div class="kushi-reviews-content">
+          <!-- Start of Judge.me code -->
+          {% assign has_legacy = false %}
+          {% if product.metafields.judgeme.widget.size > 20 %}{% assign has_legacy = true %}{% endif %}
+          <div style='clear:both'></div>
+          <div id='judgeme_product_reviews' class='jdgm-widget jdgm-review-widget' data-product-title='{{ product.title | escape }}' data-id='{{ product.id }}' data-product-id='{{ product.id }}' data-widget='review' data-auto-install='false' data-shop-reviews-count='{{ shop.metafields.judgeme.shop_reviews_count | default: 0 | escape }}' data-entry-point='review_widget.js' data-entry-key='review-widget/main.js'>{% if has_legacy %}<div class='jdgm-legacy-widget-content' style='display: none;'>{{ product.metafields.judgeme.widget }}</div>{% endif %}</div>
+          {% if product.metafields.judgeme.review_widget_data %}<script>jdgm.data ||= {}; jdgm.data.reviewWidget ||= {}; jdgm.data.reviewWidget[{{ product.id }}] = {{ product.metafields.judgeme.review_widget_data }}</script>{% endif %}
+          <!-- End of Judge.me code -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{%- comment -%} ===== SHOP THE NEW ARRIVALS ===== {%- endcomment -%}
+{%- if section.settings.show_new_arrivals -%}
+  {%- assign na_collection = section.settings.new_arrivals_collection -%}
+  {%- if na_collection != blank and na_collection.products.size > 0 -%}
+    <section class="kushi-new-arrivals">
+      <div class="kushi-page-width">
+        <div class="kushi-new-arrivals__head">
+          <h2 class="kushi-new-arrivals__heading">{{ section.settings.new_arrivals_heading | default: 'Shop The New Arrivals' }}</h2>
+          <a href="{{ na_collection.url }}" class="kushi-new-arrivals__link">View All</a>
+        </div>
+        <div class="kushi-product-cards">
+          {%- for prod in na_collection.products limit: section.settings.new_arrivals_count -%}
+            <div class="kushi-product-card">
+              <a href="{{ prod.url }}">
+                <div class="kushi-product-card__image">
+                  {%- if prod.featured_image -%}
+                    <img src="{{ prod.featured_image | image_url: width: 400 }}" alt="{{ prod.featured_image.alt | default: prod.title | escape }}" loading="lazy">
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {%- endif -%}
+                </div>
+                <div class="kushi-product-card__info">
+                  <div class="kushi-product-card__title">{{ prod.title }}</div>
+                  <div class="kushi-product-card__price">
+                    {{ prod.price | money }}
+                    {%- if prod.compare_at_price > prod.price -%}<s>{{ prod.compare_at_price | money }}</s>{%- endif -%}
+                  </div>
+                </div>
+              </a>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ===== MEDIA BANNER (video or image) ===== {%- endcomment -%}
+{%- if section.settings.show_media_banner -%}
+  {%- if section.settings.banner_video != blank or section.settings.banner_image != blank -%}
+    <section class="kushi-media-banner">
+      <div class="kushi-page-width">
+        <div class="kushi-media-banner__inner">
+          {%- if section.settings.banner_video != blank -%}
+            {{ section.settings.banner_video | video_tag: image_size: '1100x', controls: false, autoplay: true, loop: true, muted: true, playsinline: true }}
+          {%- elsif section.settings.banner_image != blank -%}
+            <img
+              src="{{ section.settings.banner_image | image_url: width: 1600 }}"
+              alt="{{ section.settings.banner_image.alt | default: product.title | escape }}"
+              loading="lazy"
+              width="{{ section.settings.banner_image.width }}"
+              height="{{ section.settings.banner_image.height }}"
+            >
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ===== RECENTLY VIEWED PRODUCTS ===== {%- endcomment -%}
+<section class="kushi-recently-viewed" id="kushi-recently-viewed-section" style="display:none;">
+  <div class="kushi-page-width">
+    <h2 class="kushi-recently-viewed__heading">Recently Viewed Products</h2>
+    <div class="kushi-product-cards" id="kushi-recently-viewed-grid"></div>
+  </div>
+</section>
+
+{%- comment -%} ===== SIZE CHART MODAL ===== {%- endcomment -%}
+{%- assign size_chart = product.metafields.custom.size_guide_chart.value -%}
+{%- if size_chart != blank and size_chart.page != blank -%}
+  <div class="kushi-modal-overlay" id="kushi-size-chart-modal" role="dialog" aria-modal="true" aria-label="{{ size_chart.heading | default: 'Size Chart' | escape }}">
+    <div class="kushi-modal">
+      <button type="button" class="kushi-modal__close" onclick="kushiCloseSizeChart()" aria-label="Close size chart">&times;</button>
+      <h2 class="kushi-modal__title">{{ size_chart.heading | default: 'Size Chart' }}</h2>
+      <div class="kushi-modal__body">
+        {{ size_chart.page.value.content }}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+</div>{%- comment -%} /.template-product {%- endcomment -%}
+
+<script src="{{ 'product-page.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Kushi Product Page",
+  "tag": "section",
+  "class": "section-kushi-product",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Shipping Info"
+    },
+    {
+      "type": "text",
+      "id": "shipping_return_text",
+      "label": "Return Policy Text",
+      "default": "Free return within 30 days of purchase. $79"
+    },
+    {
+      "type": "text",
+      "id": "shipping_delivery_text",
+      "label": "Delivery Estimate Text",
+      "default": "Estimate delivery times: 12-26 days (International)"
+    },
+    {
+      "type": "header",
+      "content": "Shipping Policy Tab"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_policy_content",
+      "label": "Shipping Policy Content",
+      "default": "<p>We offer free standard shipping on all orders over $79. Delivery typically takes 5-7 business days for domestic orders and 12-26 business days for international orders.</p><p>Express shipping options are available at checkout. All orders are shipped with tracking information provided via email.</p><p>For returns, you have 30 days from the date of purchase to return your item. Products must be in original condition with tags attached. Return shipping is free for domestic orders.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Shop The New Arrivals"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_new_arrivals",
+      "label": "Show New Arrivals section",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "new_arrivals_collection",
+      "label": "New Arrivals collection"
+    },
+    {
+      "type": "text",
+      "id": "new_arrivals_heading",
+      "label": "Heading",
+      "default": "Shop The New Arrivals"
+    },
+    {
+      "type": "range",
+      "id": "new_arrivals_count",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Products to show",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Media Banner (below New Arrivals)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_media_banner",
+      "label": "Show media banner",
+      "default": true
+    },
+    {
+      "type": "video",
+      "id": "banner_video",
+      "label": "Video (takes priority over image)"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Image (used if no video)"
+    },
+    {
+      "type": "header",
+      "content": "Recently Viewed"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recently_viewed",
+      "label": "Show Recently Viewed Products",
+      "default": true
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Kushi Product Page"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

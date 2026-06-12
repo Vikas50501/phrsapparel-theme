@@ -1,0 +1,477 @@
+{%- style -%}
+
+  .tp-section-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .tp-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .tp-inner-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.side_padding }}px;
+  }
+
+  /* ── Heading ───────────────────────────────────────── */
+  .tp-heading-wrap-{{ section.id }} {
+    text-align: {{ section.settings.heading_align }};
+    margin-bottom: {{ section.settings.heading_gap }}px;
+  }
+
+  .tp-heading-{{ section.id }} {
+    display: inline-block;
+    position: relative;
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    color: {{ section.settings.heading_color }};
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.heading_transform }};
+    line-height: 1.2;
+    margin: 0;
+    padding-bottom: {{ section.settings.underline_gap }}px;
+  }
+
+  .tp-heading-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: {{ section.settings.underline_width }}px;
+    height: {{ section.settings.underline_thickness }}px;
+    background: {{ section.settings.underline_color }};
+    border-radius: {{ section.settings.underline_thickness }}px;
+    display: {{ tp_underline_display }};
+  }
+
+  .tp-heading-wrap-{{ section.id }}[data-align="left"]  .tp-heading-{{ section.id }}::after { left: 0; transform: none; }
+  .tp-heading-wrap-{{ section.id }}[data-align="right"] .tp-heading-{{ section.id }}::after { left: auto; right: 0; transform: none; }
+
+  /* ── Grid — always 4 columns ───────────────────────── */
+  .tp-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+  }
+
+  @media (max-width: 750px) {
+    .tp-grid-{{ section.id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ section.settings.grid_gap | times: 0.7 | round: 0 }}px;
+    }
+  }
+
+  /* ── Card ──────────────────────────────────────────── */
+  a.tp-card-{{ section.id }},
+  div.tp-card-{{ section.id }} {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  /* ── Image — portrait 3:4 ──────────────────────────── */
+  .tp-card-img-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    border-radius: {{ section.settings.image_radius }}px;
+    background: {{ section.settings.image_bg }};
+  }
+
+  .tp-card-img-{{ section.id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  a.tp-card-{{ section.id }}:hover .tp-card-img-{{ section.id }} img {
+    transform: scale(1.05);
+  }
+
+  /* ── VIEW ALL button ───────────────────────────────── */
+  .tp-button-wrap-{{ section.id }} {
+    display: flex;
+    justify-content: center;
+    margin-top: {{ section.settings.button_gap }}px;
+  }
+
+  .tp-button-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.button_pad_y }}px {{ section.settings.button_pad_x }}px;
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_color }};
+    border: {{ section.settings.button_border_width }}px solid {{ section.settings.button_border }};
+    border-radius: {{ section.settings.button_radius }}px;
+    font-size: {{ section.settings.button_size }}px;
+    font-weight: {{ section.settings.button_weight }};
+    letter-spacing: {{ section.settings.button_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.button_transform }};
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, transform 0.2s;
+    white-space: nowrap;
+  }
+
+  .tp-button-{{ section.id }}:hover {
+    background: {{ section.settings.button_bg_hover }};
+    color: {{ section.settings.button_color_hover }};
+    transform: translateY(-1px);
+  }
+
+{%- endstyle -%}
+
+{%- assign tp_underline_display = 'block' -%}
+{%- unless section.settings.show_underline -%}
+  {%- assign tp_underline_display = 'none' -%}
+{%- endunless -%}
+
+<section class="tp-section-{{ section.id }}">
+  <div class="tp-inner-{{ section.id }}">
+
+    {%- if section.settings.heading != blank -%}
+      <div class="tp-heading-wrap-{{ section.id }}" data-align="{{ section.settings.heading_align }}">
+        <h2 class="tp-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="tp-grid-{{ section.id }}">
+
+      {%- assign tp_source = section.settings.product_source -%}
+
+      {%- if tp_source == 'collection' and section.settings.collection != blank -%}
+        {%- comment -%} ── Collection mode: product image, click → product page ── {%- endcomment -%}
+        {%- for p in section.settings.collection.products limit: 4 -%}
+          <a class="tp-card-{{ section.id }}" href="{{ p.url }}">
+            <div class="tp-card-img-{{ section.id }}">
+              {%- if p.featured_image -%}
+                <img
+                  src="{{ p.featured_image | img_url: '600x800' }}"
+                  alt="{{ p.featured_image.alt | default: p.title | escape }}"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+          </a>
+        {%- else -%}
+          <p style="grid-column:1/-1;text-align:center;color:#888;padding:40px 0;">
+            No products found in this collection.
+          </p>
+        {%- endfor -%}
+
+      {%- elsif tp_source == 'manual' -%}
+        {%- comment -%} ── Manual mode: product picker; custom image overrides product image ── {%- endcomment -%}
+        {%- for block in section.blocks limit: 4 -%}
+          {%- if block.type == 'product' -%}
+            {%- assign p = block.settings.product -%}
+
+            {%- comment -%} Resolve image: custom gallery image takes priority over product image {%- endcomment -%}
+            {%- assign custom_img = block.settings.custom_image -%}
+            {%- assign card_link = block.settings.custom_link -%}
+            {%- if card_link == blank and p != blank -%}
+              {%- assign card_link = p.url -%}
+            {%- endif -%}
+
+            {%- if card_link != blank -%}
+              <a class="tp-card-{{ section.id }}" href="{{ card_link }}" {{ block.shopify_attributes }}>
+            {%- else -%}
+              <div class="tp-card-{{ section.id }}" {{ block.shopify_attributes }}>
+            {%- endif -%}
+
+              <div class="tp-card-img-{{ section.id }}">
+                {%- if custom_img != blank -%}
+                  {%- comment -%} ✅ Custom gallery image set in block settings {%- endcomment -%}
+                  <img
+                    src="{{ custom_img | img_url: '600x800' }}"
+                    alt="{{ custom_img.alt | default: 'Product image' | escape }}"
+                    loading="lazy">
+                {%- elsif p != blank and p.featured_image -%}
+                  {%- comment -%} Fallback: product featured image {%- endcomment -%}
+                  <img
+                    src="{{ p.featured_image | img_url: '600x800' }}"
+                    alt="{{ p.featured_image.alt | default: p.title | escape }}"
+                    loading="lazy">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+
+            {%- if card_link != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+
+          {%- endif -%}
+        {%- endfor -%}
+
+      {%- else -%}
+        {%- comment -%} ── Gallery mode: pure image + custom link, no product needed ── {%- endcomment -%}
+        {%- for block in section.blocks limit: 4 -%}
+          {%- if block.type == 'image' -%}
+            {%- assign custom_img  = block.settings.image -%}
+            {%- assign card_link   = block.settings.link -%}
+
+            {%- if card_link != blank -%}
+              <a class="tp-card-{{ section.id }}" href="{{ card_link }}" {{ block.shopify_attributes }}>
+            {%- else -%}
+              <div class="tp-card-{{ section.id }}" {{ block.shopify_attributes }}>
+            {%- endif -%}
+
+              <div class="tp-card-img-{{ section.id }}">
+                {%- if custom_img != blank -%}
+                  <img
+                    src="{{ custom_img | img_url: '600x800' }}"
+                    alt="{{ custom_img.alt | default: 'Trending product' | escape }}"
+                    loading="lazy">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+
+            {%- if card_link != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+    </div>
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="tp-button-wrap-{{ section.id }}">
+        <a class="tp-button-{{ section.id }}" href="{{ section.settings.button_link | default: '#' }}">
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trending Products",
+  "tag": "section",
+  "class": "section-trending-products",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product card",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Product"
+        },
+        {
+          "type": "paragraph",
+          "content": "Used in 'Manual products' mode. Pick a product to link to its page."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "header",
+          "content": "Custom image (optional)"
+        },
+        {
+          "type": "paragraph",
+          "content": "Upload or choose from your media gallery. Overrides the product image when set."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Custom link (optional)"
+        },
+        {
+          "type": "paragraph",
+          "content": "Overrides the product URL. Leave blank to use the product page link."
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image card (gallery only)",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Image"
+        },
+        {
+          "type": "paragraph",
+          "content": "Used in 'Gallery images' mode. No product needed — just pick an image and a link."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product source"
+    },
+    {
+      "type": "select",
+      "id": "product_source",
+      "label": "Show products from",
+      "options": [
+        { "value": "collection", "label": "Collection (automatic)" },
+        { "value": "manual",     "label": "Manual products (blocks)" },
+        { "value": "gallery",    "label": "Gallery images (blocks)" }
+      ],
+      "default": "collection",
+      "info": "Collection: auto-pulls from a collection. Manual: pick products + optional custom image per card. Gallery: pure image + link, no product needed."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Used in Collection mode only"
+    },
+
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Trending Products" },
+    {
+      "type": "select", "id": "heading_weight", "label": "Weight",
+      "options": [
+        { "value": "300", "label": "Light" }, { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }, { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select", "id": "heading_transform", "label": "Case",
+      "options": [
+        { "value": "none", "label": "As typed" },
+        { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    { "type": "range", "id": "heading_spacing", "label": "Letter spacing",
+      "min": 0, "max": 20, "step": 1, "default": 0, "info": "Divided by 100 to em" },
+    { "type": "color", "id": "heading_color", "label": "Colour", "default": "#111111" },
+    {
+      "type": "select", "id": "heading_align", "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "range", "id": "heading_gap", "label": "Gap below heading",
+      "min": 16, "max": 80, "step": 4, "unit": "px", "default": 40 },
+
+    { "type": "header", "content": "Heading underline" },
+    { "type": "checkbox", "id": "show_underline", "label": "Show underline", "default": true },
+    { "type": "range", "id": "underline_width", "label": "Width",
+      "min": 40, "max": 400, "step": 10, "unit": "px", "default": 260 },
+    { "type": "range", "id": "underline_thickness", "label": "Thickness",
+      "min": 1, "max": 8, "step": 1, "unit": "px", "default": 4 },
+    { "type": "range", "id": "underline_gap", "label": "Gap under text",
+      "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
+    { "type": "color", "id": "underline_color", "label": "Colour", "default": "#e8b8b0" },
+
+    { "type": "header", "content": "Grid" },
+    { "type": "range", "id": "grid_gap", "label": "Gap between cards",
+      "min": 8, "max": 60, "step": 2, "unit": "px", "default": 16 },
+
+    { "type": "header", "content": "Image" },
+    { "type": "range", "id": "image_radius", "label": "Corner radius",
+      "min": 0, "max": 32, "step": 2, "unit": "px", "default": 8 },
+    { "type": "color", "id": "image_bg", "label": "Placeholder background", "default": "#f5f5f5" },
+
+    { "type": "header", "content": "View all button" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "VIEW ALL" },
+    { "type": "url",  "id": "button_link",  "label": "Button link" },
+    { "type": "range", "id": "button_gap", "label": "Gap above button",
+      "min": 16, "max": 80, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "button_size", "label": "Font size",
+      "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    {
+      "type": "select", "id": "button_weight", "label": "Weight",
+      "options": [
+        { "value": "400", "label": "Regular" }, { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" }, { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select", "id": "button_transform", "label": "Case",
+      "options": [
+        { "value": "uppercase",  "label": "UPPERCASE" },
+        { "value": "none",       "label": "As typed" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "uppercase"
+    },
+    { "type": "range", "id": "button_spacing", "label": "Letter spacing",
+      "min": 0, "max": 30, "step": 1, "default": 10 },
+    { "type": "range", "id": "button_pad_x", "label": "Padding X",
+      "min": 16, "max": 60, "step": 2, "unit": "px", "default": 36 },
+    { "type": "range", "id": "button_pad_y", "label": "Padding Y",
+      "min": 8, "max": 24, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "button_radius", "label": "Corner radius",
+      "min": 0, "max": 50, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "button_border_width", "label": "Border width",
+      "min": 0, "max": 4, "step": 1, "unit": "px", "default": 1 },
+    { "type": "color", "id": "button_bg",           "label": "Background",        "default": "#111111" },
+    { "type": "color", "id": "button_color",        "label": "Text colour",       "default": "#ffffff" },
+    { "type": "color", "id": "button_border",       "label": "Border colour",     "default": "#111111" },
+    { "type": "color", "id": "button_bg_hover",     "label": "Background — hover","default": "#333333" },
+    { "type": "color", "id": "button_color_hover",  "label": "Text — hover",      "default": "#ffffff" },
+
+    { "type": "header", "content": "Layout & background" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max section width",
+      "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "side_padding", "label": "Side padding",
+      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_top", "label": "Top padding",
+      "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding",
+      "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "presets": [
+    { "name": "Trending Products" }
+  ]
+}
+{% endschema %}

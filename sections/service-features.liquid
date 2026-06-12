@@ -1,0 +1,558 @@
+{%- assign sf_border_top = 'none' -%}
+{%- if section.settings.border_top -%}
+  {%- assign sf_border_top = section.settings.border_width | append: 'px solid ' | append: section.settings.border_color -%}
+{%- endif -%}
+{%- assign sf_border_bottom = 'none' -%}
+{%- if section.settings.border_bottom -%}
+  {%- assign sf_border_bottom = section.settings.border_width | append: 'px solid ' | append: section.settings.border_color -%}
+{%- endif -%}
+
+{%- style -%}
+  /* ══════════════════════════════════════════════════════
+     SERVICE FEATURES BAR — 4 icon+text columns
+     with custom hover animations per icon type
+  ══════════════════════════════════════════════════════ */
+
+  .sf-section-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    border-top: {{ sf_border_top }};
+    border-bottom: {{ sf_border_bottom }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .sf-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .sf-inner-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.side_padding }}px;
+  }
+
+  /* ── Grid ────────────────────────────────────────────── */
+  .sf-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.item_gap }}px;
+    align-items: center;
+  }
+
+  @media (max-width: 990px) {
+    .sf-grid-{{ section.id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ section.settings.item_gap | divided_by: 2 }}px;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .sf-grid-{{ section.id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Single item ─────────────────────────────────────── */
+  .sf-item-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.icon_gap }}px;
+    padding: {{ section.settings.item_pad_y }}px {{ section.settings.item_pad_x }}px;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .sf-item-{{ section.id }}[data-align="center"] {
+    flex-direction: column;
+    text-align: center;
+    gap: {{ section.settings.icon_gap | times: 0.75 | round: 0 }}px;
+  }
+
+  .sf-item-{{ section.id }}[data-align="center"] .sf-text-wrap-{{ section.id }} {
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ── Icon wrapper ────────────────────────────────────── */
+  .sf-icon-{{ section.id }} {
+    flex-shrink: 0;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ section.settings.icon_color }};
+    transition: color 0.3s ease;
+  }
+
+  .sf-item-{{ section.id }}:hover .sf-icon-{{ section.id }} {
+    color: {{ section.settings.icon_hover_color }};
+  }
+
+  .sf-icon-{{ section.id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: {{ section.settings.icon_stroke }};
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Text ────────────────────────────────────────────── */
+  .sf-text-wrap-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.text_gap }}px;
+    min-width: 0;
+  }
+
+  .sf-title-{{ section.id }} {
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-h3-weight);
+    color: {{ section.settings.title_color }};
+    letter-spacing: {{ section.settings.title_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.title_transform }};
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .sf-sub-{{ section.id }} {
+    font-size: {{ section.settings.sub_size }}px;
+    font-weight: {{ section.settings.sub_weight }};
+    color: {{ section.settings.sub_color }};
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HOVER ANIMATIONS — per icon type
+  ══════════════════════════════════════════════════════ */
+
+  /* Headphone — subtle bob/wiggle */
+  .sf-anim-headphone-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-headphone-{{ section.id }} svg {
+    animation: sf-wiggle-{{ section.id }} 0.6s ease-in-out;
+  }
+  @keyframes sf-wiggle-{{ section.id }} {
+    0%, 100% { transform: rotate(0); }
+    25%       { transform: rotate(-12deg); }
+    75%       { transform: rotate(12deg); }
+  }
+
+  /* Lock — shackle lifts, body drops, then locks back */
+  .sf-anim-lock-{{ section.id }} .sf-lock-shackle {
+    transform-origin: center bottom;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-lock-{{ section.id }} .sf-lock-shackle {
+    animation: sf-lock-cycle-{{ section.id }} 1.2s ease-in-out;
+  }
+  @keyframes sf-lock-cycle-{{ section.id }} {
+    0%   { transform: translateY(0); }
+    30%  { transform: translateY(-4px) scaleY(1.15); }
+    60%  { transform: translateY(-4px) scaleY(1.15); }
+    100% { transform: translateY(0) scaleY(1); }
+  }
+
+  /* Truck — drives forward, pauses, resets */
+  .sf-anim-truck-{{ section.id }} svg {
+    transition: transform 0.4s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-truck-{{ section.id }} svg {
+    animation: sf-drive-{{ section.id }} 1.3s ease-in-out;
+  }
+  @keyframes sf-drive-{{ section.id }} {
+    0%   { transform: translateX(0); }
+    40%  { transform: translateX(10px); }
+    50%  { transform: translateX(10px); }
+    100% { transform: translateX(0); }
+  }
+  /* Wheel spin */
+  .sf-anim-truck-{{ section.id }} .sf-wheel {
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-truck-{{ section.id }} .sf-wheel {
+    animation: sf-spin-{{ section.id }} 0.9s linear;
+  }
+  @keyframes sf-spin-{{ section.id }} {
+    from { transform: rotate(0); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Refresh — 360° rotation */
+  .sf-anim-refresh-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-refresh-{{ section.id }} svg {
+    transform: rotate(360deg);
+  }
+
+  /* Star — pulse */
+  .sf-anim-star-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.3s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-star-{{ section.id }} svg {
+    animation: sf-pulse-{{ section.id }} 0.6s ease;
+  }
+  @keyframes sf-pulse-{{ section.id }} {
+    0%   { transform: scale(1)   rotate(0); }
+    50%  { transform: scale(1.2) rotate(20deg); }
+    100% { transform: scale(1)   rotate(0); }
+  }
+
+  /* Gift — shake/bounce */
+  .sf-anim-gift-{{ section.id }} svg {
+    transform-origin: center bottom;
+    transition: transform 0.3s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-gift-{{ section.id }} svg {
+    animation: sf-bounce-{{ section.id }} 0.7s ease;
+  }
+  @keyframes sf-bounce-{{ section.id }} {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    20%       { transform: translateY(-6px) rotate(-4deg); }
+    50%       { transform: translateY(0) rotate(0); }
+    70%       { transform: translateY(-3px) rotate(3deg); }
+  }
+
+  /* Heart — beat */
+  .sf-anim-heart-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.3s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-heart-{{ section.id }} svg {
+    animation: sf-beat-{{ section.id }} 0.7s ease;
+  }
+  @keyframes sf-beat-{{ section.id }} {
+    0%, 100% { transform: scale(1); }
+    25%       { transform: scale(1.2); }
+    40%       { transform: scale(1);   }
+    60%       { transform: scale(1.2); }
+  }
+
+  /* Clock — hand rotates */
+  .sf-anim-clock-{{ section.id }} .sf-clock-hand {
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: transform 1s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-clock-{{ section.id }} .sf-clock-hand {
+    transform: rotate(360deg);
+  }
+
+  /* Shield — slight bounce */
+  .sf-anim-shield-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-shield-{{ section.id }} svg {
+    transform: scale(1.12);
+  }
+
+  /* Tag — bounce tilt */
+  .sf-anim-tag-{{ section.id }} svg {
+    transform-origin: center;
+    transition: transform 0.3s ease;
+  }
+  .sf-item-{{ section.id }}:hover .sf-anim-tag-{{ section.id }} svg {
+    animation: sf-tag-bounce-{{ section.id }} 0.6s ease;
+  }
+  .sf-title-template--27496016773484__service_features_7mK4RG{
+    font-size:16px;
+  }
+  .announcement-bar__message{
+    font-size:16px;
+  }
+  @keyframes sf-tag-bounce-{{ section.id }} {
+    0%, 100% { transform: rotate(0); }
+    30%       { transform: rotate(-15deg); }
+    70%       { transform: rotate(10deg); }
+  }
+{%- endstyle -%}
+
+<section class="sf-section-{{ section.id }}">
+  <div class="sf-inner-{{ section.id }}">
+    <div class="sf-grid-{{ section.id }}">
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'feature' -%}
+          {%- assign tag = 'div' -%}
+          {%- if block.settings.link != blank -%}{%- assign tag = 'a' -%}{%- endif -%}
+
+          <{{ tag }}
+            class="sf-item-{{ section.id }}"
+            data-align="{{ section.settings.item_align }}"
+            {% if tag == 'a' %}href="{{ block.settings.link }}"{% endif %}
+            {{ block.shopify_attributes }}
+          >
+
+            <div class="sf-icon-{{ section.id }} sf-anim-{{ block.settings.icon }}-{{ section.id }}">
+              {%- case block.settings.icon -%}
+
+                {%- when 'headphone' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M3 18v-6a9 9 0 1 1 18 0v6"/>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
+                    <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                  </svg>
+
+                {%- when 'lock' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path class="sf-lock-shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  </svg>
+
+                {%- when 'truck' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M1 3h15v13H1z"/>
+                    <path d="M16 8h4l3 3v5h-7"/>
+                    <circle class="sf-wheel" cx="5.5" cy="18.5" r="2.5"/>
+                    <circle class="sf-wheel" cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+
+                {%- when 'refresh' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M23 4v6h-6"/>
+                    <path d="M1 20v-6h6"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
+                    <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/>
+                  </svg>
+
+                {%- when 'star' -%}
+                  <svg viewBox="0 0 24 24">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+
+                {%- when 'gift' -%}
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3"  y="8"  width="18" height="4"/>
+                    <rect x="4"  y="12" width="16" height="10"/>
+                    <path d="M12 8v14"/>
+                    <path d="M12 8a3 3 0 1 1-3-3 4 4 0 0 1 3 3z"/>
+                    <path d="M12 8a3 3 0 1 0 3-3 4 4 0 0 0-3 3z"/>
+                  </svg>
+
+                {%- when 'heart' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+
+                {%- when 'clock' -%}
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline class="sf-clock-hand" points="12 6 12 12 16 14"/>
+                  </svg>
+
+                {%- when 'shield' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                  </svg>
+
+                {%- when 'tag' -%}
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20.59 13.41L13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                  </svg>
+
+              {%- endcase -%}
+            </div>
+
+            <div class="sf-text-wrap-{{ section.id }}">
+              {%- if block.settings.title != blank -%}
+                <h3 class="sf-title-{{ section.id }}">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.subtitle != blank -%}
+                <p class="sf-sub-{{ section.id }}">{{ block.settings.subtitle }}</p>
+              {%- endif -%}
+            </div>
+
+          </{{ tag }}>
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Service Features",
+  "tag": "section",
+  "class": "section-service-features",
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon",
+          "info": "Each icon has its own hover animation",
+          "options": [
+            { "value": "headphone", "label": "Headphone (support) — wiggle" },
+            { "value": "lock",      "label": "Lock (security) — lock cycle" },
+            { "value": "truck",     "label": "Truck (shipping) — drives forward" },
+            { "value": "refresh",   "label": "Refresh (returns) — rotates 360°" },
+            { "value": "star",      "label": "Star — pulses" },
+            { "value": "gift",      "label": "Gift — bounces" },
+            { "value": "heart",     "label": "Heart — beats" },
+            { "value": "clock",     "label": "Clock — hand rotates" },
+            { "value": "shield",    "label": "Shield — scale up" },
+            { "value": "tag",       "label": "Price tag — tilts" }
+          ],
+          "default": "headphone"
+        },
+        { "type": "text",     "id": "title",    "label": "Title",    "default": "Feature title" },
+        { "type": "text",     "id": "subtitle", "label": "Subtitle", "default": "Short description" },
+        { "type": "url",      "id": "link",     "label": "Link (optional)" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "range", "id": "columns", "label": "Columns (desktop)",
+      "min": 2, "max": 6, "step": 1, "default": 4
+    },
+    {
+      "type": "select", "id": "item_align", "label": "Item alignment",
+      "options": [
+        { "value": "row",    "label": "Icon left, text right" },
+        { "value": "center", "label": "Icon above, text below (centered)" }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "range", "id": "item_gap", "label": "Gap between items",
+      "min": 8, "max": 80, "step": 4, "unit": "px", "default": 24
+    },
+    {
+      "type": "range", "id": "icon_gap", "label": "Gap: icon to text",
+      "min": 8, "max": 40, "step": 2, "unit": "px", "default": 18
+    },
+    {
+      "type": "range", "id": "text_gap", "label": "Gap: title to subtitle",
+      "min": 0, "max": 16, "step": 2, "unit": "px", "default": 4
+    },
+    {
+      "type": "range", "id": "item_pad_x", "label": "Item padding X",
+      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0
+    },
+    {
+      "type": "range", "id": "item_pad_y", "label": "Item padding Y",
+      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 8
+    },
+
+    { "type": "header", "content": "Icon" },
+    {
+      "type": "range", "id": "icon_size", "label": "Size",
+      "min": 24, "max": 80, "step": 2, "unit": "px", "default": 44
+    },
+    {
+      "type": "range", "id": "icon_stroke", "label": "Stroke thickness",
+      "min": 1, "max": 4, "step": 1, "unit": "px", "default": 1
+    },
+    { "type": "color", "id": "icon_color",       "label": "Colour",        "default": "#111111" },
+    { "type": "color", "id": "icon_hover_color", "label": "Colour — hover","default": "#111111" },
+
+    { "type": "header", "content": "Title" },
+    {
+      "type": "range", "id": "title_size", "label": "Size",
+      "min": 13, "max": 28, "step": 1, "unit": "px", "default": 17
+    },
+    {
+      "type": "select", "id": "title_weight", "label": "Weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select", "id": "title_transform", "label": "Case",
+      "options": [
+        { "value": "none",       "label": "As typed" },
+        { "value": "uppercase",  "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range", "id": "title_spacing", "label": "Letter spacing",
+      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0,
+      "info": "Divided by 100"
+    },
+    { "type": "color", "id": "title_color", "label": "Colour", "default": "#111111" },
+
+    { "type": "header", "content": "Subtitle" },
+    {
+      "type": "range", "id": "sub_size", "label": "Size",
+      "min": 11, "max": 20, "step": 1, "unit": "px", "default": 13
+    },
+    {
+      "type": "select", "id": "sub_weight", "label": "Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    { "type": "color", "id": "sub_color", "label": "Colour", "default": "#888888" },
+
+    { "type": "header", "content": "Dividers" },
+    { "type": "checkbox", "id": "border_top",    "label": "Show top border",    "default": false },
+    { "type": "checkbox", "id": "border_bottom", "label": "Show bottom border", "default": false },
+    {
+      "type": "range", "id": "border_width", "label": "Border thickness",
+      "min": 1, "max": 4, "step": 1, "unit": "px", "default": 1
+    },
+    { "type": "color", "id": "border_color", "label": "Border colour", "default": "#eeeeee" },
+
+    { "type": "header", "content": "Background & padding" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#ffffff" },
+    {
+      "type": "range", "id": "max_width", "label": "Max section width",
+      "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400
+    },
+    {
+      "type": "range", "id": "side_padding", "label": "Side padding",
+      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24
+    },
+    {
+      "type": "range", "id": "padding_top", "label": "Top padding",
+      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48
+    },
+    {
+      "type": "range", "id": "padding_bottom", "label": "Bottom padding",
+      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Service Features",
+      "blocks": [
+        { "type": "feature", "settings": { "icon": "headphone", "title": "24h Services",     "subtitle": "On orders above $50." } },
+        { "type": "feature", "settings": { "icon": "lock",      "title": "Security Payment", "subtitle": "Accept major credit cards." } },
+        { "type": "feature", "settings": { "icon": "truck",     "title": "Fast Delivery",    "subtitle": "And packaged with love." } },
+        { "type": "feature", "settings": { "icon": "refresh",   "title": "Free Return",      "subtitle": "Consultations via email." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

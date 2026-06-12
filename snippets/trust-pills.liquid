@@ -1,0 +1,17 @@
+{%- liquid
+  if trust_pills != blank
+    assign pills = trust_pills
+  else
+    assign pills = 'Extrait de Parfum,Cruelty-Free,IFRA Compliant,Made in India' | split: ','
+  endif
+-%}
+<div class="trust-pills">
+  {%- for pill in pills -%}
+    <span class="trust-pill">
+      <span class="trust-pill__dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+      {{ pill | strip }}
+    </span>
+  {%- endfor -%}
+</div>

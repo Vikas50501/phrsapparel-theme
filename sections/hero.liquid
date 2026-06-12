@@ -1,0 +1,69 @@
+{% style %}
+  #shopify-section-{{ section.id }} .hero {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {% if section.settings.bg_color != blank %}background-color: {{ section.settings.bg_color }};{% endif %}
+    {% if section.settings.custom_css != blank %}{{ section.settings.custom_css }}{% endif %}
+  }
+{% endstyle %}
+
+<section class="hero{% if section.settings.use_bg_noise %} bg-noise{% endif %}">
+  <div class="hero__inner">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="text-eyebrow hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <div class="hero__title">{{ section.settings.heading }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.subheading != blank -%}
+        <div class="hero__intro">{{ section.settings.subheading }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank or section.settings.button_label_2 != blank -%}
+        <div class="hero__cta">
+          {%- if section.settings.button_label != blank -%}
+            <a href="{{ section.settings.button_url | default: '/collections/all' }}" class="btn btn-primary">{{ section.settings.button_label }}</a>
+          {%- endif -%}
+          {%- if section.settings.button_label_2 != blank -%}
+            <a href="{{ section.settings.button_url_2 | default: '/pages/story' }}" class="btn">{{ section.settings.button_label_2 }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="hero__image">
+        {{ section.settings.image | image_url: width: 900 | image_tag: alt: section.settings.image_alt, loading: 'eager', sizes: '(min-width: 768px) 50vw, 100vw' }}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "div",
+  "settings": [
+    { "type": "checkbox", "id": "use_bg_noise", "label": "Use noise/texture background", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Album 01 — Out now" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Some things<br>are felt,<br><em>not said.</em></p>" },
+    { "type": "richtext", "id": "subheading", "label": "Subheading / intro text", "default": "<p>Fragrance for the moments too personal, too complex, too profound for words. Three extraits, three states of mind.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button 1 label", "default": "Shop the album" },
+    { "type": "url", "id": "button_url", "label": "Button 1 URL" },
+    { "type": "text", "id": "button_label_2", "label": "Button 2 label", "default": "Our story" },
+    { "type": "url", "id": "button_url_2", "label": "Button 2 URL" },
+    { "type": "image_picker", "id": "image", "label": "Product / hero image" },
+    { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "UNSAID Album 01" },
+    { "type": "color", "id": "bg_color", "label": "Background color override" },
+    { "type": "range", "id": "padding_top", "label": "Padding top (px)", "min": 0, "max": 200, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom (px)", "min": 0, "max": 200, "step": 4, "default": 128 },
+    { "type": "text", "id": "custom_css", "label": "Custom CSS (applied to section)" }
+  ],
+  "presets": [
+    { "name": "Hero" }
+  ]
+}
+{% endschema %}

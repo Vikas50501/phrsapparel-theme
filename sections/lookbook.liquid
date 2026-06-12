@@ -1,0 +1,466 @@
+{%- style -%}
+  /* ══════════════════════════════════════════════════════
+     LOOKBOOK — Full-bleed image grid with hover-reveal product cards
+  ══════════════════════════════════════════════════════ */
+
+  .lb-section-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  /* ── Section heading ─────────────────────────────────── */
+  .lb-heading-wrap-{{ section.id }} {
+    text-align: {{ section.settings.heading_align }};
+    padding: 0 {{ section.settings.heading_pad_x }}px {{ section.settings.heading_pad_bottom }}px;
+  }
+
+  .lb-heading-{{ section.id }} {
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    color: {{ section.settings.heading_color }};
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.heading_transform }};
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  /* ── Image grid ──────────────────────────────────────── */
+  .lb-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.side_padding }}px;
+  }
+
+  @media (max-width: 749px) {
+    .lb-grid-{{ section.id }} {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | plus: 0 }}, 1fr);
+    }
+  }
+
+  /* ── Image panel ─────────────────────────────────────── */
+  .lb-panel-{{ section.id }} {
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+  }
+
+  .lb-panel-img-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ section.settings.image_aspect }};
+    overflow: hidden;
+    background: {{ section.settings.img_placeholder_bg }};
+    border-radius: {{ section.settings.img_radius }}px;
+  }
+
+  .lb-panel-img-{{ section.id }} img,
+  .lb-panel-img-{{ section.id }} .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .lb-panel-{{ section.id }}:hover .lb-panel-img-{{ section.id }} img {
+    transform: scale({{ section.settings.img_hover_scale | divided_by: 100.0 }});
+  }
+
+  /* ── Product popup card ──────────────────────────────── */
+  .lb-popups-wrap-{{ section.id }} {
+    position: absolute;
+    bottom: {{ section.settings.popup_offset_y }}px;
+    left: {{ section.settings.popup_offset_x }}px;
+    right: {{ section.settings.popup_offset_x }}px;
+    z-index: 20;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: {{ section.settings.popup_gap }}px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .lb-panel-{{ section.id }}:hover .lb-popups-wrap-{{ section.id }} {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .lb-popup-{{ section.id }} {
+    background: {{ section.settings.popup_bg }};
+    border-radius: {{ section.settings.popup_radius }}px;
+    box-shadow: {{ section.settings.popup_shadow }};
+    width: {{ section.settings.popup_width }}px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .lb-popup-img-{{ section.id }} {
+    width: {{ section.settings.popup_thumb_size }}px;
+    height: {{ section.settings.popup_thumb_size }}px;
+    flex-shrink: 0;
+    background: {{ section.settings.popup_img_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .lb-popup-img-{{ section.id }} img,
+  .lb-popup-img-{{ section.id }} .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lb-popup-info-{{ section.id }} {
+    padding: {{ section.settings.popup_info_pad }}px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lb-popup-title-{{ section.id }} {
+    font-size: {{ section.settings.popup_title_size }}px;
+    font-weight: {{ section.settings.popup_title_weight }};
+    color: {{ section.settings.popup_title_color }};
+    margin: 0 0 3px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lb-popup-price-{{ section.id }} {
+    font-size: {{ section.settings.popup_price_size }}px;
+    font-weight: {{ section.settings.popup_price_weight }};
+    color: {{ section.settings.popup_price_color }};
+    margin: 0 0 {{ section.settings.popup_btn_gap }}px;
+  }
+
+  .lb-popup-btn-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.popup_btn_pad_y }}px {{ section.settings.popup_btn_pad_x }}px;
+    background: {{ section.settings.popup_btn_bg }};
+    color: {{ section.settings.popup_btn_color }};
+    border: 1px solid {{ section.settings.popup_btn_border }};
+    border-radius: {{ section.settings.popup_btn_radius }}px;
+    font-size: {{ section.settings.popup_btn_size }}px;
+    font-weight: {{ section.settings.popup_btn_weight }};
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: background 0.22s, color 0.22s;
+    white-space: nowrap;
+  }
+
+  .lb-popup-btn-{{ section.id }}:hover {
+    background: {{ section.settings.popup_btn_bg_hover }};
+    color: {{ section.settings.popup_btn_color_hover }};
+  }
+
+  /* ── View More button ────────────────────────────────── */
+  .lb-viewmore-wrap-{{ section.id }} {
+    text-align: {{ section.settings.viewmore_align }};
+    padding-top: {{ section.settings.viewmore_pad_top }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding-left: {{ section.settings.side_padding }}px;
+    padding-right: {{ section.settings.side_padding }}px;
+  }
+
+  /* Inherits all button styles from theme — no overrides */
+  .lb-viewmore-btn-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .lb-viewmore-btn-{{ section.id }} .lb-viewmore-arrow {
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+
+  .lb-viewmore-btn-{{ section.id }}:hover .lb-viewmore-arrow {
+    transform: translateX(3px);
+  }
+{%- endstyle -%}
+
+<section class="lb-section-{{ section.id }}" id="lb-section-{{ section.id }}">
+
+  {%- if section.settings.heading != blank -%}
+    <div class="lb-heading-wrap-{{ section.id }}">
+      <h2 class="lb-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="lb-grid-{{ section.id }}">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'image' -%}
+
+        <div class="lb-panel-{{ section.id }}" {{ block.shopify_attributes }}>
+
+          {%- comment -%} Main image {%- endcomment -%}
+          <div class="lb-panel-img-{{ section.id }}">
+            {%- if block.settings.image != blank -%}
+              <img
+                src="{{ block.settings.image | img_url: '1200x' }}"
+                alt="{{ block.settings.image.alt | default: block.settings.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.image.width }}"
+                height="{{ block.settings.image.height }}"
+              >
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Collect all enabled products into popup cards {%- endcomment -%}
+          {%- assign has_any_popup = false -%}
+          {%- for hs_n in (1..5) -%}
+            {%- liquid
+              case hs_n
+                when 1
+                  assign hs_enabled = block.settings.hs1_enabled
+                  assign hs_product = block.settings.hs1_product
+                when 2
+                  assign hs_enabled = block.settings.hs2_enabled
+                  assign hs_product = block.settings.hs2_product
+                when 3
+                  assign hs_enabled = block.settings.hs3_enabled
+                  assign hs_product = block.settings.hs3_product
+                when 4
+                  assign hs_enabled = block.settings.hs4_enabled
+                  assign hs_product = block.settings.hs4_product
+                when 5
+                  assign hs_enabled = block.settings.hs5_enabled
+                  assign hs_product = block.settings.hs5_product
+              endcase
+              if hs_enabled and hs_product != blank
+                assign has_any_popup = true
+              endif
+            -%}
+          {%- endfor -%}
+
+          {%- if has_any_popup -%}
+            <div class="lb-popups-wrap-{{ section.id }}">
+              {%- for hs_n in (1..5) -%}
+                {%- liquid
+                  case hs_n
+                    when 1
+                      assign hs_enabled = block.settings.hs1_enabled
+                      assign hs_product = block.settings.hs1_product
+                    when 2
+                      assign hs_enabled = block.settings.hs2_enabled
+                      assign hs_product = block.settings.hs2_product
+                    when 3
+                      assign hs_enabled = block.settings.hs3_enabled
+                      assign hs_product = block.settings.hs3_product
+                    when 4
+                      assign hs_enabled = block.settings.hs4_enabled
+                      assign hs_product = block.settings.hs4_product
+                    when 5
+                      assign hs_enabled = block.settings.hs5_enabled
+                      assign hs_product = block.settings.hs5_product
+                  endcase
+                -%}
+                {%- if hs_enabled and hs_product != blank -%}
+                  <div class="lb-popup-{{ section.id }}">
+                    <div class="lb-popup-img-{{ section.id }}">
+                      {%- if hs_product.featured_image != blank -%}
+                        <img
+                          src="{{ hs_product.featured_image | img_url: '200x' }}"
+                          alt="{{ hs_product.featured_image.alt | default: hs_product.title | escape }}"
+                          loading="lazy"
+                        >
+                      {%- else -%}
+                        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endif -%}
+                    </div>
+                    <div class="lb-popup-info-{{ section.id }}">
+                      <h3 class="lb-popup-title-{{ section.id }}">{{ hs_product.title }}</h3>
+                      <p class="lb-popup-price-{{ section.id }}">{{ hs_product.price | money }}</p>
+                      <a class="lb-popup-btn-{{ section.id }}" href="{{ hs_product.url }}">{{ section.settings.popup_btn_label }}</a>
+                    </div>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} View More button {%- endcomment -%}
+  {%- if section.settings.viewmore_enabled and section.settings.viewmore_url != blank -%}
+    <div class="lb-viewmore-wrap-{{ section.id }}">
+      <a
+        class="button lb-viewmore-btn-{{ section.id }}"
+        href="{{ section.settings.viewmore_url }}"
+        {%- if section.settings.viewmore_new_tab %} target="_blank" rel="noopener"{%- endif %}
+      >
+        {{- section.settings.viewmore_label -}}
+        {%- if section.settings.viewmore_show_arrow -%}
+          <span class="lb-viewmore-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </a>
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% schema %}
+{
+  "name": "Lookbook",
+  "tag": "section",
+  "class": "section-lookbook",
+  "max_blocks": 100,
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Lookbook image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text",         "id": "alt",   "label": "Image alt text" },
+
+        { "type": "header", "content": "Product 1" },
+        { "type": "checkbox", "id": "hs1_enabled", "label": "Enable product 1", "default": true },
+        { "type": "product",  "id": "hs1_product", "label": "Product" },
+
+        { "type": "header", "content": "Product 2" },
+        { "type": "checkbox", "id": "hs2_enabled", "label": "Enable product 2", "default": false },
+        { "type": "product",  "id": "hs2_product", "label": "Product" },
+
+        { "type": "header", "content": "Product 3" },
+        { "type": "checkbox", "id": "hs3_enabled", "label": "Enable product 3", "default": false },
+        { "type": "product",  "id": "hs3_product", "label": "Product" },
+
+        { "type": "header", "content": "Product 4" },
+        { "type": "checkbox", "id": "hs4_enabled", "label": "Enable product 4", "default": false },
+        { "type": "product",  "id": "hs4_product", "label": "Product" },
+
+        { "type": "header", "content": "Product 5" },
+        { "type": "checkbox", "id": "hs5_enabled", "label": "Enable product 5", "default": false },
+        { "type": "product",  "id": "hs5_product", "label": "Product" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "header", "content": "Section heading" },
+    { "type": "text",   "id": "heading",           "label": "Heading" },
+    { "type": "range",  "id": "heading_size",      "label": "Size",           "min": 16, "max": 80, "step": 2, "unit": "px", "default": 32 },
+    { "type": "select", "id": "heading_weight",    "label": "Weight",         "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "500" },
+    { "type": "select", "id": "heading_transform", "label": "Case",           "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
+    { "type": "range",  "id": "heading_spacing",   "label": "Letter spacing", "min": 0, "max": 30, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
+    { "type": "color",  "id": "heading_color",     "label": "Colour",         "default": "#111111" },
+    { "type": "select", "id": "heading_align",     "label": "Alignment",      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
+    { "type": "range",  "id": "heading_pad_x",     "label": "Side padding",   "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range",  "id": "heading_pad_bottom","label": "Gap below",      "min": 0, "max": 60, "step": 4, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Grid layout" },
+    { "type": "range",  "id": "columns",           "label": "Columns — desktop", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "select", "id": "columns_mobile",    "label": "Columns — mobile",  "options": [{"value":"1","label":"1 column"},{"value":"2","label":"2 columns"}], "default": "1" },
+    { "type": "range",  "id": "grid_gap",          "label": "Gap between images","min": 0, "max": 40, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range",  "id": "max_width",         "label": "Max section width", "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range",  "id": "side_padding",      "label": "Side padding",      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 },
+
+    { "type": "header", "content": "Images" },
+    {
+      "type": "select", "id": "image_aspect", "label": "Image aspect ratio",
+      "options": [
+        { "value": "2/3",  "label": "Portrait (2:3)" },
+        { "value": "3/4",  "label": "Portrait (3:4)" },
+        { "value": "4/5",  "label": "Portrait (4:5)" },
+        { "value": "1/1",  "label": "Square" },
+        { "value": "4/3",  "label": "Landscape (4:3)" },
+        { "value": "16/9", "label": "Widescreen" }
+      ],
+      "default": "2/3"
+    },
+    { "type": "range",  "id": "img_radius",        "label": "Image corner radius","min": 0, "max": 32, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range",  "id": "img_hover_scale",   "label": "Image zoom on hover","min": 100, "max": 115, "step": 1, "unit": "%", "default": 104, "info": "100 = no zoom" },
+    { "type": "color",  "id": "img_placeholder_bg","label": "Placeholder colour", "default": "#f0efed" },
+
+    { "type": "header", "content": "Product card popup" },
+    { "type": "range",  "id": "popup_width",       "label": "Card width",      "min": 160, "max": 400, "step": 8, "unit": "px", "default": 240 },
+    { "type": "range",  "id": "popup_radius",      "label": "Corner radius",   "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
+    { "type": "text",   "id": "popup_shadow",      "label": "Box shadow",      "default": "0 8px 32px rgba(0,0,0,0.18)" },
+    { "type": "color",  "id": "popup_bg",          "label": "Background",      "default": "#ffffff" },
+    { "type": "range",  "id": "popup_offset_y",    "label": "Offset from bottom","min": 8, "max": 60, "step": 4, "unit": "px", "default": 16 },
+    { "type": "range",  "id": "popup_offset_x",    "label": "Side inset",       "min": 0, "max": 40, "step": 4, "unit": "px", "default": 12 },
+    { "type": "range",  "id": "popup_gap",         "label": "Gap between cards","min": 4, "max": 24, "step": 2, "unit": "px", "default": 8 },
+    { "type": "color",  "id": "popup_img_bg",      "label": "Thumbnail bg",    "default": "#f5f5f5" },
+    { "type": "range",  "id": "popup_thumb_size",  "label": "Thumbnail size",  "min": 48, "max": 120, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range",  "id": "popup_info_pad",    "label": "Info padding",    "min": 8, "max": 24, "step": 2, "unit": "px", "default": 12 },
+    { "type": "range",  "id": "popup_title_size",  "label": "Title font size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 13 },
+    { "type": "select", "id": "popup_title_weight","label": "Title weight",    "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+    { "type": "color",  "id": "popup_title_color", "label": "Title colour",    "default": "#111111" },
+    { "type": "range",  "id": "popup_price_size",  "label": "Price font size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 13 },
+    { "type": "select", "id": "popup_price_weight","label": "Price weight",    "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "400" },
+    { "type": "color",  "id": "popup_price_color", "label": "Price colour",    "default": "#444444" },
+    { "type": "range",  "id": "popup_btn_gap",     "label": "Gap above button","min": 0, "max": 16, "step": 2, "unit": "px", "default": 8 },
+
+    { "type": "header", "content": "Popup button" },
+    { "type": "text",   "id": "popup_btn_label",   "label": "Button label",   "default": "Shop Now" },
+    { "type": "range",  "id": "popup_btn_size",    "label": "Font size",      "min": 10, "max": 16, "step": 1, "unit": "px", "default": 11 },
+    { "type": "select", "id": "popup_btn_weight",  "label": "Font weight",    "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+    { "type": "range",  "id": "popup_btn_pad_x",   "label": "Padding X",      "min": 8, "max": 24, "step": 2, "unit": "px", "default": 12 },
+    { "type": "range",  "id": "popup_btn_pad_y",   "label": "Padding Y",      "min": 4, "max": 14, "step": 1, "unit": "px", "default": 7 },
+    { "type": "range",  "id": "popup_btn_radius",  "label": "Radius",         "min": 0, "max": 50, "step": 2, "unit": "px", "default": 4 },
+    { "type": "color",  "id": "popup_btn_bg",      "label": "Background",     "default": "#111111" },
+    { "type": "color",  "id": "popup_btn_color",   "label": "Text colour",    "default": "#ffffff" },
+    { "type": "color",  "id": "popup_btn_border",  "label": "Border colour",  "default": "#111111" },
+    { "type": "color",  "id": "popup_btn_bg_hover",    "label": "Background — hover","default": "#333333" },
+    { "type": "color",  "id": "popup_btn_color_hover", "label": "Text — hover",      "default": "#ffffff" },
+
+    { "type": "header", "content": "View More button" },
+    { "type": "checkbox", "id": "viewmore_enabled",    "label": "Show View More button", "default": true },
+    { "type": "text",     "id": "viewmore_label",      "label": "Button label",          "default": "View Full Lookbook" },
+    { "type": "url",      "id": "viewmore_url",        "label": "Link URL" },
+    { "type": "checkbox", "id": "viewmore_new_tab",    "label": "Open in new tab",       "default": false },
+    { "type": "checkbox", "id": "viewmore_show_arrow", "label": "Show arrow icon",       "default": true },
+    { "type": "select",   "id": "viewmore_align",      "label": "Alignment",             "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
+    { "type": "range",    "id": "viewmore_pad_top",    "label": "Gap above button",      "min": 8, "max": 80, "step": 4, "unit": "px", "default": 32 },
+
+    { "type": "header", "content": "Background & padding" },
+    { "type": "color",  "id": "bg_color",          "label": "Background",     "default": "#ffffff" },
+    { "type": "range",  "id": "padding_top",       "label": "Top padding",    "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range",  "id": "padding_bottom",    "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook",
+      "settings": {
+        "heading": "Our Lookbook",
+        "viewmore_enabled": true,
+        "viewmore_label": "View Full Lookbook"
+      },
+      "blocks": [
+        { "type": "image" },
+        { "type": "image" },
+        { "type": "image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

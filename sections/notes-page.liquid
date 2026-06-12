@@ -1,0 +1,116 @@
+{% style %}
+  #shopify-section-{{ section.id }} .notes-page {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{% endstyle %}
+
+<div class="notes-page">
+  <p class="text-eyebrow text-muted">{{ section.settings.eyebrow | default: 'Album 01' }}</p>
+  <h1>{{ section.settings.heading | default: 'Fragrance Notes' }}</h1>
+  {%- if section.settings.intro != blank -%}
+    <p class="notes-page__intro">{{ section.settings.intro }}</p>
+  {%- endif -%}
+
+  <h2>{{ section.settings.glossary_heading | default: 'Note Glossary' }}</h2>
+  <div class="notes-table-wrap">
+    <table class="notes-table">
+      <thead>
+        <tr>
+          <th>Note</th>
+          <th>Type</th>
+          <th class="desktop-only">Character</th>
+          <th class="desktop-only">Family</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'note_row' -%}
+            <tr {{ block.shopify_attributes }}>
+              <td class="type">{{ block.settings.name }}</td>
+              <td>{{ block.settings.tier }}</td>
+              <td class="desktop-only">{{ block.settings.character }}</td>
+              <td class="desktop-only">{{ block.settings.family }}</td>
+            </tr>
+          {%- endif -%}
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>{{ section.settings.album_heading | default: 'Album 01 — By Fragrance' }}</h2>
+  <div class="album-notes">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'album_card' -%}
+        <div class="album-notes__card" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title }}</h3>
+          <dl>
+            {%- if block.settings.top != blank -%}
+              <div><dt>Top</dt><dd>{{ block.settings.top }}</dd></div>
+            {%- endif -%}
+            {%- if block.settings.heart != blank -%}
+              <div><dt>Heart</dt><dd>{{ block.settings.heart }}</dd></div>
+            {%- endif -%}
+            {%- if block.settings.base != blank -%}
+              <div><dt>Base</dt><dd>{{ block.settings.base }}</dd></div>
+            {%- endif -%}
+          </dl>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Notes Page",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Album 01" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Fragrance Notes" },
+    { "type": "richtext", "id": "intro", "label": "Intro text" },
+    { "type": "text", "id": "glossary_heading", "label": "Glossary heading", "default": "Note Glossary" },
+    { "type": "text", "id": "album_heading", "label": "Album notes heading", "default": "Album 01 — By Fragrance" },
+    { "type": "range", "id": "padding_top", "label": "Padding top (px)", "min": 0, "max": 200, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom (px)", "min": 0, "max": 200, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "note_row",
+      "name": "Glossary Row",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Note name", "default": "Bergamot" },
+        { "type": "select", "id": "tier", "label": "Tier", "options": [{"value":"Top","label":"Top"},{"value":"Heart","label":"Heart"},{"value":"Base","label":"Base"}], "default": "Top" },
+        { "type": "text", "id": "character", "label": "Character", "default": "Citrus, Bright, Fresh" },
+        { "type": "text", "id": "family", "label": "Family", "default": "Citrus" }
+      ]
+    },
+    {
+      "type": "album_card",
+      "name": "Album Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Fragrance name", "default": "Before It Happens" },
+        { "type": "text", "id": "top", "label": "Top notes", "default": "Bergamot" },
+        { "type": "text", "id": "heart", "label": "Heart notes", "default": "Pink Pepper, Patchouli" },
+        { "type": "text", "id": "base", "label": "Base notes", "default": "Cedarwood, Benzoin, Amber" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Notes Page",
+      "blocks": [
+        { "type": "note_row", "settings": { "name": "Bergamot", "tier": "Top", "character": "Citrus, Fresh, Bright", "family": "Citrus" } },
+        { "type": "note_row", "settings": { "name": "Pink Pepper", "tier": "Top", "character": "Spicy, Vibrant", "family": "Spice" } },
+        { "type": "note_row", "settings": { "name": "Saffron", "tier": "Top", "character": "Rich, Exotic, Warm", "family": "Spice" } },
+        { "type": "note_row", "settings": { "name": "Patchouli", "tier": "Heart", "character": "Earthy, Deep, Grounding", "family": "Woody" } },
+        { "type": "note_row", "settings": { "name": "Labdanum", "tier": "Heart", "character": "Resinous, Ambery, Deep", "family": "Resinous" } },
+        { "type": "note_row", "settings": { "name": "Cedarwood", "tier": "Base", "character": "Woody, Dry, Clean", "family": "Woody" } },
+        { "type": "note_row", "settings": { "name": "Amber", "tier": "Base", "character": "Warm, Soft, Resinous", "family": "Oriental" } },
+        { "type": "album_card", "settings": { "title": "Before It Happens", "top": "Bergamot", "heart": "Pink Pepper, Patchouli", "base": "Cedarwood, Benzoin, Amber accords" } },
+        { "type": "album_card", "settings": { "title": "Clear Smoke", "top": "Bergamot, Cardamom", "heart": "Labdanum, Vetiver", "base": "Sandalwood, Musk, Incense" } },
+        { "type": "album_card", "settings": { "title": "Controlled Chaos", "top": "Saffron, Aldehydes", "heart": "Leather, Rose absolute", "base": "Oud, Amber, Tonka Bean" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

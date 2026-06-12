@@ -1,0 +1,451 @@
+{% style %}
+  #shopify-section-{{ section.id }} .custom-announcement-bar {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    border-top: {{ section.settings.border_top }}px solid {{ section.settings.border_color }};
+    border-bottom: {{ section.settings.border_bottom }}px solid {{ section.settings.border_color }};
+  }
+
+  #shopify-section-{{ section.id }} .custom-announcement-bar__inner {
+    max-width: {{ section.settings.content_width }}px;
+    margin: 0 auto;
+    text-align: {{ section.settings.text_align }};
+    padding-left: {{ section.settings.content_padding }}px;
+    padding-right: {{ section.settings.content_padding }}px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-announcement-bar__eyebrow {
+    margin: 0 0 {{ section.settings.eyebrow_spacing }}px;
+    color: {{ section.settings.eyebrow_color }};
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: {{ section.settings.eyebrow_weight }};
+    letter-spacing: {{ section.settings.eyebrow_letter_spacing }}px;
+    text-transform: {{ section.settings.eyebrow_transform }};
+    line-height: 1.2;
+    opacity: {{ section.settings.eyebrow_opacity }};
+  }
+
+  #shopify-section-{{ section.id }} .custom-announcement-bar__heading {
+    margin: 0;
+    color: {{ section.settings.heading_color }};
+    font-size: {{ section.settings.heading_size_desktop }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    font-style: {{ section.settings.heading_style }};
+    line-height: {{ section.settings.heading_line_height }};
+    letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+    max-width: {{ section.settings.heading_width }}px;
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .custom-announcement-bar__heading span {
+    display: inline-block;
+  }
+
+  {% if section.settings.enable_text_shadow %}
+  #shopify-section-{{ section.id }} .custom-announcement-bar__heading,
+  #shopify-section-{{ section.id }} .custom-announcement-bar__eyebrow {
+    text-shadow: 0 0 {{ section.settings.shadow_blur }}px {{ section.settings.shadow_color }};
+  }
+  {% endif %}
+
+  @media screen and (max-width: 768px) {
+    #shopify-section-{{ section.id }} .custom-announcement-bar {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-announcement-bar__heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-announcement-bar__eyebrow {
+      font-size: {{ section.settings.eyebrow_size_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<section class="custom-announcement-bar">
+  <div class="custom-announcement-bar__inner">
+
+    {% if section.settings.eyebrow != blank %}
+      <p class="custom-announcement-bar__eyebrow">
+        {{ section.settings.eyebrow }}
+      </p>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <{{ section.settings.heading_tag }} class="custom-announcement-bar__heading">
+        <span>{{ section.settings.heading }}</span>
+      </{{ section.settings.heading_tag }}>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxury Announcement",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "ALBUM 01"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "\"You feel it before you know why.\""
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading Tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "div",
+          "label": "DIV"
+        }
+      ],
+      "default": "h2"
+    },
+
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#060611"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#1a1a2b"
+    },
+    {
+      "type": "range",
+      "id": "border_top",
+      "label": "Top Border",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_bottom",
+      "label": "Bottom Border",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+
+    {
+      "type": "header",
+      "content": "Eyebrow Styling"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow Color",
+      "default": "#9aa0b5"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow Font Size Desktop",
+      "min": 8,
+      "max": 40,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_mobile",
+      "label": "Eyebrow Font Size Mobile",
+      "min": 8,
+      "max": 30,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_weight",
+      "label": "Eyebrow Font Weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_letter_spacing",
+      "label": "Eyebrow Letter Spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_spacing",
+      "label": "Spacing Below Eyebrow",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_opacity",
+      "label": "Eyebrow Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.8
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_transform",
+      "label": "Eyebrow Text Transform",
+      "options": [
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "uppercase"
+    },
+
+    {
+      "type": "header",
+      "content": "Heading Styling"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading Size Desktop",
+      "min": 20,
+      "max": 120,
+      "step": 2,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading Size Mobile",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Heading Font Weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading Font Style",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "italic",
+          "label": "Italic"
+        }
+      ],
+      "default": "italic"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Heading Line Height",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Heading Letter Spacing",
+      "min": -5,
+      "max": 10,
+      "step": 0.5,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_width",
+      "label": "Heading Width",
+      "min": 300,
+      "max": 1600,
+      "step": 20,
+      "default": 900
+    },
+
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content Width",
+      "min": 600,
+      "max": 1800,
+      "step": 20,
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Side Padding",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 20
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top Desktop",
+      "min": 0,
+      "max": 300,
+      "step": 4,
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom Desktop",
+      "min": 0,
+      "max": 300,
+      "step": 4,
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding Top Mobile",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding Bottom Mobile",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 60
+    },
+
+    {
+      "type": "header",
+      "content": "Text Shadow"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_shadow",
+      "label": "Enable Text Shadow",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Shadow Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "label": "Shadow Blur",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxury Announcement"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,189 @@
+{% comment %} {% if settings.enable_loader %}
+<style type="text/css">
+  #shopify-section-loader {
+    position: absolute;
+  }
+
+  #enter-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #ffffff;
+    opacity: 0;
+    z-index: -1;
+    -webkit-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    -o-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    transition: opacity 200ms linear, 200ms z-index 200ms linear;
+  }
+
+  #enter-overlay.enabled {
+    opacity: 1;
+    z-index: 998;
+  }
+
+  #preloader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0;
+    overflow: visible;
+    -webkit-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    -o-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    transition: opacity 200ms linear, 200ms z-index 200ms linear;
+  }
+
+  #preloader.enabled {
+    z-index: 999;
+    opacity: 1;
+    -webkit-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    -o-transition: opacity 200ms linear, 200ms z-index 200ms linear;
+    transition: opacity 200ms linear, 200ms z-index 200ms linear;
+  }
+
+  #preloader .inner {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    -ms-transform: translateY(-50%);
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  #preloader .inner video {
+    min-width: 100vw;
+    min-height: 100vh;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media screen and (max-width: 749px) {
+    #preloader .inner {
+      position: relative;
+    }
+
+    #preloader .inner video {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 100vw;
+      min-height: 100vh;
+      max-height: 100vh;
+    }
+  }
+</style>
+
+<div id="preloader" class="enabled" style="background-color: {{ section.settings.background_color }};">
+  <div class="inner">
+    <video id="loaderVideo" autoplay muted playsinline>
+      <source src="{{ section.settings.video_url }}" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<script type="text/javascript">
+  const preload = document.getElementById('preloader');
+  const loaderVideo = document.getElementById('loaderVideo');
+  const enterOverlay = document.getElementById('enter-overlay');
+  const redirectTarget = '{{ section.settings.collection_redirect }}'.trim();
+
+  function disableOverlay() {
+    if (enterOverlay) enterOverlay.classList.remove('enabled');
+  }
+
+  function cleanupAndRedirect() {
+    preload?.classList.remove('enabled');
+    disableOverlay();
+    document.body.classList.remove('opacity');
+
+    if (redirectTarget !== '') {
+      window.location.href = '/collections/' + redirectTarget;
+    }
+  }
+
+  // make sure overlay shows before play
+  if (enterOverlay && !enterOverlay.classList.contains('enabled')) {
+    enterOverlay.classList.add('enabled');
+  }
+
+  // if the video element exists, hook both click and ended
+  if (loaderVideo) {
+    loaderVideo.addEventListener('ended', cleanupAndRedirect, { once: true });
+    loaderVideo.addEventListener('click', cleanupAndRedirect, { once: true });
+
+    // fallback in case video can't play or never triggers
+    const fallback = setTimeout(() => cleanupAndRedirect(), 6000);
+    loaderVideo.addEventListener('playing', () => clearTimeout(fallback), { once: true });
+  } else {
+    // if no video element, just redirect after a short delay
+    setTimeout(() => cleanupAndRedirect(), 2000);
+  }
+</script>
+
+{% comment %} <script type="text/javascript">
+  const preload = document.getElementById('preloader');
+  const loaderVideo = document.getElementById('loaderVideo');
+  const enterOverlay = document.getElementById('enter-overlay');
+
+  function disableOverlay() {
+    if (enterOverlay) {
+      enterOverlay.classList.remove('enabled');
+    }
+  }
+
+  function endLoader(e) {
+    preload.classList.remove('enabled');
+    disableOverlay();
+    document.body.classList.remove('opacity');
+  }
+
+  function hideVideo() {
+    preload.classList.remove('enabled');
+    disableOverlay();
+    document.body.classList.remove('opacity');
+  }
+
+  if (loaderVideo.playing) {
+    loaderVideo.addEventListener('ended', endLoader, false);
+  } else {
+    setTimeout(() => {
+      hideVideo();
+      console.log('{{ section.settings.collection_redirect }}');
+      if ('{{ section.settings.collection_redirect }}' != '') {
+        window.location.href = 'collections/{{ section.settings.collection_redirect }}';
+      }
+    }, 3000);
+  }
+
+  loaderVideo.addEventListener('click', hideVideo);
+
+  if (enterOverlay && !enterOverlay.classList.contains('enabled')) {
+    enterOverlay.classList.add('enabled');
+  }
+</script> {% endcomment %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Loader",
+  "class": "wrapper-section-class",
+  "settings": [
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "collection",
+      "id": "collection_redirect",
+      "label": "Collection to redirect to"
+    }
+  ]
+}
+{% endschema %} {% endcomment %}

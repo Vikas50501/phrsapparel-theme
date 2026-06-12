@@ -1,0 +1,61 @@
+{% style %}
+  #shopify-section-{{ section.id }} .faq-page {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{% endstyle %}
+
+<div class="faq-page">
+  <p class="text-eyebrow text-muted">{{ section.settings.eyebrow | default: 'Frequently Asked' }}</p>
+  <h1>{{ section.settings.heading | default: 'Questions, answered.' }}</h1>
+
+  <div class="faq-list">
+    {%- for block in section.blocks -%}
+      <div class="faq-item" {{ block.shopify_attributes }}>
+        <button class="faq-item__btn" aria-expanded="false">
+          <span class="q">{{ block.settings.question }}</span>
+          <span class="faq-item__icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-item__answer">{{ block.settings.answer }}</div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ Page",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Frequently Asked" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Questions, answered." },
+    { "type": "range", "id": "padding_top", "label": "Padding top (px)", "min": 0, "max": 200, "step": 4, "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom (px)", "min": 0, "max": 200, "step": 4, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "What concentration are UNSAID fragrances?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Every UNSAID scent is Extrait de Parfum (20–40% oil concentration) — the highest available.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Page",
+      "blocks": [
+        { "type": "faq_item", "settings": { "question": "What concentration are UNSAID fragrances?", "answer": "<p>Every UNSAID scent is Extrait de Parfum (20–40% oil concentration) — the highest available. Expect 8–24 hours of longevity, with intimate projection.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Are UNSAID fragrances unisex?", "answer": "<p>Yes. We design around states of mind, not gender. Each scent is meant to feel like an extension of you.</p>" } },
+        { "type": "faq_item", "settings": { "question": "How should I store my fragrance?", "answer": "<p>Keep your bottle upright, in a cool dark place, away from direct sunlight and heat.</p>" } },
+        { "type": "faq_item", "settings": { "question": "How long will my order take to arrive?", "answer": "<p>Orders within India typically ship in 2–5 business days. You will receive a tracking link once dispatched.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Can I return or exchange a fragrance?", "answer": "<p>Unopened products can be returned within 7 days of delivery. For hygiene reasons, opened or used fragrances cannot be returned.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Do you offer samples?", "answer": "<p>Sample sets for Album 01 will be available soon. Join our list to be notified at launch.</p>" } },
+        { "type": "faq_item", "settings": { "question": "Are your fragrances cruelty-free?", "answer": "<p>Yes. UNSAID does not test on animals at any stage of formulation or production.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

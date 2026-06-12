@@ -1,0 +1,700 @@
+{% comment %}
+  UNSAID — Story Page (Full)
+  Renders the complete story page body exactly as story.html:
+    • Part 1: 6 paragraphs (lede, body, pull, body ×3)
+    • Editorial image
+    • Part 2: 4 paragraphs (body, pull-large, body, blockquote)
+
+  Exact source values:
+    --background:        oklch(0.18 0.005 270) → #1a1a1f
+    --foreground:        oklch(0.96 0.003 270) → #f2f2f4
+    --muted-foreground:  oklch(0.7 0.01 270)   → #a8a8b0
+    --card:              oklch(0.22 0.006 270)  → #202026
+    font-display:        Cormorant Garamond 300
+    font-sans:           Inter 400
+    .story-body          max-width 48rem, padding 6rem 1.5rem
+    p                    1.125rem / 1.7 / muted
+    p+p                  margin-top 1.75rem
+    .lede                foreground colour
+    .pull                display font, italic, 1.5rem, weight 300
+    .pull-large          display font, italic, 1.875rem, lh 1.35, weight 300
+    .blockquote          border-left 2px foreground, pl 1.5rem, display, 1.5rem, weight 300
+    em                   foreground colour
+    .story-editorial     background card colour, full-width image max 64rem
+{% endcomment %}
+
+<div
+  id="unsaid-story-{{ section.id }}"
+  class="us-story"
+  style="
+    --us-bg:         {{ section.settings.bg_color }};
+    --us-card:       {{ section.settings.card_color }};
+    --us-fg:         {{ section.settings.color_foreground }};
+    --us-muted:      {{ section.settings.color_muted }};
+    --us-body-mw:    {{ section.settings.body_max_width }}px;
+    --us-body-pt:    {{ section.settings.body_padding_top }}px;
+    --us-body-pb:    {{ section.settings.body_padding_bottom }}px;
+    --us-body-px:    {{ section.settings.body_padding_x }}px;
+    --us-p-gap:      {{ section.settings.paragraph_gap }}px;
+    --us-p-size:     {{ section.settings.p_size }}px;
+    --us-p-lh:       {{ section.settings.p_line_height | divided_by: 10.0 }};
+    --us-pull-size:  {{ section.settings.pull_size }}px;
+    --us-pull-large-size: {{ section.settings.pull_large_size }}px;
+    --us-bq-size:    {{ section.settings.blockquote_size }}px;
+  "
+>
+
+  {%- comment -%}══ PART 1 ══{%- endcomment -%}
+  <section class="us-story__body">
+
+    {%- comment -%} P1 — lede + continuation {%- endcomment -%}
+    <p>
+      <span class="us-lede">{{ section.settings.p1_lede }}</span>
+      {%- if section.settings.p1_continuation != blank -%}
+        {{ section.settings.p1_continuation }}
+      {%- endif -%}
+    </p>
+
+    {%- comment -%} P2 — plain body {%- endcomment -%}
+    {%- if section.settings.p2 != blank -%}
+      <p>{{ section.settings.p2 }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P3 — pull quote {%- endcomment -%}
+    {%- if section.settings.p3_pull != blank -%}
+      <p class="us-pull">{{ section.settings.p3_pull }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P4 — plain body {%- endcomment -%}
+    {%- if section.settings.p4 != blank -%}
+      <p>{{ section.settings.p4 }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P5 — body with italic em {%- endcomment -%}
+    {%- if section.settings.p5_prefix != blank or section.settings.p5_em != blank -%}
+      <p>
+        {{- section.settings.p5_prefix -}}
+        {%- if section.settings.p5_em != blank -%}
+          <em>{{ section.settings.p5_em }}</em>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+
+    {%- comment -%} P6 — plain body {%- endcomment -%}
+    {%- if section.settings.p6 != blank -%}
+      <p>{{ section.settings.p6 }}</p>
+    {%- endif -%}
+
+  </section>
+
+  {%- comment -%}══ EDITORIAL IMAGE ══{%- endcomment -%}
+  {%- if section.settings.editorial_image != blank or section.settings.show_editorial_placeholder -%}
+    <section class="us-story__editorial">
+      {%- if section.settings.editorial_image != blank -%}
+        <img
+          src="{{ section.settings.editorial_image | image_url: width: 1280 }}"
+          srcset="
+            {{ section.settings.editorial_image | image_url: width: 800 }} 800w,
+            {{ section.settings.editorial_image | image_url: width: 1280 }} 1280w
+          "
+          sizes="100vw"
+          alt="{{ section.settings.editorial_image.alt | default: 'UNSAID editorial' | escape }}"
+          loading="lazy"
+          width="{{ section.settings.editorial_image.width }}"
+          height="{{ section.settings.editorial_image.height }}"
+        >
+      {%- elsif section.settings.show_editorial_placeholder -%}
+        <div class="us-story__editorial-placeholder">
+          <span>Editorial image</span>
+        </div>
+      {%- endif -%}
+    </section>
+  {%- endif -%}
+
+  {%- comment -%}══ PART 2 ══{%- endcomment -%}
+  <section class="us-story__body">
+
+    {%- comment -%} P7 — plain body {%- endcomment -%}
+    {%- if section.settings.p7 != blank -%}
+      <p>{{ section.settings.p7 }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P8 — pull-large {%- endcomment -%}
+    {%- if section.settings.p8_pull_large != blank -%}
+      <p class="us-pull-large">{{ section.settings.p8_pull_large }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P9 — plain body {%- endcomment -%}
+    {%- if section.settings.p9 != blank -%}
+      <p>{{ section.settings.p9 }}</p>
+    {%- endif -%}
+
+    {%- comment -%} P10 — blockquote {%- endcomment -%}
+    {%- if section.settings.p10_bq_line1 != blank or section.settings.p10_bq_line2 != blank -%}
+      <p class="us-blockquote" style="padding-left:10px;">
+        {{- section.settings.p10_bq_line1 -}}
+        {%- if section.settings.p10_bq_line2 != blank -%}
+          <br><em>{{ section.settings.p10_bq_line2 }}</em>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+
+  </section>
+
+</div>
+
+{%- comment -%}══ STYLES ══{%- endcomment -%}
+<style>
+  /* ── Wrapper ── */
+  #unsaid-story-{{ section.id }} {
+    background-color: var(--us-bg);
+  }
+
+  /* ── Body column — matches .story-body ── */
+  #unsaid-story-{{ section.id }} .us-story__body {
+    max-width: var(--us-body-mw);
+    margin-inline: auto;
+    padding: var(--us-body-pt) var(--us-body-px) var(--us-body-pb);
+    box-sizing: border-box;
+  }
+
+  /* ── Base paragraph — matches .story-body p ── */
+  #unsaid-story-{{ section.id }} .us-story__body p {
+    font-family: inherit;
+    font-size: var(--us-p-size);
+    line-height: var(--us-p-lh);
+    color: var(--us-muted);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── p + p gap — 1.75rem = 28px ── */
+  #unsaid-story-{{ section.id }} .us-story__body p + p {
+    margin-top: var(--us-p-gap);
+  }
+
+  /* ── .lede — foreground colour, matches .story-body .lede ── */
+  #unsaid-story-{{ section.id }} .us-lede {
+    color: var(--us-fg);
+  }
+
+  /* ── em — foreground colour, matches .story-body em ── */
+  #unsaid-story-{{ section.id }} .us-story__body em {
+    color: var(--us-fg);
+    font-style: italic;
+  }
+
+  /* ── .pull — Cormorant italic 1.5rem weight 300 ── */
+  #unsaid-story-{{ section.id }} .us-pull {
+    font-family: inherit;
+    font-size: var(--us-pull-size) !important;
+    font-style: italic !important;
+    font-weight: 300 !important;
+    color: var(--us-fg) !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ── .pull-large — Cormorant italic 1.875rem lh 1.35 weight 300 ── */
+  #unsaid-story-{{ section.id }} .us-pull-large {
+    font-family: inherit !important;
+    font-size: var(--us-pull-large-size) !important;
+    font-style: italic !important;
+    font-weight: 300 !important;
+    color: var(--us-fg) !important;
+    line-height: 1.35 !important;
+  }
+
+  /* ── .blockquote — border-left 2px, Cormorant 1.5rem weight 300 ── */
+  #unsaid-story-{{ section.id }} .us-blockquote {
+    font-family: inherit !important;
+    font-size: var(--us-bq-size) !important;
+    font-weight: 300 !important;
+    color: var(--us-fg) !important;
+    border-left: {{ section.settings.blockquote_border_width }}px solid var(--us-fg);
+    padding-left: {{ section.settings.blockquote_padding_left }}px;
+  }
+
+  /* ── Editorial image — matches .story-editorial ── */
+  #unsaid-story-{{ section.id }} .us-story__editorial {
+    background-color: var(--us-card);
+  }
+
+  #unsaid-story-{{ section.id }} .us-story__editorial img {
+    display: block;
+    margin-inline: auto;
+    width: 100%;
+    max-width: {{ section.settings.editorial_max_width }}px;
+    height: auto;
+  }
+
+  #unsaid-story-{{ section.id }} .us-story__editorial-placeholder {
+    background-color: var(--us-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    color: var(--us-muted);
+    font-family: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* ── Mobile ── */
+  @media screen and (max-width: 749px) {
+    #unsaid-story-{{ section.id }} .us-story__body p {
+      font-size: {{ section.settings.p_size_mobile }}px;
+    }
+    #unsaid-story-{{ section.id }} .us-pull {
+      font-size: {{ section.settings.pull_size_mobile }}px !important;
+    }
+    #unsaid-story-{{ section.id }} .us-pull-large {
+      font-size: {{ section.settings.pull_large_size_mobile }}px !important;
+      font-style: italic;
+
+    }
+    #unsaid-story-{{ section.id }} .us-blockquote {
+      font-size: {{ section.settings.blockquote_size_mobile }}px !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Story Page",
+  "tag": "div",
+  "class": "section-unsaid-story",
+  "limit": 1,
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "─── Colours ───"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#1a1a1f",
+      "info": "Site background: oklch(0.18 0.005 270)"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card / editorial background",
+      "default": "#202026",
+      "info": "Used behind editorial image: oklch(0.22 0.006 270)"
+    },
+    {
+      "type": "color",
+      "id": "color_foreground",
+      "label": "Foreground (bright text)",
+      "default": "#f2f2f4",
+      "info": "oklch(0.96 0.003 270) — lede, em, pull quotes, blockquote"
+    },
+    {
+      "type": "color",
+      "id": "color_muted",
+      "label": "Muted text",
+      "default": "#a8a8b0",
+      "info": "oklch(0.7 0.01 270) — body paragraph text"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Layout ───"
+    },
+    {
+      "type": "range",
+      "id": "body_max_width",
+      "label": "Body column max width",
+      "min": 400,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 760,
+      "info": "Original: 48rem = 768px"
+    },
+    {
+      "type": "range",
+      "id": "body_padding_top",
+      "label": "Body padding top",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 96,
+      "info": "Original: 6rem = 96px"
+    },
+    {
+      "type": "range",
+      "id": "body_padding_bottom",
+      "label": "Body padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "body_padding_x",
+      "label": "Body side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24,
+      "info": "Original: 1.5rem = 24px"
+    },
+    {
+      "type": "range",
+      "id": "paragraph_gap",
+      "label": "Gap between paragraphs",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28,
+      "info": "Original: 1.75rem = 28px"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Typography — Body ───"
+    },
+    {
+      "type": "range",
+      "id": "p_size",
+      "label": "Body font size — desktop",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18,
+      "info": "Original: 1.125rem = 18px"
+    },
+    {
+      "type": "range",
+      "id": "p_size_mobile",
+      "label": "Body font size — mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "p_line_height",
+      "label": "Body line height (÷10)",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "/10",
+      "default": 17,
+      "info": "Original: 1.7 → enter 17"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Typography — Pull Quote ───"
+    },
+    {
+      "type": "range",
+      "id": "pull_size",
+      "label": "Pull quote font size — desktop",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "info": "Original: 1.5rem = 24px"
+    },
+    {
+      "type": "range",
+      "id": "pull_size_mobile",
+      "label": "Pull quote font size — mobile",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "header",
+      "content": "─── Typography — Pull Large ───"
+    },
+    {
+      "type": "range",
+      "id": "pull_large_size",
+      "label": "Pull large font size — desktop",
+      "min": 14,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "info": "Original: 1.875rem = 30px"
+    },
+    {
+      "type": "range",
+      "id": "pull_large_size_mobile",
+      "label": "Pull large font size — mobile",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+
+    {
+      "type": "header",
+      "content": "─── Typography — Blockquote ───"
+    },
+    {
+      "type": "range",
+      "id": "blockquote_size",
+      "label": "Blockquote font size — desktop",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "info": "Original: 1.5rem = 24px"
+    },
+    {
+      "type": "range",
+      "id": "blockquote_size_mobile",
+      "label": "Blockquote font size — mobile",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "blockquote_border_width",
+      "label": "Blockquote border width",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 2,
+      "info": "Original: 2px"
+    },
+    {
+      "type": "range",
+      "id": "blockquote_padding_left",
+      "label": "Blockquote left padding",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24,
+      "info": "Original: 1.5rem = 24px"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 1 ───"
+    },
+    {
+      "type": "text",
+      "id": "p1_lede",
+      "label": "Lede (bold, bright)",
+      "default": "UNSAID was created from the belief that the most defining parts of who we are often live in silence"
+    },
+    {
+      "type": "textarea",
+      "id": "p1_continuation",
+      "label": "Continuation (muted, after em dash)",
+      "default": " — the pause before a life-changing decision, the calm after internal chaos, the confidence that doesn't seek validation."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 2 ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p2",
+      "label": "Body paragraph",
+      "default": "In a world obsessed with noise, trends, and constant expression, we chose something different."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 3 (Pull Quote) ───"
+    },
+    {
+      "type": "text",
+      "id": "p3_pull",
+      "label": "Pull quote text",
+      "default": "We built UNSAID for what remains unspoken."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 4 ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p4",
+      "label": "Body paragraph",
+      "default": "\"Fragrance for the Unsaid\" is more than a tagline. It is the foundation of our brand — a reflection of emotions, identities, and moments too personal, too complex, or too profound for words."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 5 (with italic em) ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p5_prefix",
+      "label": "Text before italic",
+      "default": "Each fragrance is designed not around gender, seasons, or fleeting trends, but around states of mind: "
+    },
+    {
+      "type": "text",
+      "id": "p5_em",
+      "label": "Italic text (em — foreground colour)",
+      "default": "anticipation, clarity, control, unfinished emotion."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 1 — Paragraph 6 ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p6",
+      "label": "Body paragraph",
+      "default": "Our scents are crafted to linger quietly yet powerfully — not to announce your presence, but to become part of it."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Editorial Image ───"
+    },
+    {
+      "type": "image_picker",
+      "id": "editorial_image",
+      "label": "Editorial image",
+      "info": "Full-width image between Part 1 and Part 2. Original: assets/editorial-chaos.jpg"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_editorial_placeholder",
+      "label": "Show placeholder when no image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "editorial_max_width",
+      "label": "Image max width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1020,
+      "info": "Original: 64rem = 1024px"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 2 — Paragraph 7 ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p7",
+      "label": "Body paragraph",
+      "default": "UNSAID is for those who understand that true presence doesn't demand attention."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 2 — Paragraph 8 (Pull Large) ───"
+    },
+    {
+      "type": "text",
+      "id": "p8_pull_large",
+      "label": "Pull large text",
+      "default": "It is felt. Remembered. Recognized."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 2 — Paragraph 9 ───"
+    },
+    {
+      "type": "textarea",
+      "id": "p9",
+      "label": "Body paragraph",
+      "default": "We exist for individuals who wear fragrance not as decoration, but as an extension of the inner world they choose not to explain."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Part 2 — Paragraph 10 (Blockquote) ───"
+    },
+    {
+      "type": "text",
+      "id": "p10_bq_line1",
+      "label": "Blockquote line 1",
+      "default": "Because not everything meaningful needs to be said."
+    },
+    {
+      "type": "text",
+      "id": "p10_bq_line2",
+      "label": "Blockquote line 2 (italic)",
+      "default": "Some things are better worn."
+    }
+
+  ],
+  "presets": [
+    {
+      "name": "Story Page",
+      "settings": {
+        "bg_color": "#1a1a1f",
+        "card_color": "#202026",
+        "color_foreground": "#f2f2f4",
+        "color_muted": "#a8a8b0",
+        "body_max_width": 760,
+        "body_padding_top": 96,
+        "body_padding_bottom": 96,
+        "body_padding_x": 24,
+        "paragraph_gap": 28,
+        "p_size": 18,
+        "p_size_mobile": 16,
+        "p_line_height": 17,
+        "pull_size": 24,
+        "pull_size_mobile": 20,
+        "pull_large_size": 30,
+        "pull_large_size_mobile": 24,
+        "blockquote_size": 24,
+        "blockquote_size_mobile": 20,
+        "blockquote_border_width": 2,
+        "blockquote_padding_left": 24,
+        "show_editorial_placeholder": true,
+        "editorial_max_width": 1020,
+        "p1_lede": "UNSAID was created from the belief that the most defining parts of who we are often live in silence",
+        "p1_continuation": " \u2014 the pause before a life-changing decision, the calm after internal chaos, the confidence that doesn\u2019t seek validation.",
+        "p2": "In a world obsessed with noise, trends, and constant expression, we chose something different.",
+        "p3_pull": "We built UNSAID for what remains unspoken.",
+        "p4": "\u201cFragrance for the Unsaid\u201d is more than a tagline. It is the foundation of our brand \u2014 a reflection of emotions, identities, and moments too personal, too complex, or too profound for words.",
+        "p5_prefix": "Each fragrance is designed not around gender, seasons, or fleeting trends, but around states of mind: ",
+        "p5_em": "anticipation, clarity, control, unfinished emotion.",
+        "p6": "Our scents are crafted to linger quietly yet powerfully \u2014 not to announce your presence, but to become part of it.",
+        "p7": "UNSAID is for those who understand that true presence doesn\u2019t demand attention.",
+        "p8_pull_large": "It is felt. Remembered. Recognized.",
+        "p9": "We exist for individuals who wear fragrance not as decoration, but as an extension of the inner world they choose not to explain.",
+        "p10_bq_line1": "Because not everything meaningful needs to be said.",
+        "p10_bq_line2": "Some things are better worn."
+      }
+    }
+  ]
+}
+{% endschema %}

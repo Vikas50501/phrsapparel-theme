@@ -1,0 +1,36 @@
+{%- comment -%}
+  Snippet: fps-card
+  Usage: {% render 'fps-card', product: product %}
+{%- endcomment -%}
+
+<div class="fps-item">
+  <a href="{{ product.url }}" class="fps-card" aria-label="{{ product.title | escape }}">
+    {%- if product.featured_image != blank -%}
+      {%- assign img_url = product.featured_image | image_url: width: 900 -%}
+      {%- assign img_alt = product.featured_image.alt | default: product.title | escape -%}
+      <img src="{{ img_url }}" alt="{{ img_alt }}" loading="lazy">
+    {%- else -%}
+      <div class="fps-placeholder">
+        {{ 'product-1' | placeholder_svg_tag }}
+      </div>
+    {%- endif -%}
+  </a>
+
+  <div class="fps-info">
+    <a href="{{ product.url }}" class="fps-info__title">{{ product.title }}</a>
+    {%- if product.description != blank -%}
+      <p class="fps-info__desc">{{ product.description | strip_html | truncate: 120 }}</p>
+    {%- endif -%}
+    <p class="fps-info__meta">
+      {{ product.price | money_without_trailing_zeros }}
+      {%- if product.variants.first.unit_price_measurement -%}
+        &nbsp;&middot;&nbsp;
+        {{ product.variants.first.unit_price_measurement.reference_value }}{{ product.variants.first.unit_price_measurement.reference_unit | upcase }}
+        &nbsp;|&nbsp;
+        {{- product.variants.first.weight | weight_with_unit -}}
+      {%- elsif product.metafields.custom.size != blank -%}
+        &nbsp;&middot;&nbsp;{{ product.metafields.custom.size }}
+      {%- endif -%}
+    </p>
+  </div>
+</div>

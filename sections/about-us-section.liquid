@@ -1,0 +1,982 @@
+{%- comment -%} Pre-assign variables before style block {%- endcomment -%}
+{%- assign au_accent_r = section.settings.accent_color | color_extract: 'red' -%}
+{%- assign au_accent_g = section.settings.accent_color | color_extract: 'green' -%}
+{%- assign au_accent_b = section.settings.accent_color | color_extract: 'blue' -%}
+
+{%- style -%}
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT US — Premium editorial layout
+   Matches theme: #f0efed warm off-white, serif display headings
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ─────────────────────────────────────────── */
+.au-{{ section.id }} {
+  background: {{ section.settings.bg }};
+  color: {{ section.settings.text_color }};
+}
+
+/* ── Shared container ────────────────────────────────────────── */
+.au-container-{{ section.id }} {
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto;
+  padding: 0 {{ section.settings.side_pad }}px;
+}
+
+/* ═══════════════ HERO — full-bleed image + title ═══════════════ */
+.au-hero-{{ section.id }} {
+  position: relative;
+  height: {{ section.settings.hero_height_mobile }}px;
+  overflow: hidden;
+  background: #111;
+}
+
+@media (min-width: 750px) {
+  .au-hero-{{ section.id }} {
+    height: {{ section.settings.hero_height }}px;
+  }
+}
+
+.au-hero-{{ section.id }} img,
+.au-hero-{{ section.id }} .placeholder-svg {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+  transition: transform 8s ease;
+}
+
+.au-hero-{{ section.id }}:hover img { transform: scale(1.03); }
+
+.au-hero-overlay-{{ section.id }} {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,{{ section.settings.hero_overlay | divided_by: 100.0 }});
+  z-index: 1;
+}
+
+.au-hero-content-{{ section.id }} {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: {{ section.settings.hero_valign }};
+  align-items: {{ section.settings.hero_halign }};
+  text-align: {{ section.settings.hero_text_align }};
+  padding: {{ section.settings.hero_pad }}px {{ section.settings.side_pad }}px;
+}
+
+.au-eyebrow-{{ section.id }} {
+  font-size: {{ section.settings.eyebrow_size }}px;
+  font-weight: 600;
+  letter-spacing: {{ section.settings.eyebrow_spacing | divided_by: 100.0 }}em;
+  text-transform: uppercase;
+  color: {{ section.settings.accent_color }};
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.au-eyebrow-{{ section.id }}::before,
+.au-eyebrow-{{ section.id }}::after {
+  content: '';
+  flex: 0 0 {{ section.settings.eyebrow_line }}px;
+  height: 1px;
+  background: {{ section.settings.accent_color }};
+  opacity: 0.7;
+}
+
+.au-hero-title-{{ section.id }} {
+  font-size: var(--font-h1-size);
+  font-weight: var(--font-h1-weight);
+  font-style: normal;
+  font-family: inherit;
+  color: {{ section.settings.hero_title_color }};
+  letter-spacing: {{ section.settings.hero_title_spacing | divided_by: 100.0 }}em;
+  line-height: 1.05;
+  margin: 0;
+  max-width: {{ section.settings.hero_title_max_width }}px;
+}
+
+.au-hero-sub-{{ section.id }} {
+  font-size: {{ section.settings.hero_sub_size }}px;
+  color: rgba({{ au_accent_r }},{{ au_accent_g }},{{ au_accent_b }},0.9);
+  margin: 20px 0 0;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+/* ═══════════════ INTRO — split layout ══════════════════════════ */
+.au-intro-{{ section.id }} {
+  padding: {{ section.settings.section_pad }}px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.au-intro-grid-{{ section.id }} {
+  display: grid;
+  grid-template-columns: {{ section.settings.intro_left_w }}fr {{ section.settings.intro_right_w }}fr;
+  gap: {{ section.settings.intro_gap }}px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .au-intro-grid-{{ section.id }} { grid-template-columns: 1fr; }
+}
+
+.au-intro-left-{{ section.id }} {}
+
+.au-section-label-{{ section.id }} {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: {{ section.settings.accent_color }};
+  margin: 0 0 20px;
+  display: block;
+}
+
+.au-display-title-{{ section.id }} {
+  font-size: var(--font-h2-size);
+  font-weight: var(--font-h2-weight);
+  font-style: normal;
+  font-family: inherit;
+  color: {{ section.settings.heading_color }};
+  letter-spacing: {{ section.settings.display_spacing | divided_by: 100.0 }}em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.au-intro-right-{{ section.id }} {
+  display: flex;
+  flex-direction: column;
+  gap: {{ section.settings.body_gap }}px;
+}
+
+.au-body-{{ section.id }} {
+  font-size: {{ section.settings.body_size }}px;
+  font-weight: {{ section.settings.body_weight }};
+  color: {{ section.settings.body_color }};
+  line-height: {{ section.settings.body_lh | divided_by: 100.0 }};
+  margin: 0;
+}
+
+.au-body-large-{{ section.id }} {
+  font-size: {{ section.settings.body_size | plus: 3 }}px;
+  color: {{ section.settings.heading_color }};
+  font-weight: 500;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ═══════════════ STATS ══════════════════════════════════════════ */
+.au-stats-{{ section.id }} {
+  background: {{ section.settings.stats_bg }};
+  padding: {{ section.settings.stats_pad }}px 0;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.au-stats-grid-{{ section.id }} {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.stats_cols }}, 1fr);
+  gap: 1px;
+  background: rgba(0,0,0,0.08);
+}
+
+@media (max-width: 600px) {
+  .au-stats-grid-{{ section.id }} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.au-stat-{{ section.id }} {
+  background: {{ section.settings.stats_bg }};
+  padding: {{ section.settings.stats_item_pad }}px;
+  text-align: center;
+}
+
+.au-stat-num-{{ section.id }} {
+  font-size: var(--font-h2-size);
+  font-weight: var(--font-h2-weight);
+  font-family: inherit;
+  font-style: normal;
+  color: {{ section.settings.stat_num_color }};
+  line-height: 1;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.au-stat-label-{{ section.id }} {
+  font-size: {{ section.settings.stat_label_size }}px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: {{ section.settings.stat_label_color }};
+  margin: 0;
+}
+
+.au-stat-desc-{{ section.id }} {
+  font-size: 13px;
+  color: {{ section.settings.body_color }};
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+/* ═══════════════ IMAGE + TEXT BAND ══════════════════════════════ */
+.au-band-{{ section.id }} {
+  padding: {{ section.settings.section_pad }}px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.au-band-grid-{{ section.id }} {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: {{ section.settings.band_gap }}px;
+  align-items: center;
+}
+
+.au-band-grid-{{ section.id }}[data-reverse="true"] {
+  direction: rtl;
+}
+
+.au-band-grid-{{ section.id }}[data-reverse="true"] > * {
+  direction: ltr;
+}
+
+@media (max-width: 768px) {
+  .au-band-grid-{{ section.id }} {
+    grid-template-columns: 1fr;
+    direction: ltr !important;
+  }
+  .au-band-grid-{{ section.id }} > * { direction: ltr !important; }
+}
+
+.au-band-img-{{ section.id }} {
+  position: relative;
+  aspect-ratio: {{ section.settings.band_aspect }};
+  overflow: hidden;
+  border-radius: {{ section.settings.band_radius }}px;
+  background: #ddd;
+}
+
+.au-band-img-{{ section.id }} img,
+.au-band-img-{{ section.id }} .placeholder-svg {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.6s ease;
+}
+
+.au-band-img-{{ section.id }}:hover img { transform: scale(1.04); }
+
+.au-band-text-{{ section.id }} {
+  display: flex;
+  flex-direction: column;
+  gap: {{ section.settings.body_gap }}px;
+  padding: {{ section.settings.band_text_pad }}px;
+}
+
+/* ═══════════════ TEAM GRID ══════════════════════════════════════ */
+.au-team-{{ section.id }} {
+  padding: {{ section.settings.section_pad }}px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.au-team-header-{{ section.id }} {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: {{ section.settings.body_gap | times: 2 }}px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.au-team-grid-{{ section.id }} {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.team_cols }}, 1fr);
+  gap: {{ section.settings.team_gap }}px;
+}
+
+@media (max-width: 768px) {
+  .au-team-grid-{{ section.id }} { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px) {
+  .au-team-grid-{{ section.id }} { grid-template-columns: 1fr; }
+}
+
+.au-member-{{ section.id }} {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.au-member-img-{{ section.id }} {
+  aspect-ratio: {{ section.settings.member_aspect }};
+  overflow: hidden;
+  border-radius: {{ section.settings.member_radius }}px;
+  background: #e0e0e0;
+  position: relative;
+}
+
+.au-member-img-{{ section.id }} img,
+.au-member-img-{{ section.id }} .placeholder-svg {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.au-member-{{ section.id }}:hover .au-member-img-{{ section.id }} img {
+  transform: scale(1.05);
+}
+
+.au-member-name-{{ section.id }} {
+  font-size: var(--font-h3-size);
+  font-weight: var(--font-h3-weight);
+  font-family: inherit;
+  color: {{ section.settings.heading_color }};
+  margin: 0;
+  line-height: 1.2;
+}
+
+.au-member-role-{{ section.id }} {
+  font-size: {{ section.settings.member_role_size }}px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: {{ section.settings.accent_color }};
+  margin: 4px 0 0;
+}
+
+.au-member-bio-{{ section.id }} {
+  font-size: 13px;
+  color: {{ section.settings.body_color }};
+  line-height: 1.6;
+  margin: 4px 0 0;
+}
+
+/* ═══════════════ VALUES ═════════════════════════════════════════ */
+.au-values-{{ section.id }} {
+  padding: {{ section.settings.section_pad }}px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.au-values-grid-{{ section.id }} {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.values_cols }}, 1fr);
+  gap: {{ section.settings.values_gap }}px;
+  margin-top: {{ section.settings.body_gap | times: 2 }}px;
+}
+
+@media (max-width: 768px) {
+  .au-values-grid-{{ section.id }} { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px) {
+  .au-values-grid-{{ section.id }} { grid-template-columns: 1fr; }
+}
+
+.au-value-{{ section.id }} {
+  padding: {{ section.settings.values_pad }}px;
+  background: {{ section.settings.values_card_bg }};
+  border: 1px solid {{ section.settings.values_card_border }};
+  border-radius: {{ section.settings.values_radius }}px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.au-value-{{ section.id }}:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.au-value-icon-{{ section.id }} {
+  font-size: {{ section.settings.value_icon_size }}px;
+  line-height: 1;
+  display: block;
+}
+
+.au-value-title-{{ section.id }} {
+  font-size: var(--font-h3-size);
+  font-weight: var(--font-h3-weight);
+  font-family: inherit;
+  color: {{ section.settings.heading_color }};
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.au-value-text-{{ section.id }} {
+  font-size: 14px;
+  color: {{ section.settings.body_color }};
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ═══════════════ CTA BAND ═══════════════════════════════════════ */
+.au-cta-{{ section.id }} {
+  padding: {{ section.settings.section_pad }}px 0;
+  background: {{ section.settings.cta_bg }};
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.au-cta-inner-{{ section.id }} {
+  text-align: {{ section.settings.cta_align }};
+  display: flex;
+  flex-direction: column;
+  align-items: {{ section.settings.cta_align_flex }};
+  gap: 28px;
+}
+
+.au-cta-title-{{ section.id }} {
+  font-size: var(--font-h2-size);
+  font-weight: var(--font-h2-weight);
+  font-style: normal;
+  font-family: inherit;
+  color: {{ section.settings.cta_title_color }};
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+  max-width: {{ section.settings.cta_title_max_width }}px;
+}
+
+.au-cta-sub-{{ section.id }} {
+  font-size: {{ section.settings.body_size }}px;
+  color: {{ section.settings.cta_sub_color }};
+  margin: 0;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.au-cta-btns-{{ section.id }} {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: {{ section.settings.cta_align }};
+}
+
+.au-btn-{{ section.id }} {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: {{ section.settings.btn_py }}px {{ section.settings.btn_px }}px;
+  font-size: {{ section.settings.btn_size }}px;
+  font-weight: {{ section.settings.btn_weight }};
+  letter-spacing: {{ section.settings.btn_ls | divided_by: 100.0 }}em;
+  text-transform: {{ section.settings.btn_tt }};
+  text-decoration: none;
+  border-radius: {{ section.settings.btn_r }}px;
+  border: {{ section.settings.btn_bw }}px solid transparent;
+  transition: background 0.22s, color 0.22s, border-color 0.22s, transform 0.2s;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.au-btn-{{ section.id }}:hover { transform: translateY(-2px); }
+
+.au-btn-primary-{{ section.id }} {
+  background: {{ section.settings.btn1_bg }};
+  color: {{ section.settings.btn1_color }};
+  border-color: {{ section.settings.btn1_bg }};
+}
+
+.au-btn-primary-{{ section.id }}:hover {
+  background: {{ section.settings.btn1_bg_h }};
+  color: {{ section.settings.btn1_color_h }};
+  border-color: {{ section.settings.btn1_bg_h }};
+}
+
+.au-btn-outline-{{ section.id }} {
+  background: transparent;
+  color: {{ section.settings.btn2_color }};
+  border-color: {{ section.settings.btn2_border }};
+}
+
+.au-btn-outline-{{ section.id }}:hover {
+  background: {{ section.settings.btn2_bg_h }};
+  color: {{ section.settings.btn2_color_h }};
+  border-color: {{ section.settings.btn2_bg_h }};
+}
+
+/* ═══════════════ SECTION VISIBILITY TOGGLES ═════════════════════ */
+.au-section-hidden { display: none !important; }
+{%- endstyle -%}
+
+<div class="au-{{ section.id }}">
+
+  {%- comment -%}──── HERO ────{%- endcomment -%}
+  {%- unless section.settings.hide_hero -%}
+  <div class="au-hero-{{ section.id }}">
+    {%- if section.settings.hero_image != blank -%}
+      <img src="{{ section.settings.hero_image | img_url: '2400x' }}"
+           alt="{{ section.settings.hero_image.alt | default: section.settings.hero_title | escape }}"
+           loading="eager">
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+    <div class="au-hero-overlay-{{ section.id }}"></div>
+    <div class="au-hero-content-{{ section.id }}">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="au-eyebrow-{{ section.id }}">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.hero_title != blank -%}
+        <h1 class="au-hero-title-{{ section.id }}">{{ section.settings.hero_title }}</h1>
+      {%- endif -%}
+      {%- if section.settings.hero_sub != blank -%}
+        <p class="au-hero-sub-{{ section.id }}">{{ section.settings.hero_sub }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+  {%- endunless -%}
+
+  {%- comment -%}──── INTRO ────{%- endcomment -%}
+  {%- unless section.settings.hide_intro -%}
+  <div class="au-intro-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div class="au-intro-grid-{{ section.id }}">
+        <div class="au-intro-left-{{ section.id }}">
+          {%- if section.settings.intro_label != blank -%}
+            <span class="au-section-label-{{ section.id }}">{{ section.settings.intro_label }}</span>
+          {%- endif -%}
+          {%- if section.settings.intro_title != blank -%}
+            <h2 class="au-display-title-{{ section.id }}">{{ section.settings.intro_title }}</h2>
+          {%- endif -%}
+        </div>
+        <div class="au-intro-right-{{ section.id }}">
+          {%- if section.settings.intro_lead != blank -%}
+            <p class="au-body-large-{{ section.id }}">{{ section.settings.intro_lead }}</p>
+          {%- endif -%}
+          {%- if section.settings.intro_body != blank -%}
+            <p class="au-body-{{ section.id }}">{{ section.settings.intro_body }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endunless -%}
+
+  {%- comment -%}──── STATS ────{%- endcomment -%}
+  {%- unless section.settings.hide_stats -%}
+  {%- assign has_stats = false -%}
+  {%- if section.settings.stat1_num != blank or section.settings.stat2_num != blank or section.settings.stat3_num != blank or section.settings.stat4_num != blank -%}
+    {%- assign has_stats = true -%}
+  {%- endif -%}
+  {%- if has_stats -%}
+  <div class="au-stats-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div class="au-stats-grid-{{ section.id }}">
+        {%- for i in (1..4) -%}
+          {%- liquid
+            case i
+              when 1
+                assign sn = section.settings.stat1_num
+                assign sl = section.settings.stat1_label
+                assign sd = section.settings.stat1_desc
+              when 2
+                assign sn = section.settings.stat2_num
+                assign sl = section.settings.stat2_label
+                assign sd = section.settings.stat2_desc
+              when 3
+                assign sn = section.settings.stat3_num
+                assign sl = section.settings.stat3_label
+                assign sd = section.settings.stat3_desc
+              when 4
+                assign sn = section.settings.stat4_num
+                assign sl = section.settings.stat4_label
+                assign sd = section.settings.stat4_desc
+            endcase
+          -%}
+          {%- if sn != blank -%}
+          <div class="au-stat-{{ section.id }}">
+            <p class="au-stat-num-{{ section.id }}">{{ sn }}</p>
+            {%- if sl != blank -%}<p class="au-stat-label-{{ section.id }}">{{ sl }}</p>{%- endif -%}
+            {%- if sd != blank -%}<p class="au-stat-desc-{{ section.id }}">{{ sd }}</p>{%- endif -%}
+          </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+
+  {%- comment -%}──── IMAGE + TEXT BAND ────{%- endcomment -%}
+  {%- unless section.settings.hide_band -%}
+  {%- if section.settings.band_image != blank or section.settings.band_title != blank -%}
+  <div class="au-band-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div class="au-band-grid-{{ section.id }}" data-reverse="{{ section.settings.band_reverse }}">
+        <div class="au-band-img-{{ section.id }}">
+          {%- if section.settings.band_image != blank -%}
+            <img src="{{ section.settings.band_image | img_url: '1200x' }}"
+                 alt="{{ section.settings.band_image.alt | default: section.settings.band_title | escape }}"
+                 loading="lazy">
+          {%- else -%}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+        <div class="au-band-text-{{ section.id }}">
+          {%- if section.settings.band_label != blank -%}
+            <span class="au-section-label-{{ section.id }}">{{ section.settings.band_label }}</span>
+          {%- endif -%}
+          {%- if section.settings.band_title != blank -%}
+            <h2 class="au-display-title-{{ section.id }}">{{ section.settings.band_title }}</h2>
+          {%- endif -%}
+          {%- if section.settings.band_lead != blank -%}
+            <p class="au-body-large-{{ section.id }}">{{ section.settings.band_lead }}</p>
+          {%- endif -%}
+          {%- if section.settings.band_body != blank -%}
+            <p class="au-body-{{ section.id }}">{{ section.settings.band_body }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+
+  {%- comment -%}──── TEAM ────{%- endcomment -%}
+  {%- unless section.settings.hide_team -%}
+  {%- assign has_members = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'member' -%}{%- assign has_members = true -%}{%- endif -%}
+  {%- endfor -%}
+  {%- if has_members -%}
+  <div class="au-team-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div class="au-team-header-{{ section.id }}">
+        <div>
+          {%- if section.settings.team_label != blank -%}
+            <span class="au-section-label-{{ section.id }}">{{ section.settings.team_label }}</span>
+          {%- endif -%}
+          {%- if section.settings.team_title != blank -%}
+            <h2 class="au-display-title-{{ section.id }}" style="margin-top:12px;">{{ section.settings.team_title }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.team_sub != blank -%}
+          <p class="au-body-{{ section.id }}" style="max-width:320px;">{{ section.settings.team_sub }}</p>
+        {%- endif -%}
+      </div>
+      <div class="au-team-grid-{{ section.id }}">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'member' -%}
+          <div class="au-member-{{ section.id }}" {{ block.shopify_attributes }}>
+            <div class="au-member-img-{{ section.id }}">
+              {%- if block.settings.photo != blank -%}
+                <img src="{{ block.settings.photo | img_url: '600x' }}"
+                     alt="{{ block.settings.photo.alt | default: block.settings.name | escape }}"
+                     loading="lazy">
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            <div>
+              {%- if block.settings.name != blank -%}
+                <p class="au-member-name-{{ section.id }}">{{ block.settings.name }}</p>
+              {%- endif -%}
+              {%- if block.settings.role != blank -%}
+                <p class="au-member-role-{{ section.id }}">{{ block.settings.role }}</p>
+              {%- endif -%}
+              {%- if block.settings.bio != blank -%}
+                <p class="au-member-bio-{{ section.id }}">{{ block.settings.bio }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+
+  {%- comment -%}──── VALUES ────{%- endcomment -%}
+  {%- unless section.settings.hide_values -%}
+  {%- assign has_values = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'value' -%}{%- assign has_values = true -%}{%- endif -%}
+  {%- endfor -%}
+  {%- if has_values -%}
+  <div class="au-values-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div>
+        {%- if section.settings.values_label != blank -%}
+          <span class="au-section-label-{{ section.id }}">{{ section.settings.values_label }}</span>
+        {%- endif -%}
+        {%- if section.settings.values_title != blank -%}
+          <h2 class="au-display-title-{{ section.id }}" style="margin-top:12px;">{{ section.settings.values_title }}</h2>
+        {%- endif -%}
+      </div>
+      <div class="au-values-grid-{{ section.id }}">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'value' -%}
+          <div class="au-value-{{ section.id }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.icon != blank -%}
+              <span class="au-value-icon-{{ section.id }}">{{ block.settings.icon }}</span>
+            {%- endif -%}
+            {%- if block.settings.title != blank -%}
+              <h3 class="au-value-title-{{ section.id }}">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p class="au-value-text-{{ section.id }}">{{ block.settings.text }}</p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+
+  {%- comment -%}──── CTA ────{%- endcomment -%}
+  {%- unless section.settings.hide_cta -%}
+  {%- if section.settings.cta_title != blank -%}
+  <div class="au-cta-{{ section.id }}">
+    <div class="au-container-{{ section.id }}">
+      <div class="au-cta-inner-{{ section.id }}">
+        {%- if section.settings.cta_eyebrow != blank -%}
+          <p class="au-eyebrow-{{ section.id }}">{{ section.settings.cta_eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="au-cta-title-{{ section.id }}">{{ section.settings.cta_title }}</h2>
+        {%- if section.settings.cta_sub != blank -%}
+          <p class="au-cta-sub-{{ section.id }}">{{ section.settings.cta_sub }}</p>
+        {%- endif -%}
+        {%- if section.settings.btn1_label != blank or section.settings.btn2_label != blank -%}
+          <div class="au-cta-btns-{{ section.id }}">
+            {%- if section.settings.btn1_label != blank -%}
+              <a class="au-btn-{{ section.id }} au-btn-primary-{{ section.id }}"
+                 href="{{ section.settings.btn1_link | default: '#' }}">{{ section.settings.btn1_label }}</a>
+            {%- endif -%}
+            {%- if section.settings.btn2_label != blank -%}
+              <a class="au-btn-{{ section.id }} au-btn-outline-{{ section.id }}"
+                 href="{{ section.settings.btn2_link | default: '#' }}">{{ section.settings.btn2_label }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endunless -%}
+
+</div>
+
+{% schema %}
+{
+  "name": "About Us",
+  "tag": "section",
+  "class": "section-about-us",
+  "max_blocks": 20,
+  "blocks": [
+    {
+      "type": "member",
+      "name": "Team member",
+      "settings": [
+        { "type": "image_picker", "id": "photo", "label": "Photo" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Team Member" },
+        { "type": "text", "id": "role", "label": "Role / Title", "default": "Co-Founder" },
+        { "type": "textarea", "id": "bio", "label": "Short bio" }
+      ]
+    },
+    {
+      "type": "value",
+      "name": "Brand value",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "✦" },
+        { "type": "text", "id": "title", "label": "Value title", "default": "Quality First" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "We source only the finest materials and craft every piece to last a lifetime." }
+      ]
+    }
+  ],
+  "settings": [
+
+    { "type": "header", "content": "Global typography & colours" },
+    { "type": "select", "id": "display_weight",  "label": "Display font weight",  "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "400" },
+    { "type": "range",  "id": "display_size",    "label": "Heading size",         "min": 28, "max": 80, "step": 2, "unit": "px", "default": 52 },
+    { "type": "range",  "id": "display_spacing", "label": "Heading letter spacing","min": 0, "max": 10, "step": 1, "unit": "em", "default": 0 },
+    { "type": "color",  "id": "heading_color",   "label": "Heading colour",       "default": "#111111" },
+    { "type": "range",  "id": "body_size",        "label": "Body text size",       "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "select", "id": "body_weight",      "label": "Body weight",          "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"}], "default": "400" },
+    { "type": "range",  "id": "body_lh",          "label": "Body line height",     "min": 140, "max": 200, "step": 5, "unit": "%", "default": 170 },
+    { "type": "range",  "id": "body_gap",         "label": "Gap between text elements","min": 12, "max": 40, "step": 4, "unit": "px", "default": 20 },
+    { "type": "color",  "id": "body_color",       "label": "Body text colour",     "default": "#555555" },
+    { "type": "color",  "id": "text_color",       "label": "Section text colour",  "default": "#111111" },
+    { "type": "color",  "id": "accent_color",     "label": "Accent colour",        "default": "#c8a882" },
+    { "type": "range",  "id": "eyebrow_size",     "label": "Eyebrow size",         "min": 9, "max": 14, "step": 1, "unit": "px", "default": 11 },
+    { "type": "range",  "id": "eyebrow_spacing",  "label": "Eyebrow letter spacing","min": 10, "max": 30, "step": 1, "unit": "em", "default": 16 },
+    { "type": "range",  "id": "eyebrow_line",     "label": "Eyebrow line length",  "min": 0, "max": 60, "step": 4, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Layout & spacing" },
+    { "type": "range", "id": "max_width",    "label": "Max content width",  "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1300 },
+    { "type": "range", "id": "side_pad",    "label": "Side padding",        "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "section_pad", "label": "Section top/bottom padding","min": 40, "max": 160, "step": 8, "unit": "px", "default": 96 },
+    { "type": "color", "id": "bg",          "label": "Page background",     "default": "#f0efed" },
+
+    { "type": "header", "content": "Hero section" },
+    { "type": "checkbox",    "id": "hide_hero",       "label": "Hide hero",           "default": false },
+    { "type": "image_picker","id": "hero_image",      "label": "Hero image" },
+    { "type": "range",       "id": "hero_height",     "label": "Height — desktop",   "min": 300, "max": 900, "step": 10, "unit": "px", "default": 600 },
+    { "type": "range",       "id": "hero_height_mobile","label": "Height — mobile",  "min": 240, "max": 700, "step": 10, "unit": "px", "default": 420 },
+    { "type": "range",       "id": "hero_overlay",    "label": "Overlay opacity",    "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35 },
+    { "type": "text",        "id": "eyebrow",         "label": "Eyebrow text",        "default": "Est. 2020" },
+    { "type": "inline_richtext","id": "hero_title",   "label": "Hero title",          "default": "We make things that matter" },
+    { "type": "range",       "id": "hero_title_size", "label": "Title size",          "min": 32, "max": 120, "step": 2, "unit": "px", "default": 72 },
+    { "type": "select",      "id": "hero_title_weight","label": "Title weight",       "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "400" },
+    { "type": "range",       "id": "hero_title_spacing","label": "Title letter spacing","min": 0, "max": 10, "step": 1, "unit": "em", "default": 0 },
+    { "type": "range",       "id": "hero_title_max_width","label": "Title max width", "min": 400, "max": 1200, "step": 20, "unit": "px", "default": 800 },
+    { "type": "color",       "id": "hero_title_color","label": "Title colour",        "default": "#ffffff" },
+    { "type": "text",        "id": "hero_sub",        "label": "Subtitle text" },
+    { "type": "range",       "id": "hero_sub_size",   "label": "Subtitle size",       "min": 13, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range",       "id": "hero_pad",        "label": "Content padding",     "min": 24, "max": 120, "step": 8, "unit": "px", "default": 64 },
+    {
+      "type": "select", "id": "hero_valign", "label": "Content vertical position",
+      "options": [{"value":"flex-start","label":"Top"},{"value":"center","label":"Middle"},{"value":"flex-end","label":"Bottom"}],
+      "default": "flex-end"
+    },
+    {
+      "type": "select", "id": "hero_halign", "label": "Content horizontal position",
+      "options": [{"value":"flex-start","label":"Left"},{"value":"center","label":"Center"},{"value":"flex-end","label":"Right"}],
+      "default": "flex-start"
+    },
+    {
+      "type": "select", "id": "hero_text_align", "label": "Text alignment",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],
+      "default": "left"
+    },
+
+    { "type": "header", "content": "Intro section" },
+    { "type": "checkbox",    "id": "hide_intro",      "label": "Hide intro",          "default": false },
+    { "type": "text",        "id": "intro_label",     "label": "Section label",       "default": "Our Story" },
+    { "type": "inline_richtext","id": "intro_title",  "label": "Heading",             "default": "Born from a passion for craft" },
+    { "type": "textarea",    "id": "intro_lead",      "label": "Lead paragraph",      "default": "We started with a simple belief: that everyday objects should be extraordinary. Every product we create carries that conviction." },
+    { "type": "textarea",    "id": "intro_body",      "label": "Body paragraph" },
+    { "type": "range",       "id": "intro_left_w",   "label": "Left column weight",  "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range",       "id": "intro_right_w",  "label": "Right column weight", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range",       "id": "intro_gap",      "label": "Column gap",          "min": 20, "max": 120, "step": 4, "unit": "px", "default": 80 },
+
+    { "type": "header", "content": "Stats" },
+    { "type": "checkbox", "id": "hide_stats",  "label": "Hide stats",   "default": false },
+    { "type": "color",    "id": "stats_bg",    "label": "Background",   "default": "#f0efed" },
+    { "type": "range",    "id": "stats_pad",   "label": "Padding",      "min": 24, "max": 96, "step": 8, "unit": "px", "default": 56 },
+    { "type": "range",    "id": "stats_item_pad","label": "Item padding","min": 16, "max": 60, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range",    "id": "stats_cols",  "label": "Columns",      "min": 2, "max": 4, "step": 1, "default": 4 },
+    { "type": "color",    "id": "stat_num_color","label": "Number colour","default": "#111111" },
+    { "type": "range",    "id": "stat_num_size","label": "Number size",  "min": 32, "max": 90, "step": 2, "unit": "px", "default": 60 },
+    { "type": "select",   "id": "stat_num_weight","label": "Number weight","options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "400" },
+    { "type": "range",    "id": "stat_label_size","label": "Label size", "min": 10, "max": 16, "step": 1, "unit": "px", "default": 12 },
+    { "type": "color",    "id": "stat_label_color","label": "Label colour","default": "#888888" },
+    { "type": "text", "id": "stat1_num",   "label": "Stat 1 — number", "default": "5K+" },
+    { "type": "text", "id": "stat1_label", "label": "Stat 1 — label",  "default": "Happy Customers" },
+    { "type": "text", "id": "stat1_desc",  "label": "Stat 1 — detail" },
+    { "type": "text", "id": "stat2_num",   "label": "Stat 2 — number", "default": "200+" },
+    { "type": "text", "id": "stat2_label", "label": "Stat 2 — label",  "default": "Products" },
+    { "type": "text", "id": "stat2_desc",  "label": "Stat 2 — detail" },
+    { "type": "text", "id": "stat3_num",   "label": "Stat 3 — number", "default": "4+" },
+    { "type": "text", "id": "stat3_label", "label": "Stat 3 — label",  "default": "Years" },
+    { "type": "text", "id": "stat3_desc",  "label": "Stat 3 — detail" },
+    { "type": "text", "id": "stat4_num",   "label": "Stat 4 — number", "default": "12" },
+    { "type": "text", "id": "stat4_label", "label": "Stat 4 — label",  "default": "Countries" },
+    { "type": "text", "id": "stat4_desc",  "label": "Stat 4 — detail" },
+
+    { "type": "header", "content": "Image + text band" },
+    { "type": "checkbox",    "id": "hide_band",       "label": "Hide band",           "default": false },
+    { "type": "image_picker","id": "band_image",      "label": "Image" },
+    { "type": "text",        "id": "band_label",      "label": "Section label",       "default": "Our Mission" },
+    { "type": "inline_richtext","id": "band_title",   "label": "Heading",             "default": "Crafted for those who notice the details" },
+    { "type": "textarea",    "id": "band_lead",       "label": "Lead paragraph" },
+    { "type": "textarea",    "id": "band_body",       "label": "Body paragraph" },
+    { "type": "checkbox",    "id": "band_reverse",    "label": "Image on right",      "default": false },
+    { "type": "select",      "id": "band_aspect",     "label": "Image aspect ratio",
+      "options": [{"value":"4/5","label":"Portrait (4:5)"},{"value":"1/1","label":"Square"},{"value":"4/3","label":"Landscape (4:3)"},{"value":"3/2","label":"Landscape (3:2)"}],
+      "default": "4/5" },
+    { "type": "range", "id": "band_gap",      "label": "Column gap",          "min": 20, "max": 100, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "band_radius",   "label": "Image radius",        "min": 0, "max": 32, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "band_text_pad", "label": "Text side padding",   "min": 0, "max": 60, "step": 4, "unit": "px", "default": 20 },
+
+    { "type": "header", "content": "Team section" },
+    { "type": "checkbox", "id": "hide_team",       "label": "Hide team",         "default": false },
+    { "type": "text",     "id": "team_label",      "label": "Section label",     "default": "The People" },
+    { "type": "text",     "id": "team_title",      "label": "Heading",           "default": "Meet the team" },
+    { "type": "text",     "id": "team_sub",        "label": "Subtext",           "default": "The faces behind the brand." },
+    { "type": "range",    "id": "team_cols",       "label": "Columns",           "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range",    "id": "team_gap",        "label": "Gap",               "min": 16, "max": 60, "step": 4, "unit": "px", "default": 28 },
+    { "type": "select",   "id": "member_aspect",   "label": "Photo aspect ratio","options": [{"value":"3/4","label":"Portrait (3:4)"},{"value":"1/1","label":"Square"},{"value":"4/5","label":"Portrait (4:5)"}], "default": "3/4" },
+    { "type": "range",    "id": "member_radius",   "label": "Photo radius",      "min": 0, "max": 50, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range",    "id": "member_name_size","label": "Name size",         "min": 14, "max": 28, "step": 1, "unit": "px", "default": 18 },
+    { "type": "select",   "id": "member_name_weight","label": "Name weight",     "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+    { "type": "range",    "id": "member_role_size","label": "Role size",         "min": 9, "max": 14, "step": 1, "unit": "px", "default": 11 },
+
+    { "type": "header", "content": "Values section" },
+    { "type": "checkbox", "id": "hide_values",     "label": "Hide values",       "default": false },
+    { "type": "text",     "id": "values_label",    "label": "Section label",     "default": "What drives us" },
+    { "type": "text",     "id": "values_title",    "label": "Heading",           "default": "Our principles" },
+    { "type": "range",    "id": "values_cols",     "label": "Columns",           "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range",    "id": "values_gap",      "label": "Gap",               "min": 12, "max": 48, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range",    "id": "values_pad",      "label": "Card padding",      "min": 16, "max": 60, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range",    "id": "values_radius",   "label": "Card radius",       "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
+    { "type": "color",    "id": "values_card_bg",  "label": "Card background",   "default": "#ffffff" },
+    { "type": "color",    "id": "values_card_border","label": "Card border",     "default": "#e8e8e8" },
+    { "type": "range",    "id": "value_icon_size", "label": "Icon size",         "min": 20, "max": 52, "step": 2, "unit": "px", "default": 32 },
+    { "type": "range",    "id": "value_title_size","label": "Title size",        "min": 14, "max": 28, "step": 1, "unit": "px", "default": 20 },
+    { "type": "select",   "id": "value_title_weight","label": "Title weight",    "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+
+    { "type": "header", "content": "CTA section" },
+    { "type": "checkbox", "id": "hide_cta",        "label": "Hide CTA",          "default": false },
+    { "type": "color",    "id": "cta_bg",          "label": "Background",        "default": "#f0efed" },
+    { "type": "text",     "id": "cta_eyebrow",     "label": "Eyebrow" },
+    { "type": "inline_richtext","id": "cta_title", "label": "Heading",           "default": "Ready to explore the collection?" },
+    { "type": "range",    "id": "cta_title_size",  "label": "Heading size",      "min": 24, "max": 80, "step": 2, "unit": "px", "default": 52 },
+    { "type": "range",    "id": "cta_title_max_width","label": "Heading max width","min": 400, "max": 1000, "step": 20, "unit": "px", "default": 700 },
+    { "type": "color",    "id": "cta_title_color", "label": "Heading colour",    "default": "#111111" },
+    { "type": "textarea", "id": "cta_sub",         "label": "Subtext" },
+    { "type": "color",    "id": "cta_sub_color",   "label": "Subtext colour",    "default": "#666666" },
+    {
+      "type": "select", "id": "cta_align", "label": "Alignment",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],
+      "default": "center"
+    },
+    {
+      "type": "select", "id": "cta_align_flex", "label": "Flex alignment",
+      "options": [{"value":"flex-start","label":"Left"},{"value":"center","label":"Center"},{"value":"flex-end","label":"Right"}],
+      "default": "center"
+    },
+    { "type": "text",  "id": "btn1_label",   "label": "Button 1 label",       "default": "Shop Now" },
+    { "type": "url",   "id": "btn1_link",    "label": "Button 1 link" },
+    { "type": "color", "id": "btn1_bg",      "label": "Button 1 background",  "default": "#111111" },
+    { "type": "color", "id": "btn1_color",   "label": "Button 1 text",        "default": "#ffffff" },
+    { "type": "color", "id": "btn1_bg_h",    "label": "Button 1 bg — hover",  "default": "#333333" },
+    { "type": "color", "id": "btn1_color_h", "label": "Button 1 text — hover","default": "#ffffff" },
+    { "type": "text",  "id": "btn2_label",   "label": "Button 2 label",       "default": "Our Story" },
+    { "type": "url",   "id": "btn2_link",    "label": "Button 2 link" },
+    { "type": "color", "id": "btn2_color",   "label": "Button 2 text",        "default": "#111111" },
+    { "type": "color", "id": "btn2_border",  "label": "Button 2 border",      "default": "#111111" },
+    { "type": "color", "id": "btn2_bg_h",    "label": "Button 2 bg — hover",  "default": "#111111" },
+    { "type": "color", "id": "btn2_color_h", "label": "Button 2 text — hover","default": "#ffffff" },
+
+    { "type": "header", "content": "Button style (shared)" },
+    { "type": "range",  "id": "btn_py",   "label": "Padding Y",      "min": 8, "max": 24, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range",  "id": "btn_px",   "label": "Padding X",      "min": 16, "max": 60, "step": 2, "unit": "px", "default": 32 },
+    { "type": "range",  "id": "btn_size", "label": "Font size",      "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "select", "id": "btn_weight","label": "Font weight",   "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+    { "type": "select", "id": "btn_tt",   "label": "Case",           "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
+    { "type": "range",  "id": "btn_ls",   "label": "Letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 4 },
+    { "type": "range",  "id": "btn_r",    "label": "Radius",         "min": 0, "max": 50, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range",  "id": "btn_bw",   "label": "Border width",   "min": 0, "max": 3, "step": 1, "unit": "px", "default": 1 }
+  ],
+  "presets": [
+    {
+      "name": "About Us",
+      "blocks": [
+        { "type": "member", "settings": { "name": "Alex Founder", "role": "CEO & Co-Founder" } },
+        { "type": "member", "settings": { "name": "Sam Designer", "role": "Creative Director" } },
+        { "type": "member", "settings": { "name": "Jordan Dev",   "role": "Head of Operations" } },
+        { "type": "value",  "settings": { "icon": "✦", "title": "Quality First",     "text": "We source only the finest materials and craft every piece to last." } },
+        { "type": "value",  "settings": { "icon": "◈", "title": "Community Driven",  "text": "Our customers shape our brand. We listen, adapt and grow together." } },
+        { "type": "value",  "settings": { "icon": "◎", "title": "Sustainably Made",  "text": "Every decision considers our impact on people and the planet." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

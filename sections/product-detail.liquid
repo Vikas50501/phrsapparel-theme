@@ -1,0 +1,1663 @@
+{%- liquid
+  assign current_variant  = product.selected_or_first_available_variant
+  assign eyebrow          = product.metafields.custom.eyebrow_label.value
+  assign tagline          = product.metafields.custom.short_description_tagline.value
+  assign poetry           = product.metafields.custom.poetry_lines.value
+  assign notes_json       = product.metafields.custom.notes_json.value
+  assign trust_pills      = product.metafields.custom.trust_pills.value
+  assign compare_price    = product.compare_at_price
+  assign price            = product.price
+  assign badges           = product.metafields.custom.badges.value
+  assign highlights       = product.metafields.custom.highlights.value
+  assign feature_list     = product.metafields.custom.feature_list.value
+  assign faq_items        = product.metafields.custom.faq.value
+  assign banner_text      = product.metafields.custom.banner_text.value
+  assign custom_label     = product.metafields.custom.custom_label.value
+  assign custom_tabs      = product.metafields.custom.custom_tabs.value
+  assign top_highlight    = product.metafields.custom.top_highlight.value
+  assign heart_icon_text  = product.metafields.custom.heart_icon_text.value
+  assign base_block       = product.metafields.custom.base_block.value
+-%}
+
+<style>
+/* ── UNSAID Design Tokens ────────────────────────────────────── */
+.unsaid-product-page {
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --foreground: oklch(0.96 0.003 270);
+  --primary-foreground: oklch(0.12 0.005 270);
+  --card: oklch(0.22 0.006 270);
+  --card-foreground: oklch(0.96 0.003 270);
+  --muted: oklch(0.26 0.008 270);
+  --muted-foreground: oklch(0.7 0.01 270);
+  --border: oklch(0.32 0.008 270 / 60%);
+  --border-soft: oklch(0.32 0.008 270 / 40%);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  background: transparent;
+}
+
+/* ── Utilities ────────────────────────────────────────────────── */
+.unsaid-product-page .u-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.unsaid-product-page .u-muted { color: var(--muted-foreground); }
+
+/* ── Product Detail Section ──────────────────────────────────── */
+.unsaid-product-page .product-detail {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 768px) {
+  .unsaid-product-page .product-detail {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    padding: 4rem 1.5rem;
+    gap: 4rem;
+    align-items: start;
+  }
+}
+
+/* ── Gallery ─────────────────────────────────────────────────── */
+.unsaid-product-page .product-gallery {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .unsaid-product-page .product-gallery {
+    position: sticky;
+    top: 5rem;
+  }
+}
+
+.unsaid-product-page .product-gallery__main {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:
+    radial-gradient(ellipse at center, oklch(0.32 0.008 270 / 50%) 0%, transparent 70%);
+  background-size: cover;
+  background-position: center;
+}
+
+.unsaid-product-page .product-gallery__main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s;
+}
+.unsaid-product-page .product-gallery__main img.is-contain {
+  object-fit: contain;
+  padding: 2.5rem;
+}
+.unsaid-product-page .product-gallery__main.is-zoomed img {
+  object-fit: contain;
+  padding: 1rem;
+  cursor: zoom-out;
+}
+
+.unsaid-product-page .gallery-zoom-btn {
+  position: absolute;
+  bottom: 0.875rem;
+  right: 0.875rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: oklch(0.14 0.006 270 / 80%);
+  border: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--foreground);
+  transition: background 0.2s;
+  z-index: 2;
+}
+.unsaid-product-page .gallery-zoom-btn:hover { background: var(--card); }
+
+.unsaid-product-page .product-gallery__thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.unsaid-product-page .product-gallery__thumb {
+  aspect-ratio: 1;
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s, opacity 0.2s;
+  opacity: 0.65;
+}
+.unsaid-product-page .product-gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.unsaid-product-page .product-gallery__thumb img.is-contain {
+  object-fit: contain;
+  padding: 0.5rem;
+}
+.unsaid-product-page .product-gallery__thumb:hover { opacity: 1; }
+.unsaid-product-page .product-gallery__thumb.active {
+  border-color: var(--foreground);
+  opacity: 1;
+}
+
+/* ── Product Info ────────────────────────────────────────────── */
+.unsaid-product-page .product-detail__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.unsaid-product-page .product-detail__info h1 {
+  margin-top: 0.75rem;
+  font-size: clamp(2.5rem, 5vw, 3.25rem);
+  line-height: 1.05;
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--foreground);
+}
+
+.unsaid-product-page .product-detail__tagline {
+  margin-top: 0.75rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  font-family: var(--font-display);
+}
+
+.unsaid-product-page .product-detail__poetry {
+  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.35;
+  color: oklch(0.88 0.005 270);
+}
+.unsaid-product-page .product-detail__poetry p { margin: 0; }
+.unsaid-product-page .product-detail__poetry p + p { margin-top: 0.125rem; }
+
+.unsaid-product-page .product-detail__desc {
+  margin-top: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  font-family: var(--font-sans);
+}
+
+/* ── Notes Strip ─────────────────────────────────────────────── */
+.unsaid-product-page .notes-strip {
+  margin-top: 1.75rem;
+}
+.unsaid-product-page .notes-strip__label {
+  color: var(--muted-foreground);
+  margin-bottom: 0.875rem;
+}
+.unsaid-product-page .notes-strip__track {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  -webkit-mask-image: linear-gradient(to right, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, black 92%, transparent 100%);
+}
+.unsaid-product-page .notes-strip__track::-webkit-scrollbar { height: 4px; }
+.unsaid-product-page .notes-strip__track::-webkit-scrollbar-track { background: transparent; }
+.unsaid-product-page .notes-strip__track::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.unsaid-product-page .note-card {
+  flex: 0 0 auto;
+  width: calc((100% - 2.25rem) / 3.5);
+  min-width: 95px;
+  max-width: 130px;
+  scroll-snap-align: start;
+  text-align: center;
+  border: 1px solid var(--border-soft);
+  background: var(--card);
+  padding: 1rem 0.5rem;
+  transition: border-color 0.2s;
+}
+.unsaid-product-page .note-card:hover { border-color: var(--foreground); }
+
+.unsaid-product-page .note-card__img {
+  width: 6.25rem;
+  height: 6.25rem;
+  margin: 0 auto 0.625rem;
+  
+  background: oklch(0.26 0.008 270);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.unsaid-product-page .note-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unsaid-product-page .note-card__icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto 0.625rem;
+  border-radius: 999px;
+  background: oklch(0.26 0.008 270);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: oklch(0.78 0.05 80);
+}
+.unsaid-product-page .note-card__icon svg { width: 1.75rem; height: 1.75rem; }
+
+.unsaid-product-page .note-card__name {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.unsaid-product-page .note-card__tier {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.unsaid-product-page .notes-strip__dots {
+  display: flex;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  justify-content: center;
+}
+.unsaid-product-page .notes-strip__dots span {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.unsaid-product-page .notes-strip__dots span.active { background: var(--foreground); }
+
+/* ── Trust Pills ─────────────────────────────────────────────── */
+.unsaid-product-page .trust-pills {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.unsaid-product-page .trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.875rem;
+  border-radius: 999px;
+  background: oklch(0.26 0.008 270);
+  border: 1px solid var(--border-soft);
+  font-size: 0.75rem;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+.unsaid-product-page .trust-pill__dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: oklch(0.45 0.09 145);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+.unsaid-product-page .trust-pill__dot svg { width: 0.65rem; height: 0.65rem; }
+
+/* ── Guarantee Strip ─────────────────────────────────────────── */
+.unsaid-product-page .guarantee-strip {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border-soft);
+  background: oklch(0.22 0.006 270);
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+.unsaid-product-page .guarantee-strip svg {
+  width: 1rem;
+  height: 1rem;
+  color: oklch(0.78 0.13 75);
+  flex-shrink: 0;
+}
+
+/* ── Price Row ───────────────────────────────────────────────── */
+.unsaid-product-page .product-detail__row {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.unsaid-product-page .product-detail__price-block { flex: 1; }
+.unsaid-product-page .product-detail__mrp-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+.unsaid-product-page .product-detail__mrp-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.unsaid-product-page .product-detail__compare {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+  text-decoration-color: oklch(0.55 0.01 270);
+}
+.unsaid-product-page .product-detail__price {
+  margin-top: 0;
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  font-weight: 300;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+.unsaid-product-page .savings-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  background: oklch(0.45 0.09 145 / 20%);
+  border: 1px solid oklch(0.45 0.09 145 / 40%);
+  color: oklch(0.78 0.12 145);
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.unsaid-product-page .product-detail__per-ml {
+  margin-top: 0.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+}
+.unsaid-product-page .product-detail__tax-note {
+  margin-top: 0.125rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+}
+
+/* ── Qty Stepper ─────────────────────────────────────────────── */
+.unsaid-product-page .qty-stepper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+}
+.unsaid-product-page .qty-stepper button {
+  padding: 0.75rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--foreground);
+}
+.unsaid-product-page .qty-stepper button:hover { background: var(--card); }
+.unsaid-product-page .qty-stepper button svg { width: 0.75rem; height: 0.75rem; }
+.unsaid-product-page .qty-stepper .qty {
+  width: 2.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+}
+
+/* ── Add to Cart Button ──────────────────────────────────────── */
+.unsaid-product-page .product-detail__cta {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1.25rem 2rem;
+  background: var(--foreground);
+  color: var(--primary-foreground);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.unsaid-product-page .product-detail__cta:hover { background: var(--muted-foreground); }
+.unsaid-product-page .product-detail__cta:disabled,
+.unsaid-product-page .product-detail__cta[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Notes Summary (Top / Heart / Base) ──────────────────────── */
+.unsaid-product-page .product-detail__notes {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 1.5rem;
+}
+.unsaid-product-page .product-detail__notes dt { color: var(--muted-foreground); }
+.unsaid-product-page .product-detail__notes dd {
+  margin: 0;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+}
+
+/* ── Product Tabs ────────────────────────────────────────────── */
+.unsaid-product-page .product-tabs {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 5rem 1.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+.unsaid-product-page .product-tabs__nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 3rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.unsaid-product-page .product-tabs__nav::-webkit-scrollbar { display: none; }
+
+.unsaid-product-page .product-tab-btn {
+  flex-shrink: 0;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border: none;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  background: transparent;
+}
+.unsaid-product-page .product-tab-btn:hover { color: var(--foreground); }
+.unsaid-product-page .product-tab-btn.active {
+  color: var(--foreground);
+  border-bottom-color: var(--foreground);
+}
+.unsaid-product-page .product-tab-panel { display: none; }
+.unsaid-product-page .product-tab-panel.active { display: block; }
+
+.unsaid-product-page .tab-description { max-width: 48rem; }
+.unsaid-product-page .tab-description p {
+  color: var(--muted-foreground);
+  line-height: 1.7;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+}
+.unsaid-product-page .tab-description p + p { margin-top: 1.25rem; }
+.unsaid-product-page .tab-description h3 {
+  margin-top: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-family: var(--font-display);
+  color: var(--foreground);
+}
+.unsaid-product-page .tab-description ul {
+  margin-top: 1.25rem;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.875rem;
+}
+.unsaid-product-page .tab-description ul li {
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+}
+.unsaid-product-page .tab-description ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.625rem;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--muted-foreground);
+}
+
+/* ── Custom Label (gallery overlay) ─────────────────────────── */
+.unsaid-product-page .gallery-custom-label {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 3;
+  background: oklch(0.96 0.003 270 / 95%);
+  color: oklch(0.12 0.005 270);
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  pointer-events: none;
+}
+
+/* ── Badges (near title) ─────────────────────────────────────── */
+.unsaid-product-page .product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.unsaid-product-page .product-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid var(--border-soft);
+  background: var(--card);
+  color: var(--foreground);
+}
+.unsaid-product-page .product-badge--accent {
+  background: oklch(0.42 0.08 280 / 15%);
+  border-color: oklch(0.42 0.08 280 / 40%);
+  color: oklch(0.78 0.06 280);
+}
+.unsaid-product-page .product-badge--green {
+  background: oklch(0.45 0.09 145 / 15%);
+  border-color: oklch(0.45 0.09 145 / 40%);
+  color: oklch(0.72 0.12 145);
+}
+.unsaid-product-page .product-badge--gold {
+  background: oklch(0.55 0.12 75 / 15%);
+  border-color: oklch(0.55 0.12 75 / 40%);
+  color: oklch(0.78 0.13 75);
+}
+
+/* ── Top Highlight / Heart Icon Text ────────────────────────── */
+.unsaid-product-page .product-highlight-bar {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border-soft);
+  background: var(--card);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+.unsaid-product-page .product-highlight-bar svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  color: oklch(0.78 0.13 75);
+}
+.unsaid-product-page .product-highlight-bar strong {
+  color: var(--foreground);
+}
+
+/* ── Highlights (icon + text rows) ──────────────────────────── */
+.unsaid-product-page .product-highlights {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.875rem;
+}
+.unsaid-product-page .product-highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+.unsaid-product-page .product-highlight-item__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: oklch(0.72 0.05 80);
+}
+.unsaid-product-page .product-highlight-item__icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+.unsaid-product-page .product-highlight-item__text strong {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  margin-bottom: 0.125rem;
+}
+
+/* ── Feature List / USP Blocks ───────────────────────────────── */
+.unsaid-product-page .product-features {
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 1.5rem;
+}
+.unsaid-product-page .product-features__label {
+  margin-bottom: 1rem;
+  color: var(--muted-foreground);
+}
+.unsaid-product-page .product-feature-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+.unsaid-product-page .product-feature-item {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 0.875rem;
+  border: 1px solid var(--border-soft);
+  background: var(--card);
+  transition: border-color 0.2s;
+}
+.unsaid-product-page .product-feature-item:hover {
+  border-color: oklch(0.42 0.008 270);
+}
+.unsaid-product-page .product-feature-item__icon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: oklch(0.26 0.008 270);
+  color: oklch(0.72 0.05 80);
+}
+.unsaid-product-page .product-feature-item__icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+.unsaid-product-page .product-feature-item__title {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+.unsaid-product-page .product-feature-item__text {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+/* ── Banner Strip ────────────────────────────────────────────── */
+.unsaid-product-page .product-banner-strip {
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--card);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--foreground);
+  letter-spacing: 0.01em;
+  max-width: 80rem;
+  margin-inline: auto;
+}
+
+/* ── FAQ Accordion ───────────────────────────────────────────── */
+.unsaid-product-page .product-faq {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 4rem 1.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+.unsaid-product-page .product-faq__head {
+  margin-bottom: 2.5rem;
+}
+.unsaid-product-page .product-faq__head h2 {
+  margin-top: 0.75rem;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--foreground);
+}
+.unsaid-product-page .faq-list {
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+}
+.unsaid-product-page .faq-item {
+  border-bottom: 1px solid var(--border-soft);
+}
+.unsaid-product-page .faq-item:last-child { border-bottom: none; }
+.unsaid-product-page .faq-item__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.25rem 0;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--foreground);
+}
+.unsaid-product-page .faq-item__btn span.q {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 300;
+}
+.unsaid-product-page .faq-item__icon {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: transform 0.3s;
+  display: flex;
+  align-items: center;
+}
+.unsaid-product-page .faq-item.open .faq-item__icon { transform: rotate(180deg); }
+.unsaid-product-page .faq-item__answer {
+  display: none;
+  padding-bottom: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  font-family: var(--font-sans);
+}
+.unsaid-product-page .faq-item.open .faq-item__answer { display: block; }
+
+/* ── Base Block (rich content below tabs) ────────────────────── */
+.unsaid-product-page .product-base-block {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 4rem 1.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+.unsaid-product-page .product-base-block__inner {
+  max-width: 48rem;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.unsaid-product-page .product-base-block__inner h2,
+.unsaid-product-page .product-base-block__inner h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--foreground);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.unsaid-product-page .product-base-block__inner p + p { margin-top: 1.25rem; }
+.unsaid-product-page .product-base-block__inner a {
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border-soft);
+  transition: border-color 0.2s;
+}
+.unsaid-product-page .product-base-block__inner a:hover {
+  border-bottom-color: var(--foreground);
+}
+</style>
+
+<div class="unsaid-product-page">
+
+<section
+  class="product-detail"
+  data-section-id="{{ section.id }}"
+  itemscope
+  itemtype="https://schema.org/Product"
+  style="padding-top:{{ section.settings.padding_top }}px; padding-bottom:{{ section.settings.padding_bottom }}px;"
+>
+
+  <!-- ══ GALLERY (left) ══════════════════════════════════════════ -->
+  <div class="product-gallery">
+    <div class="product-gallery__main">
+      {%- assign featured = current_variant.featured_image | default: product.featured_image -%}
+      {%- if featured -%}
+        {{ featured | image_url: width: 900 | image_tag:
+          alt:     featured.alt | default: product.title,
+          loading: 'eager',
+          class:   'is-contain',
+          id:      'ProductMainImage',
+          itemprop:'image' }}
+      {%- endif -%}
+
+      {%- if custom_label != blank -%}
+        <span class="gallery-custom-label">{{ custom_label }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.show_zoom_icon -%}
+        <button class="gallery-zoom-btn" aria-label="Zoom image" onclick="this.closest('.product-gallery__main').classList.toggle('is-zoomed')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if product.images.size > 1 -%}
+      <div class="product-gallery__thumbs">
+        {%- for image in product.images limit: section.settings.thumb_limit -%}
+          <button
+            class="product-gallery__thumb{% if forloop.first %} active{% endif %}"
+            data-full="{{ image | image_url: width: 900 }}"
+            {% if forloop.first %}data-contain{% endif %}
+            aria-label="View image {{ forloop.index }}"
+          >
+            {%- assign thumb_class = '' -%}
+            {%- if forloop.first -%}{%- assign thumb_class = 'is-contain' -%}{%- endif -%}
+            {{ image | image_url: width: 200 | image_tag:
+              alt:     image.alt,
+              loading: 'lazy',
+              class:   thumb_class }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <!-- ══ INFO (right) ════════════════════════════════════════════ -->
+  <div class="product-detail__info">
+
+    <p class="u-eyebrow u-muted" itemprop="category">
+      {{ eyebrow | default: section.settings.product_type | default: product.type | default: 'Extrait de Parfum' }}
+      {%- if section.settings.show_volume %} &middot; {{ section.settings.volume_label | default: '50ml | 1.7 oz' }}{%- endif -%}
+    </p>
+
+    <h1 itemprop="name">{{ product.title }}</h1>
+
+    <!-- BADGES -->
+    {%- if badges != blank -%}
+      <div class="product-badges">
+        {%- for badge in badges -%}
+          <span class="product-badge{% if badge.color != blank %} product-badge--{{ badge.color }}{% endif %}">
+            {{ badge.label }}
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if tagline != blank -%}
+      <p class="product-detail__tagline">{{ tagline }}</p>
+    {%- elsif section.settings.fallback_to_description and product.description != blank -%}
+      <p class="product-detail__tagline">{{ product.description | strip_html | truncate: 120 }}</p>
+    {%- endif -%}
+
+    {%- if poetry != blank -%}
+      <div class="product-detail__poetry">{{ poetry | newline_to_br }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.show_description -%}
+      <p class="product-detail__desc" itemprop="description">
+        {{ product.description | strip_html | truncate: section.settings.desc_truncate }}
+      </p>
+    {%- endif -%}
+
+    <!-- TOP HIGHLIGHT BAR -->
+    {%- if top_highlight != blank -%}
+      <div class="product-highlight-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>{{ top_highlight }}</span>
+      </div>
+    {%- endif -%}
+
+    <!-- HEART ICON TEXT -->
+    {%- if heart_icon_text != blank -%}
+      <div class="product-highlight-bar" style="margin-top:0.5rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>{{ heart_icon_text }}</span>
+      </div>
+    {%- endif -%}
+
+    <!-- NOTES STRIP (image cards) -->
+    {%- if notes_json != blank -%}
+      <div class="notes-strip">
+        <p class="u-eyebrow notes-strip__label">{{ section.settings.notes_label | default: 'Notes' }}</p>
+        <div class="notes-strip__track" id="NotesTrack">
+          {%- for note in notes_json -%}
+            <div class="note-card">
+              {%- if note.image != blank -%}
+                <div class="note-card__img">
+                  <img src="{{ note.image }}" alt="{{ note.name }}" loading="lazy">
+                </div>
+              {%- else -%}
+                <div class="note-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                </div>
+              {%- endif -%}
+              <p class="note-card__name">{{ note.name }}
+                {%- if note.tier != blank and section.settings.show_note_tier -%}
+                  <span class="note-card__tier">{{ note.tier }}</span>
+                {%- endif -%}
+              </p>
+            </div>
+          {%- endfor -%}
+        </div>
+        <div class="notes-strip__dots" id="NotesDots"></div>
+      </div>
+    {%- endif -%}
+
+    <!-- TRUST PILLS -->
+    {%- if trust_pills != blank -%}
+      <div class="trust-pills">
+        {%- for pill in trust_pills -%}
+          <span class="trust-pill">
+            <span class="trust-pill__dot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            {{ pill.label }}
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- elsif section.settings.trust_pills_text != blank -%}
+      <div class="trust-pills">
+        {%- assign pill_list = section.settings.trust_pills_text | split: '|' -%}
+        {%- for pill in pill_list -%}
+          <span class="trust-pill">
+            <span class="trust-pill__dot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            {{ pill | strip }}
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- HIGHLIGHTS (icon + text rows) -->
+    {%- if highlights != blank -%}
+      <div class="product-highlights">
+        {%- for hl in highlights -%}
+          <div class="product-highlight-item">
+            <div class="product-highlight-item__icon">
+              {%- if hl.icon_svg != blank -%}
+                {{ hl.icon_svg }}
+              {%- else -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+              {%- endif -%}
+            </div>
+            <div class="product-highlight-item__text">
+              {%- if hl.title != blank -%}<strong>{{ hl.title }}</strong>{%- endif -%}
+              {{ hl.text }}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- FEATURE LIST / USP BLOCKS -->
+    {%- if feature_list != blank -%}
+      <div class="product-features">
+        {%- if section.settings.features_label != blank -%}
+          <p class="u-eyebrow product-features__label">{{ section.settings.features_label }}</p>
+        {%- endif -%}
+        <div class="product-feature-grid">
+          {%- for feat in feature_list -%}
+            <div class="product-feature-item">
+              <div class="product-feature-item__icon">
+                {%- if feat.icon_svg != blank -%}
+                  {{ feat.icon_svg }}
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                {%- endif -%}
+              </div>
+              <div>
+                {%- if feat.title != blank -%}<p class="product-feature-item__title">{{ feat.title }}</p>{%- endif -%}
+                {%- if feat.text != blank -%}<p class="product-feature-item__text">{{ feat.text }}</p>{%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- GUARANTEE STRIP -->
+    {%- if section.settings.show_guarantee -%}
+      <div class="guarantee-strip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        {{ section.settings.guarantee_text | default: '100% Satisfaction Guaranteed · 7-day return on unopened bottles' }}
+      </div>
+    {%- endif -%}
+
+    <!-- PRICE + QTY + ADD TO CART -->
+    {%- form 'product', product, id: 'ProductForm', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+      <div class="product-detail__row">
+        <div class="product-detail__price-block" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+          <p class="u-eyebrow u-muted">{{ section.settings.price_label | default: 'Price' }}</p>
+          <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+          {%- assign variant_compare = current_variant.compare_at_price -%}
+          {%- assign variant_price   = current_variant.price -%}
+          <div class="product-detail__mrp-line" id="PriceMrpLine" {% unless variant_compare > variant_price %}style="display:none"{% endunless %}>
+            <span class="product-detail__mrp-label">MRP</span>
+            <s class="product-detail__compare" id="PriceCompare">{{ variant_compare | money }}</s>
+            {%- if section.settings.show_savings_badge -%}
+              {%- assign saving = variant_compare | minus: variant_price -%}
+              <span class="savings-badge" id="PriceSavings">{% if variant_compare > variant_price %}SAVE {{ saving | money }}{% endif %}</span>
+            {%- endif -%}
+          </div>
+          <p class="product-detail__price">
+            <span itemprop="price" content="{{ variant_price | divided_by: 100.0 }}" id="PriceCurrent">
+              {{ variant_price | money }}
+            </span>
+          </p>
+          {%- if section.settings.show_per_ml and section.settings.volume_ml > 0 -%}
+            {%- assign per_ml = current_variant.price | divided_by: section.settings.volume_ml -%}
+            <p class="product-detail__per-ml u-muted">{{ per_ml | money }} / ml</p>
+          {%- endif -%}
+          {%- if section.settings.show_tax_note -%}
+            <p class="product-detail__tax-note u-muted">{{ section.settings.tax_note | default: 'MRP Incl. of all taxes' }}</p>
+          {%- endif -%}
+        </div>
+
+        <div class="qty-stepper">
+          <button type="button" class="dec" aria-label="Decrease quantity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <span class="qty" id="QtyDisplay">1</span>
+          <input type="hidden" name="quantity" id="QtyInput" value="1">
+          <button type="button" class="inc" aria-label="Increase quantity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit"
+        class="product-detail__cta"
+        {%- unless current_variant.available %} disabled aria-disabled="true"{% endunless %}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        {%- if current_variant.available -%}
+          {{ section.settings.cta_text | default: 'Add to cart' }}
+        {%- else -%}
+          {{ section.settings.sold_out_text | default: 'Sold out' }}
+        {%- endif -%}
+      </button>
+
+      {%- if section.settings.show_buy_now -%}
+        {{ form | payment_button }}
+      {%- endif -%}
+    {%- endform -%}
+
+    <!-- NOTES SUMMARY (Top / Heart / Base) -->
+    {%- if notes_json != blank and section.settings.show_notes_summary -%}
+      <dl class="product-detail__notes">
+        {%- assign top_notes   = '' -%}
+        {%- assign heart_notes = '' -%}
+        {%- assign base_notes  = '' -%}
+        {%- for note in notes_json -%}
+          {%- if note.tier == 'top' -%}
+            {%- assign top_notes = top_notes | append: note.name | append: ', ' -%}
+          {%- elsif note.tier == 'heart' -%}
+            {%- assign heart_notes = heart_notes | append: note.name | append: ', ' -%}
+          {%- else -%}
+            {%- assign base_notes = base_notes | append: note.name | append: ', ' -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if top_notes   != '' -%}<div><dt class="u-eyebrow">Top</dt><dd>{{ top_notes   | remove_last: ', ' }}</dd></div>{%- endif -%}
+        {%- if heart_notes != '' -%}<div><dt class="u-eyebrow">Heart</dt><dd>{{ heart_notes | remove_last: ', ' }}</dd></div>{%- endif -%}
+        {%- if base_notes  != '' -%}<div><dt class="u-eyebrow">Base</dt><dd>{{ base_notes  | remove_last: ', ' }}</dd></div>{%- endif -%}
+      </dl>
+    {%- endif -%}
+
+  </div><!-- /product-detail__info -->
+</section>
+
+<!-- ══ BANNER STRIP ════════════════════════════════════════════════ -->
+{%- if banner_text != blank -%}
+<div class="product-banner-strip">{{ banner_text }}</div>
+{%- endif -%}
+
+<!-- ══ PRODUCT TABS ═══════════════════════════════════════════════ -->
+{%- if section.settings.show_tabs -%}
+<section class="product-tabs" data-section-id="{{ section.id }}-tabs">
+  <nav class="product-tabs__nav" role="tablist">
+    <button class="product-tab-btn active" data-tab="notes"  role="tab" aria-selected="true"  aria-controls="panel-notes">{{ section.settings.tab1_label | default: 'Notes' }}</button>
+    <button class="product-tab-btn"        data-tab="story"  role="tab" aria-selected="false" aria-controls="panel-story">{{ section.settings.tab2_label | default: 'Story' }}</button>
+    <button class="product-tab-btn"        data-tab="care"   role="tab" aria-selected="false" aria-controls="panel-care">{{ section.settings.tab3_label | default: 'Care & Use' }}</button>
+    {%- if section.settings.tab4_label != blank -%}
+    <button class="product-tab-btn"        data-tab="custom" role="tab" aria-selected="false" aria-controls="panel-custom">{{ section.settings.tab4_label }}</button>
+    {%- endif -%}
+    {%- if custom_tabs != blank -%}
+      {%- for ctab in custom_tabs -%}
+        <button class="product-tab-btn" data-tab="ctab-{{ forloop.index }}" role="tab" aria-selected="false" aria-controls="panel-ctab-{{ forloop.index }}">{{ ctab.label }}</button>
+      {%- endfor -%}
+    {%- endif -%}
+  </nav>
+
+  <div class="product-tab-panel active tab-description" data-panel="notes" id="panel-notes" role="tabpanel">
+    {{ product.description }}
+  </div>
+
+  <div class="product-tab-panel tab-description" data-panel="story" id="panel-story" role="tabpanel">
+    <p>{{ section.settings.story_text | default: 'Each UNSAID fragrance is built around a state of mind. Not a season. Not a trend. A feeling that lives before words arrive.' }}</p>
+  </div>
+
+  <div class="product-tab-panel tab-description" data-panel="care" id="panel-care" role="tabpanel">
+    <p>{{ section.settings.care_text | default: 'Apply to pulse points — inner wrists, the side of the neck, behind the ears. Extrait de parfum is concentrated, so two to three sprays is enough. Avoid rubbing, which breaks the molecular structure of the notes. Best layered on warm, moisturised skin.' }}</p>
+    {%- if section.settings.show_care_extras -%}
+      <h3>Storage</h3>
+      <p>{{ section.settings.storage_text | default: 'Keep your bottle upright, in a cool dark place, away from direct sunlight and heat. This preserves the integrity of the oils.' }}</p>
+      <h3>Format</h3>
+      <ul>
+        {%- assign format_list = section.settings.format_text | default: '50ml | 1.7 oz|Extrait de parfum · 20–40% concentration|Made in India|IFRA compliant · Cruelty-free' | split: '|' -%}
+        {%- for item in format_list -%}
+          <li>{{ item | strip }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.tab4_label != blank -%}
+  <div class="product-tab-panel tab-description" data-panel="custom" id="panel-custom" role="tabpanel">
+    {{ section.settings.tab4_content }}
+  </div>
+  {%- endif -%}
+
+  <!-- CUSTOM TABS FROM METAFIELD -->
+  {%- if custom_tabs != blank -%}
+    {%- for ctab in custom_tabs -%}
+    <div class="product-tab-panel tab-description" data-panel="ctab-{{ forloop.index }}" id="panel-ctab-{{ forloop.index }}" role="tabpanel">
+      {{ ctab.content }}
+    </div>
+    {%- endfor -%}
+  {%- endif -%}
+</section>
+{%- endif -%}
+
+<!-- ══ FAQ ACCORDION ═══════════════════════════════════════════════ -->
+{%- if faq_items != blank -%}
+<div class="product-faq">
+  <div class="product-faq__head">
+    <p class="u-eyebrow u-muted">{{ section.settings.faq_eyebrow | default: 'Questions' }}</p>
+    <h2>{{ section.settings.faq_heading | default: 'Frequently Asked' }}</h2>
+  </div>
+  <div class="faq-list">
+    {%- for item in faq_items -%}
+      <div class="faq-item">
+        <button class="faq-item__btn" aria-expanded="false">
+          <span class="q">{{ item.q }}</span>
+          <span class="faq-item__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="faq-item__answer">{{ item.a }}</div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+<!-- ══ BASE BLOCK CONTENT ══════════════════════════════════════════ -->
+{%- if base_block != blank -%}
+<div class="product-base-block">
+  <div class="product-base-block__inner">
+    {{ base_block }}
+  </div>
+</div>
+{%- endif -%}
+
+</div><!-- /unsaid-product-page -->
+
+<script>
+(function () {
+  /* ── Gallery thumb switcher ──────────────────────────────── */
+  var mainImg = document.getElementById('ProductMainImage');
+  document.querySelectorAll('.product-gallery__thumb').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.product-gallery__thumb').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (mainImg) {
+        mainImg.src = btn.dataset.full;
+        if (btn.dataset.contain !== undefined) {
+          mainImg.classList.add('is-contain');
+        } else {
+          mainImg.classList.remove('is-contain');
+        }
+      }
+    });
+  });
+
+  /* ── Qty stepper ─────────────────────────────────────────── */
+  var qtyDisplay = document.getElementById('QtyDisplay');
+  var qtyInput   = document.getElementById('QtyInput');
+  document.querySelectorAll('.qty-stepper .dec').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var v = parseInt(qtyInput.value, 10);
+      if (v > 1) { qtyInput.value = v - 1; qtyDisplay.textContent = v - 1; }
+    });
+  });
+  document.querySelectorAll('.qty-stepper .inc').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var v = parseInt(qtyInput.value, 10);
+      qtyInput.value = v + 1; qtyDisplay.textContent = v + 1;
+    });
+  });
+
+  /* ── Product tabs ────────────────────────────────────────── */
+  document.querySelectorAll('.product-tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = btn.dataset.tab;
+      document.querySelectorAll('.product-tab-btn').forEach(function(b){
+        b.classList.remove('active');
+        b.setAttribute('aria-selected','false');
+      });
+      document.querySelectorAll('.product-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      var panel = document.querySelector('[data-panel="' + tab + '"]');
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  /* ── Notes strip dots ────────────────────────────────────── */
+  var track = document.getElementById('NotesTrack');
+  var dots  = document.getElementById('NotesDots');
+  if (track && dots) {
+    var cards = track.querySelectorAll('.note-card');
+    var count = Math.ceil(cards.length / 3);
+    for (var i = 0; i < count; i++) {
+      var s = document.createElement('span');
+      if (i === 0) s.classList.add('active');
+      dots.appendChild(s);
+    }
+    track.addEventListener('scroll', function() {
+      var idx = Math.round(track.scrollLeft / (track.scrollWidth / count));
+      dots.querySelectorAll('span').forEach(function(s, i){ s.classList.toggle('active', i === idx); });
+    });
+  }
+
+  /* ── Variant price update ────────────────────────────────── */
+  var variantData = {{ product.variants | json }};
+  var hiddenId    = document.querySelector('#ProductForm input[name="id"]');
+  var priceCur    = document.getElementById('PriceCurrent');
+  var priceComp   = document.getElementById('PriceCompare');
+  var priceMrp    = document.getElementById('PriceMrpLine');
+  var priceSave   = document.getElementById('PriceSavings');
+
+  var moneyFormat = {{ shop.money_format | json }};
+  function formatMoney(cents) {
+    return Shopify.formatMoney ? Shopify.formatMoney(cents, moneyFormat) : ('₹' + (cents / 100).toFixed(0));
+  }
+
+  function updatePrice(variantId) {
+    var v = variantData.find(function(x){ return x.id === variantId; });
+    if (!v) return;
+    var showMrp = v.compare_at_price && v.compare_at_price > v.price;
+    if (priceCur) {
+      priceCur.textContent = formatMoney(v.price);
+      priceCur.setAttribute('content', (v.price / 100).toFixed(2));
+    }
+    if (priceMrp) priceMrp.style.display = showMrp ? '' : 'none';
+    if (priceComp && showMrp) priceComp.textContent = formatMoney(v.compare_at_price);
+    if (priceSave && showMrp) priceSave.textContent = 'SAVE ' + formatMoney(v.compare_at_price - v.price);
+  }
+
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.name === 'id') updatePrice(parseInt(e.target.value, 10));
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "UNSAID Product Detail",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Info"
+    },
+    {
+      "type": "text",
+      "id": "product_type",
+      "label": "Product type label (eyebrow)",
+      "info": "Shows above product title. Falls back to product.type if blank.",
+      "default": "Extrait de Parfum"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_volume",
+      "label": "Show volume label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "volume_label",
+      "label": "Volume label",
+      "default": "50ml | 1.7 oz"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show short description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "fallback_to_description",
+      "label": "Use product description as tagline if metafield empty",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "desc_truncate",
+      "label": "Short description truncate length",
+      "min": 100,
+      "max": 600,
+      "step": 20,
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Metafields — set these on each product"
+    },
+    {
+      "type": "paragraph",
+      "content": "Core metafields (namespace: custom) — eyebrow_label (single_line_text), short_description_tagline (single_line_text), poetry_lines (multi_line_text), notes_json (json), trust_pills (json). Extended metafields — badges (json: [{\"label\":\"New\",\"color\":\"#fff\"}]), top_highlight (single_line_text), heart_icon_text (single_line_text), highlights (json: [{\"icon\":\"★\",\"text\":\"Long-lasting\"}]), feature_list (json: [{\"icon\":\"✓\",\"title\":\"Natural\",\"desc\":\"100% natural oils\"}]), banner_text (single_line_text), custom_label (single_line_text — gallery overlay), custom_tabs (json: [{\"label\":\"Tab\",\"content\":\"<p>…</p>\"}]), faq (json: [{\"q\":\"Question?\",\"a\":\"Answer.\"}]), base_block (richtext). notes_json format: [{\"name\":\"Bergamot\",\"tier\":\"top\",\"image\":\"\"}]. trust_pills format: [{\"label\":\"Cruelty-Free\"}]."
+    },
+    {
+      "type": "header",
+      "content": "Gallery"
+    },
+    {
+      "type": "range",
+      "id": "thumb_limit",
+      "label": "Max thumbnails shown",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_zoom_icon",
+      "label": "Show zoom toggle button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Notes Strip"
+    },
+    {
+      "type": "text",
+      "id": "notes_label",
+      "label": "Notes section label",
+      "default": "Notes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_note_tier",
+      "label": "Show tier label on note card (top / heart / base)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Trust Badges"
+    },
+    {
+      "type": "textarea",
+      "id": "trust_pills_text",
+      "label": "Trust pills — pipe-separated fallback",
+      "info": "Used only when the 'trust_pills' metafield is empty. Separate with |",
+      "default": "100% Natural Ingredients | IFRA Compliant | Cruelty Free | Made in India"
+    },
+    {
+      "type": "header",
+      "content": "Price Block"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price eyebrow label",
+      "default": "Price"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings_badge",
+      "label": "Show savings badge when compare-at price set",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_per_ml",
+      "label": "Show per-ml price",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "volume_ml",
+      "label": "Volume in ml (used for per-ml calculation)",
+      "min": 0,
+      "max": 500,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tax_note",
+      "label": "Show tax note",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tax_note",
+      "label": "Tax note text",
+      "default": "MRP Incl. of all taxes"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Add to cart button text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold out text",
+      "default": "Sold out"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show dynamic checkout button (Buy Now / Shop Pay)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Guarantee Strip"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_guarantee",
+      "label": "Show guarantee strip",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "guarantee_text",
+      "label": "Guarantee text",
+      "default": "100% Satisfaction Guaranteed · 7-day return on unopened bottles"
+    },
+    {
+      "type": "header",
+      "content": "Highlights & Features"
+    },
+    {
+      "type": "text",
+      "id": "features_label",
+      "label": "Features section eyebrow label",
+      "default": "What Makes It Different"
+    },
+    {
+      "type": "header",
+      "content": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_eyebrow",
+      "label": "FAQ eyebrow label",
+      "default": "Questions"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "Frequently Asked"
+    },
+    {
+      "type": "header",
+      "content": "Notes Summary (Top / Heart / Base)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_notes_summary",
+      "label": "Show Top / Heart / Base notes summary block",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Tabs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tabs",
+      "label": "Show product tabs section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tab1_label",
+      "label": "Tab 1 label",
+      "default": "Notes"
+    },
+    {
+      "type": "text",
+      "id": "tab2_label",
+      "label": "Tab 2 label",
+      "default": "Story"
+    },
+    {
+      "type": "text",
+      "id": "tab3_label",
+      "label": "Tab 3 label",
+      "default": "Care & Use"
+    },
+    {
+      "type": "text",
+      "id": "tab4_label",
+      "label": "Tab 4 label (leave blank to hide)",
+      "default": ""
+    },
+    {
+      "type": "richtext",
+      "id": "tab4_content",
+      "label": "Tab 4 content (rich text)"
+    },
+    {
+      "type": "textarea",
+      "id": "story_text",
+      "label": "Story tab text",
+      "default": "Each UNSAID fragrance is built around a state of mind. Not a season. Not a trend. A feeling that lives before words arrive."
+    },
+    {
+      "type": "textarea",
+      "id": "care_text",
+      "label": "Care & Use tab text",
+      "default": "Apply to pulse points — inner wrists, the side of the neck, behind the ears. Extrait de parfum is concentrated, so two to three sprays is enough. Avoid rubbing, which breaks the molecular structure of the notes. Best layered on warm, moisturised skin."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_care_extras",
+      "label": "Show Storage + Format in Care tab",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "storage_text",
+      "label": "Storage paragraph",
+      "default": "Keep your bottle upright, in a cool dark place, away from direct sunlight and heat. This preserves the integrity of the oils."
+    },
+    {
+      "type": "textarea",
+      "id": "format_text",
+      "label": "Format list items (pipe-separated)",
+      "default": "50ml | 1.7 oz|Extrait de parfum · 20–40% concentration|Made in India|IFRA compliant · Cruelty-free"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom (px)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 48
+    }
+  ]
+}
+{% endschema %}

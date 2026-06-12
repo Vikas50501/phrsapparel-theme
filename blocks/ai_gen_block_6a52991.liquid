@@ -1,0 +1,283 @@
+{% doc %}
+  @prompt
+    Create a new section with a full-width background video that autoplays and loops silently, with fixed overlay text centered on top of the video. The section should include customizable settings for the video source (URL), overlay text (heading and subheading), text color, and an optional overlay opacity to ensure text readability. The text should remain visually fixed/centered over the video at all times., video upload option, video should be vislble fully 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-video-background-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.section_height }}px;
+    overflow: hidden;
+    display: block;
+    background-color: #000000;
+  }
+
+  .ai-video-background__video-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-video-background__video-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-video-background__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-video-background__placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+  }
+
+  .ai-video-background__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-video-background__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity }});
+    z-index: 2;
+  }
+
+  .ai-video-background__content-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    text-align: center;
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  .ai-video-background__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+
+  .ai-video-background__subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.subheading_size }}px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-video-background-{{ ai_gen_id }} {
+      height: {{ block.settings.mobile_section_height }}px;
+    }
+
+    .ai-video-background__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.7);
+    }
+
+    .ai-video-background__subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_size }}px * 0.8);
+    }
+  }
+{% endstyle %}
+
+<video-background-{{ ai_gen_id }} class="ai-video-background-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-video-background__video-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.video_shopify != blank %}
+      {{ block.settings.video_shopify | video_tag: autoplay: true, loop: true, muted: true, controls: false, class: 'ai-video-background__video-' | append: ai_gen_id }}
+    {% elsif block.settings.video_url != blank %}
+      <video
+        class="ai-video-background__video-{{ ai_gen_id }}"
+        autoplay
+        loop
+        muted
+        playsinline
+        aria-label="{{ block.settings.heading | strip_html | escape }}"
+      >
+        <source src="{{ block.settings.video_url }}" type="video/mp4">
+      </video>
+    {% else %}
+      <div class="ai-video-background__placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+        <div class="ai-video-background__empty-state-{{ ai_gen_id }}">
+          Next, upload a video or add a video URL
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-video-background__overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-video-background__content-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-video-background__heading-{{ ai_gen_id }}">
+        {{ block.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% if block.settings.subheading != blank %}
+      <p class="ai-video-background__subheading-{{ ai_gen_id }}">
+        {{ block.settings.subheading }}
+      </p>
+    {% endif %}
+  </div>
+</video-background-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VideoBackground{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.video = this.querySelector('.ai-video-background__video-{{ ai_gen_id }}');
+        
+        if (this.video) {
+          this.video.setAttribute('playsinline', '');
+          this.video.addEventListener('loadeddata', () => {
+            this.video.play().catch(() => {
+              console.log('Video autoplay prevented');
+            });
+          });
+        }
+      }
+    }
+
+    customElements.define('video-background-{{ ai_gen_id }}', VideoBackground{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video background",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "video",
+      "id": "video_shopify",
+      "label": "Upload video"
+    },
+    {
+      "type": "paragraph",
+      "content": "Or use an external video URL below"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Desktop height",
+      "min": 300,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_height",
+      "label": "Mobile height",
+      "min": 200,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Text content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Welcome to our store</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Discover our latest collection</p>"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video background"
+    }
+  ]
+}
+{% endschema %}

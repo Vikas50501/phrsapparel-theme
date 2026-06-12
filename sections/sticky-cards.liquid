@@ -1,0 +1,580 @@
+{%- assign sc_card_count = 0 -%}
+{%- assign sc_has_heading = false -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'card' -%}{%- assign sc_card_count = sc_card_count | plus: 1 -%}{%- endif -%}
+  {%- if block.type == 'heading' -%}{%- assign sc_has_heading = true -%}{%- endif -%}
+{%- endfor -%}
+{%- assign sc_label_opacity = 0 -%}
+{%- if section.settings.show_labels -%}{%- assign sc_label_opacity = 1 -%}{%- endif -%}
+
+{%- style -%}
+  .sc-section-{{ section.id }} {
+    position: relative;
+    background: {{ section.settings.bg_color }};
+    isolation: isolate;
+    /* Total height = n card slots + 1 extra viewport for scrubbing */
+    height: calc(({{ sc_card_count }} + 1) * var(--sc-vh, 100vh));
+  }
+
+  .sc-pin-{{ section.id }} {
+    position: sticky;
+    top: {{ section.settings.sticky_top }}px;
+    height: calc(var(--sc-vh, 100vh) - {{ section.settings.sticky_top }}px);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: {{ section.settings.bg_color }};
+  }
+
+  /* ── Heading — lives INSIDE the pin, behind the cards ─── */
+  .sc-heading-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: {{ section.settings.heading_align_flex }};
+    justify-content: center;
+    padding: 40px;
+    z-index: 0; /* behind cards (cards get z-index 10+) */
+    pointer-events: none;
+  }
+
+  .sc-heading-{{ section.id }} .sc-htitle {
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    color: {{ section.settings.heading_color }};
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.heading_transform }};
+    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
+    margin: 0 0 {{ section.settings.heading_gap }}px;
+    padding: 0;
+    text-align: {{ section.settings.heading_align }};
+    max-width: {{ section.settings.heading_max_width }}px;
+  }
+
+  .sc-heading-{{ section.id }} .sc-hsub {
+    font-size: {{ section.settings.subheading_size }}px;
+    font-weight: {{ section.settings.subheading_weight }};
+    color: {{ section.settings.subheading_color }};
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    text-align: {{ section.settings.heading_align }};
+    max-width: {{ section.settings.subheading_max_width }}px;
+  }
+
+  /* ── Scroll arrow ────────────────────────────────────── */
+  .sc-arrow-{{ section.id }} {
+    margin-top: {{ section.settings.arrow_gap }}px;
+    width: {{ section.settings.arrow_size }}px;
+    height: {{ section.settings.arrow_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    animation: sc-bounce-{{ section.id }} 1.8s ease-in-out infinite;
+  }
+
+  .sc-arrow-{{ section.id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: {{ section.settings.arrow_color }};
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  @keyframes sc-bounce-{{ section.id }} {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50%      { transform: translateY(8px); opacity: 1; }
+  }
+
+  /* ── Card stage (sits above heading via z-index) ─────── */
+  .sc-stage-{{ section.id }} {
+    position: relative;
+    width: {{ section.settings.card_width }};
+    max-width: {{ section.settings.card_max_width }}px;
+    height: calc(var(--sc-vh, 100vh) - {{ section.settings.sticky_top }}px - {{ section.settings.inner_padding | times: 2 }}px);
+    z-index: 1;
+  }
+
+  .sc-card-{{ section.id }} {
+    position: absolute;
+    inset: {{ section.settings.card_gap }}px;
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateY(100%);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.10);
+  }
+
+  .sc-card-{{ section.id }} img,
+  .sc-card-{{ section.id }} .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ section.settings.image_fit }};
+    display: block;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .sc-card-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    transition: background 0.32s ease;
+    pointer-events: none;
+  }
+
+  .sc-card-{{ section.id }}:hover::after {
+    background: rgba(0,0,0,{{ section.settings.hover_opacity | divided_by: 100.0 }});
+  }
+
+  .sc-card-{{ section.id }}[data-href] { cursor: pointer; }
+
+  /* ── Card label ──────────────────────────────────────── */
+  .sc-label-wrap-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: {{ sc_label_opacity }};
+  }
+
+  .sc-label-{{ section.id }} {
+    font-size: {{ section.settings.label_size }}px;
+    font-weight: {{ section.settings.label_weight }};
+    color: {{ section.settings.label_color }};
+    letter-spacing: {{ section.settings.label_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.label_transform }};
+    text-align: center;
+    line-height: 1.3;
+    padding: var(--sc-lpad, 0);
+    background: var(--sc-lbg, transparent);
+    border-radius: {{ section.settings.label_radius }}px;
+    backdrop-filter: var(--sc-lblur, none);
+    -webkit-backdrop-filter: var(--sc-lblur, none);
+  }
+{%- endstyle -%}
+
+<section class="sc-section-{{ section.id }}" id="sc-section-{{ section.id }}">
+  <div class="sc-pin-{{ section.id }}">
+
+    {%- comment -%}
+      Heading sits INSIDE the pin area, absolutely positioned to fill it.
+      Cards slide in on top (higher z-index). Heading stays in place behind.
+    {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'heading' -%}
+        <div class="sc-heading-{{ section.id }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading_text != blank -%}
+            <h2 class="sc-htitle">{{ block.settings.heading_text }}</h2>
+          {%- endif -%}
+          {%- if block.settings.subheading_text != blank -%}
+            <p class="sc-hsub">{{ block.settings.subheading_text }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.show_arrow -%}
+            <div class="sc-arrow-{{ section.id }}" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4v16M6 14l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} Cards stage — sits ABOVE the heading via z-index {%- endcomment -%}
+    <div class="sc-stage-{{ section.id }}" id="sc-stage-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'card' -%}
+          {%- assign has_bg = false -%}
+          {%- if block.settings.label_bg_color != blank -%}{%- assign has_bg = true -%}{%- endif -%}
+          <div
+            class="sc-card-{{ section.id }}"
+            {% if block.settings.link != blank %}data-href="{{ block.settings.link }}"{% endif %}
+            style="
+              {%- if has_bg -%}
+                --sc-lbg: {{ block.settings.label_bg_color }};
+                --sc-lpad: {{ section.settings.label_pad }}px {{ section.settings.label_pad | plus: 10 }}px;
+                {%- if section.settings.label_blur > 0 -%}--sc-lblur: blur({{ section.settings.label_blur }}px);{%- endif -%}
+              {%- endif -%}
+            "
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.image != blank -%}
+              <img
+                src="{{ block.settings.image | img_url: '2000x' }}"
+                alt="{{ block.settings.image.alt | default: block.settings.label | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                draggable="false"
+              >
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+            {%- if block.settings.label != blank -%}
+              <div class="sc-label-wrap-{{ section.id }}">
+                <span class="sc-label-{{ section.id }}">{{ block.settings.label }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  var SID        = '{{ section.id }}';
+  var SCALE_DOWN = parseFloat('{{ section.settings.scale_down }}') || 0.72;
+  var ROTATION   = parseFloat('{{ section.settings.rotation }}')   || 5;
+  var NAV_H      = {{ section.settings.sticky_top }};
+
+  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+  function lerp(a, b, t)    { return a + (b - a) * t; }
+
+  function setVH() {
+    document.documentElement.style.setProperty('--sc-vh', window.innerHeight + 'px');
+  }
+
+  function init() {
+    var section = document.getElementById('sc-section-' + SID);
+    var stage   = document.getElementById('sc-stage-'   + SID);
+    if (!section || !stage) return;
+
+    var cards = Array.from(stage.querySelectorAll('.sc-card-' + SID));
+    var n = cards.length;
+    if (n < 1) return;
+
+    setVH();
+    window.addEventListener('resize', function () {
+      setVH(); requestAnimationFrame(update);
+    }, { passive: true });
+
+    cards.forEach(function (card) {
+      if (card.dataset.href) {
+        card.addEventListener('click', function () {
+          window.location.href = card.dataset.href;
+        });
+      }
+    });
+
+    var ticking = false;
+
+    function update() {
+      ticking = false;
+      var rect     = section.getBoundingClientRect();
+      var pinH     = window.innerHeight - NAV_H;
+      var scrolled = -rect.top;
+
+      if (scrolled < 0 || scrolled > rect.height) return;
+
+      var gp = clamp(scrolled / pinH, 0, n);
+
+      cards.forEach(function (card, i) {
+        var inProg  = clamp(gp - i,       0, 1);
+        var outProg = clamp(gp - (i + 1), 0, 1);
+
+        var ty  = lerp(100, 0,          inProg);
+        var sc  = lerp(1,   SCALE_DOWN, outProg);
+        var rot = lerp(0,   ROTATION,   outProg);
+
+        /* Cards always above heading (heading has z:0) */
+        card.style.zIndex    = inProg > 0 ? 10 + n + i : 10 + n - i;
+        card.style.transform =
+          'translateY(' + ty.toFixed(2)  + '%) ' +
+          'scale('      + sc.toFixed(4)  + ') ' +
+          'rotate('     + rot.toFixed(2) + 'deg)';
+      });
+    }
+
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
+
+    requestAnimationFrame(update);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId === SID) init();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Sticky Card Stack",
+  "tag": "section",
+  "class": "section-sticky-cards",
+  "max_blocks": 9,
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Sits in the top empty area. When scrolled, cards slide in over it."
+        },
+        { "type": "text",     "id": "heading_text",    "label": "Heading",    "default": "Our Collection" },
+        { "type": "textarea", "id": "subheading_text", "label": "Subheading" }
+      ]
+    },
+    {
+      "type": "card",
+      "name": "Image card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url",          "id": "link",  "label": "Link URL", "info": "Clicking the card navigates here" },
+        { "type": "text",         "id": "label", "label": "Label text", "info": "Centered on the card" },
+        { "type": "color",        "id": "label_bg_color", "label": "Label background colour", "info": "Leave empty for transparent" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "header", "content": "Heading — position & size" },
+    {
+      "type": "range", "id": "heading_max_width", "label": "Heading max width",
+      "min": 400, "max": 1400, "step": 20, "unit": "px", "default": 900
+    },
+    {
+      "type": "select", "id": "heading_align", "label": "Text alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select", "id": "heading_align_flex", "label": "Block position",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center",     "label": "Center" },
+        { "value": "flex-end",   "label": "Right" }
+      ],
+      "default": "center"
+    },
+
+    { "type": "header", "content": "Heading — text style" },
+    {
+      "type": "range", "id": "heading_size", "label": "Heading size (max)",
+      "min": 24, "max": 140, "step": 2, "unit": "px", "default": 72,
+      "info": "Scales down responsively"
+    },
+    {
+      "type": "select", "id": "heading_weight", "label": "Heading weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "select", "id": "heading_transform", "label": "Heading case",
+      "options": [
+        { "value": "none",       "label": "Normal" },
+        { "value": "uppercase",  "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range", "id": "heading_spacing", "label": "Letter spacing",
+      "min": 0, "max": 30, "step": 1, "unit": "em", "default": 0,
+      "info": "Divided by 100 (5 = 0.05em)"
+    },
+    {
+      "type": "range", "id": "heading_line_height", "label": "Line height",
+      "min": 90, "max": 200, "step": 5, "unit": "%", "default": 115,
+      "info": "Divided by 100 (115 = 1.15)"
+    },
+    {
+      "type": "range", "id": "heading_gap", "label": "Gap below heading",
+      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 14
+    },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#111111" },
+
+    { "type": "header", "content": "Subheading" },
+    {
+      "type": "range", "id": "subheading_size", "label": "Size",
+      "min": 12, "max": 32, "step": 1, "unit": "px", "default": 17
+    },
+    {
+      "type": "select", "id": "subheading_weight", "label": "Weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range", "id": "subheading_max_width", "label": "Max width",
+      "min": 300, "max": 900, "step": 20, "unit": "px", "default": 580
+    },
+    { "type": "color", "id": "subheading_color", "label": "Colour", "default": "#666666" },
+
+    { "type": "header", "content": "Scroll arrow" },
+    {
+      "type": "checkbox", "id": "show_arrow", "label": "Show scroll arrow", "default": true
+    },
+    {
+      "type": "range", "id": "arrow_size", "label": "Arrow size",
+      "min": 16, "max": 64, "step": 2, "unit": "px", "default": 32
+    },
+    {
+      "type": "range", "id": "arrow_gap", "label": "Gap above arrow",
+      "min": 0, "max": 80, "step": 4, "unit": "px", "default": 28
+    },
+    { "type": "color", "id": "arrow_color", "label": "Arrow colour", "default": "#111111" },
+
+    { "type": "header", "content": "Card layout" },
+    {
+      "type": "select", "id": "card_width", "label": "Card width",
+      "options": [
+        { "value": "95%", "label": "95%" }, { "value": "85%", "label": "85%" },
+        { "value": "75%", "label": "75%" }, { "value": "65%", "label": "65%" },
+        { "value": "100%", "label": "Full" }
+      ],
+      "default": "85%"
+    },
+    {
+      "type": "range", "id": "card_max_width", "label": "Max card width",
+      "min": 400, "max": 1400, "step": 20, "unit": "px", "default": 900
+    },
+    {
+      "type": "range", "id": "inner_padding", "label": "Card vertical padding",
+      "min": 0, "max": 60, "step": 4, "unit": "px", "default": 16
+    },
+    {
+      "type": "range", "id": "sticky_top", "label": "Nav height offset",
+      "min": 0, "max": 200, "step": 4, "unit": "px", "default": 0,
+      "info": "Set to your theme header height"
+    },
+
+    { "type": "header", "content": "Card style" },
+    {
+      "type": "range", "id": "card_gap", "label": "Gap around card",
+      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12,
+      "info": "Space between the card edges and the section background"
+    },
+    {
+      "type": "range", "id": "card_radius", "label": "Corner radius",
+      "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20
+    },
+    {
+      "type": "select", "id": "image_fit", "label": "Image fit",
+      "options": [{ "value": "cover", "label": "Cover" }, { "value": "contain", "label": "Contain" }],
+      "default": "cover"
+    },
+    {
+      "type": "range", "id": "hover_opacity", "label": "Hover overlay darkness",
+      "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35
+    },
+
+    { "type": "header", "content": "Card label" },
+    { "type": "checkbox", "id": "show_labels", "label": "Show labels", "default": true },
+    {
+      "type": "range", "id": "label_size", "label": "Font size",
+      "min": 12, "max": 60, "step": 1, "unit": "px", "default": 22
+    },
+    {
+      "type": "select", "id": "label_weight", "label": "Weight",
+      "options": [
+        { "value": "300", "label": "Light" }, { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }, { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select", "id": "label_transform", "label": "Case",
+      "options": [
+        { "value": "none", "label": "Normal" }, { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range", "id": "label_spacing", "label": "Letter spacing",
+      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0,
+      "info": "Divided by 100"
+    },
+    { "type": "color", "id": "label_color", "label": "Text colour", "default": "#ffffff" },
+    {
+      "type": "range", "id": "label_radius", "label": "Background corner radius",
+      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 6
+    },
+    {
+      "type": "range", "id": "label_pad", "label": "Background padding",
+      "min": 0, "max": 32, "step": 2, "unit": "px", "default": 10
+    },
+    {
+      "type": "range", "id": "label_blur", "label": "Background blur",
+      "min": 0, "max": 20, "step": 1, "unit": "px", "default": 0,
+      "info": "Frosted glass effect"
+    },
+
+    { "type": "header", "content": "Animation" },
+    {
+      "type": "select", "id": "scale_down", "label": "Scale when card exits",
+      "options": [
+        { "value": "0.60", "label": "Dramatic" }, { "value": "0.68", "label": "Strong" },
+        { "value": "0.72", "label": "Medium" }, { "value": "0.80", "label": "Subtle" },
+        { "value": "0.90", "label": "Very subtle" }
+      ],
+      "default": "0.72"
+    },
+    {
+      "type": "select", "id": "rotation", "label": "Rotation when card exits",
+      "options": [
+        { "value": "0", "label": "None" }, { "value": "3", "label": "3deg" },
+        { "value": "5", "label": "5deg" }, { "value": "8", "label": "8deg" },
+        { "value": "12", "label": "12deg" }
+      ],
+      "default": "5"
+    },
+
+    { "type": "header", "content": "Background" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#f0efed" }
+  ],
+  "presets": [
+    {
+      "name": "Sticky Card Stack",
+      "blocks": [
+        { "type": "heading" },
+        { "type": "card" }, { "type": "card" }, { "type": "card" },
+        { "type": "card" }, { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

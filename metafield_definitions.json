@@ -1,0 +1,138 @@
+[
+  {
+    "namespace": "custom",
+    "key": "eyebrow_label",
+    "name": "Eyebrow Label",
+    "description": "Short uppercase label above product title (e.g. 'Extrait de Parfum')",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "short_description_tagline",
+    "name": "Short Description / Tagline",
+    "description": "1–2 sentence tagline shown below product title",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "poetry_lines",
+    "name": "Poetry Lines",
+    "description": "Multi-line poetic copy displayed in italic block below tagline",
+    "type": "multi_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "notes_json",
+    "name": "Fragrance Notes (JSON)",
+    "description": "Array of note objects. Format: [{\"name\":\"Bergamot\",\"tier\":\"top\",\"image\":\"\"},{\"name\":\"Oud\",\"tier\":\"base\",\"image\":\"\"}]. tier values: top | heart | base",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "trust_pills",
+    "name": "Trust Pills (JSON)",
+    "description": "Array of badge objects. Format: [{\"label\":\"Cruelty-Free\"},{\"label\":\"IFRA Compliant\"}]",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "badges",
+    "name": "Product Badges (JSON)",
+    "description": "Overlay badges on gallery image. Format: [{\"label\":\"New\",\"color\":\"#fff\"},{\"label\":\"Bestseller\",\"color\":\"#gold\"}]. color is optional CSS color.",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "custom_label",
+    "name": "Gallery Custom Label",
+    "description": "Short text overlaid on the main product gallery image (e.g. 'Limited Edition')",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "top_highlight",
+    "name": "Top Highlight Bar",
+    "description": "Single line shown in a prominent highlight bar below poetry (e.g. 'Lasts 12+ hours on skin')",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "heart_icon_text",
+    "name": "Heart Icon Text",
+    "description": "Short line shown with a heart icon accent below top_highlight bar",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "highlights",
+    "name": "Product Highlights (JSON)",
+    "description": "Icon + text highlight rows. Format: [{\"icon\":\"★\",\"text\":\"Long-lasting sillage\"},{\"icon\":\"◈\",\"text\":\"Skin-safe formula\"}]",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "feature_list",
+    "name": "Feature List (JSON)",
+    "description": "Feature cards shown in a grid. Format: [{\"icon\":\"✦\",\"title\":\"Natural Ingredients\",\"desc\":\"100% natural essential oils, no synthetics\"},{\"icon\":\"◎\",\"title\":\"IFRA Compliant\",\"desc\":\"Internationally certified safe formula\"}]",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "banner_text",
+    "name": "Banner Strip Text",
+    "description": "Full-width text strip shown above tabs (e.g. 'Free shipping on orders above ₹1999')",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "custom_tabs",
+    "name": "Custom Tabs (JSON)",
+    "description": "Additional tabs appended to the product tab bar. Format: [{\"label\":\"Ingredients\",\"content\":\"<p>Full ingredients list…</p>\"},{\"label\":\"Certifications\",\"content\":\"<p>…</p>\"}]. content supports HTML.",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "faq",
+    "name": "FAQ Items (JSON)",
+    "description": "FAQ accordion items. Format: [{\"q\":\"How long does it last?\",\"a\":\"Typically 8–12 hours on skin.\"},{\"q\":\"Is it vegan?\",\"a\":\"Yes, all formulas are 100% vegan.\"}]",
+    "type": "json",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "base_block",
+    "name": "Base Block (Rich Text)",
+    "description": "Rich text content block rendered after the tabs section. Good for editorial copy, brand story excerpt, or legal disclaimers.",
+    "type": "rich_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "tagline",
+    "name": "Card Tagline",
+    "description": "Short tagline shown on product cards in collection/featured grids (not the same as short_description_tagline on PDP)",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  },
+  {
+    "namespace": "custom",
+    "key": "size",
+    "name": "Size Label",
+    "description": "Size string shown on product cards (e.g. '50ml | 1.7 oz'). Falls back to volume_label section setting.",
+    "type": "single_line_text_field",
+    "owner_type": "PRODUCT"
+  }
+]

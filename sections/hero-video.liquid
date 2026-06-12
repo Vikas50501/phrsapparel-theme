@@ -1,0 +1,191 @@
+{% style %}
+  #shopify-section-{{ section.id }} .hero-video {
+    {% if section.settings.custom_css != blank %}{{ section.settings.custom_css }}{% endif %}
+  }
+{% endstyle %}
+
+<section class="hero-video">
+  <div class="hero-video__media">
+    {%- if section.settings.video_url != blank -%}
+      <video
+        src="{{ section.settings.video_url }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      ></video>
+    {%- elsif section.settings.video_shopify != blank -%}
+      {{- section.settings.video_shopify | external_video_tag: autoplay: true, muted: true, loop: true, playsinline: true -}}
+    {%- elsif section.settings.fallback_image != blank -%}
+      {{ section.settings.fallback_image | image_url: width: 1920 | image_tag:
+        alt: section.settings.fallback_image.alt,
+        loading: 'eager',
+        style: 'width:100%;height:100%;object-fit:cover;' }}
+    {%- endif -%}
+  </div>
+
+  <div class="hero-video__content">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="text-eyebrow hero-video__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <{{ section.settings.heading_size }} class="hero-video__title">
+        {{ section.settings.heading }}
+      </{{ section.settings.heading_size }}>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="hero-video__intro">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank or section.settings.button_label_2 != blank -%}
+      <div class="hero-video__cta">
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_url | default: '/collections/all' }}" class="btn btn-primary">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.button_label_2 != blank -%}
+          <a href="{{ section.settings.button_url_2 | default: '/pages/story' }}" class="btn">
+            {{ section.settings.button_label_2 }}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_sound_toggle -%}
+    <button class="hero-video__sound" aria-label="Toggle sound">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+    </button>
+  {%- endif -%}
+
+  {%- if section.settings.show_scroll_hint -%}
+    <div class="hero-video__scroll" aria-hidden="true">
+      Scroll
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero — Video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL (MP4)",
+      "info": "Paste a direct .mp4 URL. Recommended: 1080p, under 15MB. This video from the source: https://pillowta.com/cdn/shop/videos/c/vp/8125c58593a4466aa03eeaa399ac7055/8125c58593a4466aa03eeaa399ac7055.HD-1080p-7.2Mbps-66021104.mp4"
+    },
+    {
+      "type": "video",
+      "id": "video_shopify",
+      "label": "Or upload video to Shopify Files",
+      "info": "Alternative to external URL — upload via Content → Files in Shopify Admin."
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback image (shown if video fails to load)"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Album 01 — Out now"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>Some things<br>are felt, <em>not said.</em></p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Fragrance for the moments too personal, too complex, too profound for words. Three extraits, three states of mind."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Primary button label",
+      "default": "Shop the album"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Primary button URL"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Secondary button label",
+      "default": "Our story"
+    },
+    {
+      "type": "url",
+      "id": "button_url_2",
+      "label": "Secondary button URL"
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sound_toggle",
+      "label": "Show sound toggle button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_hint",
+      "label": "Show scroll hint",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "custom_css",
+      "label": "Custom CSS"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero — Video"
+    }
+  ]
+}
+{% endschema %}

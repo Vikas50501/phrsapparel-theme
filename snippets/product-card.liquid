@@ -1,0 +1,19 @@
+{%- liquid
+  assign card_product = product
+  assign card_tagline = card_product.metafields.custom.tagline.value
+-%}
+<a href="{{ card_product.url }}" class="product-card">
+  <div class="product-card__image">
+    {{ card_product.featured_image | image_url: width: 600 | image_tag:
+      alt: card_product.featured_image.alt | default: card_product.title,
+      loading: 'lazy',
+      sizes: '(min-width: 768px) 33vw, 100vw' }}
+  </div>
+  <div class="product-card__info">
+    <h3>{{ card_product.title }}</h3>
+    {%- if card_tagline != blank -%}
+      <p class="tagline">{{ card_tagline }}</p>
+    {%- endif -%}
+    <p class="text-eyebrow" style="margin-top:1rem;">{{ card_product.price | money }} &middot; 50ml | 1.7 oz</p>
+  </div>
+</a>

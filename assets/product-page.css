@@ -1,0 +1,1285 @@
+/* ===== KUSHI PRODUCT PAGE — SCOPED CSS ===== */
+/* All rules prefixed with .template-product to avoid bleeding into other pages */
+
+.template-product {
+  --kushi-font: Helvetica, "Helvetica Neue", Arial, sans-serif;
+  --kushi-base-size: 14px;
+  --kushi-heading-weight: 600;
+  --kushi-body-weight: 400;
+  --kushi-weight-medium: 500;
+  --kushi-weight-semi: 600;
+  --kushi-weight-regular: 400;
+  --kushi-h1-size: 40px;
+  --kushi-h2-size: 30px;
+  --kushi-h3-size: 26px;
+  --kushi-h4-size: 22px;
+  --kushi-h5-size: 18px;
+  --kushi-fg: 18, 18, 18;
+  --kushi-bg: 255, 255, 255;
+  --kushi-border: 18, 18, 18;
+  --kushi-border-opacity: 0.08;
+  --kushi-btn: 18, 18, 18;
+  --kushi-btn-text: 255, 255, 255;
+  --kushi-hover-btn: 18, 18, 18;
+  --kushi-btn-hover-text: 255, 255, 255;
+  --kushi-secondary-btn: 245, 245, 245;
+  --kushi-link-hover: 119, 119, 119;
+  --kushi-buttons-radius: 30px;
+  --kushi-media-radius: 0px;
+  --kushi-pill-radius: 10px;
+  --kushi-pill-border-width: 1px;
+  --kushi-pill-border-opacity: 0.15;
+  --kushi-page-width: 1440px;
+  --kushi-grid-spacing: 20px;
+  --kushi-duration: 0.3s;
+
+  /* Base typography for the product page (matches original Kushi body) */
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-body-weight);
+  line-height: 1.6;
+  color: rgb(var(--kushi-fg));
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Box-sizing reset scoped to product page only */
+.template-product,
+.template-product *,
+.template-product *::before,
+.template-product *::after {
+  box-sizing: border-box;
+}
+
+/* ===== BREADCRUMB ===== */
+.template-product .kushi-breadcrumb {
+  padding: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  color: rgba(var(--kushi-fg), 0.5);
+}
+.template-product .kushi-breadcrumb a {
+  color: rgba(var(--kushi-fg), 0.5);
+  text-decoration: none;
+  transition: all var(--kushi-duration) linear;
+}
+.template-product .kushi-breadcrumb a:hover {
+  color: rgba(var(--kushi-fg), 0.8);
+}
+.template-product .kushi-breadcrumb__sep {
+  display: flex;
+  align-items: center;
+}
+.template-product .kushi-breadcrumb__sep svg {
+  width: 10px;
+  height: 10px;
+  fill: rgba(var(--kushi-fg), 0.35);
+}
+.template-product .kushi-breadcrumb span:last-child {
+  color: rgb(var(--kushi-fg));
+}
+
+/* ===== PRODUCT SECTION ===== */
+.template-product .kushi-product-section {
+  padding: 0;
+  font-family: var(--kushi-font);
+}
+.template-product .kushi-product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+@media (max-width: 989px) {
+  .template-product .kushi-product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== PRODUCT MEDIA (Left Side) ===== */
+.template-product .kushi-media-wrapper {
+  position: relative;
+}
+.template-product .kushi-media-gallery {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 10px;
+  align-items: flex-start;
+}
+.template-product .kushi-media-gallery__main {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  aspect-ratio: 3 / 4;
+}
+.template-product .kushi-media-gallery__main img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+.template-product .kushi-thumbnail-slider {
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.template-product .kushi-thumbnail-slider::-webkit-scrollbar {
+  display: none;
+}
+.template-product .kushi-thumbnail-slider__item {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid rgba(var(--kushi-border), var(--kushi-border-opacity));
+  transition: all var(--kushi-duration) linear;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+.template-product .kushi-thumbnail-slider__item:hover {
+  opacity: 0.7;
+}
+.template-product .kushi-thumbnail-slider__item.active {
+  border-color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-thumbnail-slider__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (min-width: 990px) {
+  .template-product .kushi-media-wrapper {
+    position: sticky;
+    top: 30px;
+    align-self: flex-start;
+  }
+  /* Thumbnails track the 3:4 image height and scroll if there are extras */
+  .template-product .kushi-media-gallery {
+    position: relative;
+  }
+  .template-product .kushi-media-gallery__main {
+    margin-left: 110px; /* 100px thumbs + 10px gap */
+  }
+  .template-product .kushi-thumbnail-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100px;
+  }
+}
+@media (max-width: 989px) {
+  .template-product .kushi-media-gallery {
+    flex-direction: column;
+  }
+  .template-product .kushi-thumbnail-slider {
+    width: 100%;
+    flex-direction: row;
+    order: 2;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+  }
+  .template-product .kushi-thumbnail-slider::-webkit-scrollbar {
+    display: none;
+  }
+  .template-product .kushi-thumbnail-slider__item {
+    width: calc(25% - 8px);
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 749px) {
+  .template-product .kushi-thumbnail-slider__item {
+    width: calc(33.33% - 7px);
+  }
+}
+
+/* ===== PRODUCT INFO (Right Side) ===== */
+.template-product .kushi-info-wrapper {
+  padding-left: 55px;
+  font-family: var(--kushi-font);
+}
+@media (max-width: 1199px) {
+  .template-product .kushi-info-wrapper {
+    padding-left: 0;
+    padding-top: 30px;
+  }
+}
+.template-product .kushi-info-container > * + * {
+  margin-top: 20px;
+}
+
+/* Title */
+.template-product .kushi-product-title h2 {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h1-size);
+  font-weight: var(--kushi-heading-weight);
+  text-transform: capitalize;
+  text-wrap: balance;
+  margin: 0;
+  line-height: 1.15;
+}
+
+/* Price */
+.template-product .kushi-price-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--kushi-grid-spacing);
+  flex-wrap: wrap;
+}
+.template-product .kushi-price__sale {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.template-product .kushi-price-item--sale {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h2-size);
+  font-weight: var(--kushi-weight-regular);
+  color: rgb(var(--kushi-btn));
+  line-height: normal;
+  letter-spacing: 0;
+}
+.template-product .kushi-price-item--regular {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h4-size);
+  font-weight: 500;
+  text-decoration: line-through;
+  color: rgba(var(--kushi-fg), 0.45);
+  line-height: normal;
+}
+.template-product .kushi-badge--sale {
+  display: inline-block;
+  background: green;
+  color: white;
+  padding: 4px 8px;
+  font-size: calc(var(--kushi-base-size) - 4px);
+  font-weight: 600;
+  border-radius: 3px;
+  line-height: normal;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* SKU */
+.template-product .kushi-sku {
+  display: flex;
+  align-items: center;
+  line-height: normal;
+}
+.template-product .kushi-sku .kushi-product-label {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  color: rgba(var(--kushi-fg), 0.6);
+  margin: 0;
+}
+.template-product .kushi-sku .kushi-attributes-value {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-heading-weight);
+  color: rgb(var(--kushi-fg));
+}
+
+/* Description text */
+.template-product .kushi-product-text {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  line-height: 1.75;
+  color: rgba(var(--kushi-fg), 0.7);
+  margin: 15px 0 0;
+}
+
+/* Review stars (Judge.me preview badge) */
+.template-product .kushi-review-badge {
+  margin: 10px 0 4px;
+}
+.template-product .kushi-review-badge .jdgm-prev-badge__text {
+  font-family: var(--kushi-font);
+}
+/* Judge.me star-font fix — the scoped Helvetica was overriding the
+   star glyph font, making stars render as empty boxes. Force the
+   JudgemeStar icon font back on the star elements. */
+.template-product .jdgm-star,
+.template-product .jdgm-star::before,
+.template-product .jdgm-star::after {
+  font-family: 'JudgemeStar' !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+  speak: never;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== VARIANT PICKER ===== */
+.template-product .kushi-form-input {
+  padding: 0;
+  border: none;
+  margin-bottom: 20px;
+}
+.template-product .kushi-form-input .kushi-form-label {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  color: rgba(var(--kushi-fg), 0.6);
+  line-height: normal;
+  margin-bottom: 6px;
+  display: block;
+  text-transform: capitalize;
+}
+.template-product .kushi-form-label span {
+  font-weight: var(--kushi-heading-weight);
+  color: rgb(var(--kushi-fg));
+}
+
+/* Size chart trigger (sits beside the Size label) */
+.template-product .kushi-form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.template-product .kushi-form-label-row .kushi-form-label {
+  margin-bottom: 0;
+}
+.template-product .kushi-size-chart-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-family: var(--kushi-font);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(var(--kushi-fg), 0.7);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--kushi-duration) linear;
+}
+.template-product .kushi-size-chart-btn:hover {
+  color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-size-chart-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ===== SIZE CHART MODAL ===== */
+.template-product .kushi-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.template-product .kushi-modal-overlay.is-open {
+  display: flex;
+}
+.template-product .kushi-modal {
+  background: #fff;
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  border-radius: 4px;
+}
+.template-product .kushi-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-modal__title {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h4-size);
+  font-weight: var(--kushi-heading-weight);
+  margin: 0 0 20px;
+  text-transform: capitalize;
+}
+.template-product .kushi-modal__body {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  line-height: 1.7;
+  color: rgba(var(--kushi-fg), 0.8);
+}
+.template-product .kushi-modal__body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 16px;
+}
+.template-product .kushi-modal__body th,
+.template-product .kushi-modal__body td {
+  border: 1px solid rgba(var(--kushi-border), 0.15);
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 13px;
+}
+.template-product .kushi-modal__body th {
+  font-weight: var(--kushi-heading-weight);
+  background: rgba(var(--kushi-fg), 0.03);
+}
+.template-product .kushi-modal__body img {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 749px) {
+  .template-product .kushi-modal {
+    padding: 24px 16px;
+  }
+}
+
+/* Color Swatches */
+.template-product .kushi-swatch-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.template-product .kushi-swatch-element {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 12px 2px 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--kushi-border), var(--kushi-border-opacity));
+  transition: all var(--kushi-duration) linear;
+  cursor: pointer;
+}
+.template-product .kushi-swatch-element.active {
+  box-shadow: 0 0 0 1px rgb(var(--kushi-fg));
+}
+.template-product .kushi-swatch-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: block;
+  border: 1px solid rgba(var(--kushi-fg), 0.1);
+}
+
+/* Image swatches — variant product photo inside a box */
+.template-product .kushi-swatch-element.has-image {
+  width: 58px;
+  height: 58px;
+  border-radius: 6px;
+  margin: 10px 10px 2px 0;
+  padding: 2px;
+  background: #fff;
+  overflow: hidden;
+}
+.template-product .kushi-swatch-element.has-image:hover {
+  border-color: rgba(var(--kushi-fg), 0.4);
+}
+.template-product .kushi-swatch-element.has-image.active {
+  border-color: rgb(var(--kushi-fg));
+  box-shadow: 0 0 0 2px rgb(var(--kushi-fg));
+}
+.template-product .kushi-swatch-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 4px;
+  background-color: var(--kushi-surface, #f5f5f5);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 749px) {
+  .template-product .kushi-swatch-element.has-image {
+    width: 50px;
+    height: 50px;
+  }
+}
+.template-product .kushi-swatch-element .kushi-tooltip {
+  border-radius: var(--kushi-buttons-radius);
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  padding: 5px 15px;
+  left: 50%;
+  transform: translateY(-8px) translateX(-50%);
+  bottom: 100%;
+  white-space: nowrap;
+  visibility: hidden;
+  z-index: 100;
+  background: rgb(var(--kushi-btn));
+  color: rgb(var(--kushi-btn-text));
+  font-family: var(--kushi-font);
+  font-size: 10px;
+  line-height: normal;
+  transition: all var(--kushi-duration) linear;
+}
+.template-product .kushi-swatch-element .kushi-tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: 6px solid rgb(var(--kushi-btn));
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+.template-product .kushi-swatch-element:hover .kushi-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-4px) translateX(-50%);
+}
+
+/* Size Variant Pills */
+.template-product .kushi-variant-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.template-product .kushi-variant-pill {
+  border: var(--kushi-pill-border-width) solid rgba(var(--kushi-border), var(--kushi-pill-border-opacity));
+  margin: 10px 10px 0 0;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.3s linear;
+  border-radius: var(--kushi-pill-radius);
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-variant-pill:hover,
+.template-product .kushi-variant-pill.active {
+  border-color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-variant-pill.active {
+  background: rgb(var(--kushi-fg));
+  color: rgb(var(--kushi-bg));
+}
+.template-product .kushi-variant-pill.disabled {
+  border-color: rgba(var(--kushi-fg), 0.1);
+  color: rgba(var(--kushi-fg), 0.4);
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
+/* ===== INVENTORY / STOCK ===== */
+.template-product .kushi-inventory {
+  margin: 0;
+}
+.template-product .kushi-stock-text {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: 600;
+  color: rgb(var(--kushi-fg));
+  margin: 0 0 12px;
+  line-height: 1.3;
+}
+.template-product .kushi-inventory-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(var(--kushi-border), 0.12);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.template-product .kushi-inventory-bar__fill {
+  height: 100%;
+  border-radius: 10px;
+  background: rgb(var(--kushi-fg));
+  transition: width 0.4s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ===== DYNAMIC CHECKOUT (Buy with Shop / more options) ===== */
+.template-product .kushi-payment-buttons {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.template-product .kushi-payment-buttons .shopify-payment-button__button {
+  border-radius: var(--kushi-buttons-radius) !important;
+  min-height: 54px;
+  font-family: var(--kushi-font) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em;
+}
+/* Shop Pay web-component button radius */
+.template-product .kushi-payment-buttons shop-pay-button {
+  --shop-pay-button-border-radius: var(--kushi-buttons-radius);
+  border-radius: var(--kushi-buttons-radius);
+  overflow: hidden;
+}
+/* "More payment options" link */
+.template-product .kushi-payment-buttons .shopify-payment-button__more-options {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--kushi-font);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(var(--kushi-fg), 0.6);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-align: center;
+  transition: color var(--kushi-duration) linear;
+}
+.template-product .kushi-payment-buttons .shopify-payment-button__more-options:hover {
+  color: rgb(var(--kushi-fg));
+}
+
+/* ===== QUANTITY + BUTTONS ===== */
+.template-product .kushi-buttons-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0 0 15px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+.template-product .kushi-quantity {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(var(--kushi-border), 0.1);
+  border-radius: var(--kushi-buttons-radius);
+  overflow: hidden;
+  height: 54px;
+  flex-shrink: 0;
+}
+.template-product .kushi-quantity__button {
+  width: 44px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--kushi-fg));
+  transition: all var(--kushi-duration) linear;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--kushi-font);
+}
+.template-product .kushi-quantity__button:hover {
+  background: rgba(var(--kushi-fg), 0.04);
+}
+.template-product .kushi-quantity__button svg {
+  width: 14px;
+  height: 14px;
+}
+.template-product .kushi-quantity__input {
+  width: 44px;
+  height: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: 500;
+  color: rgb(var(--kushi-fg));
+  -moz-appearance: textfield;
+  outline: none;
+}
+.template-product .kushi-quantity__input::-webkit-inner-spin-button,
+.template-product .kushi-quantity__input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Add to Cart */
+.template-product .kushi-btn-atc {
+  flex: 1;
+  min-width: 160px;
+  min-height: 54px;
+  padding: 0 30px;
+  background: rgb(var(--kushi-btn));
+  color: rgb(var(--kushi-btn-text));
+  border: 2px solid rgb(var(--kushi-btn));
+  border-radius: var(--kushi-buttons-radius);
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-heading-weight);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: all var(--kushi-duration) linear;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.template-product .kushi-btn-atc:hover {
+  background: transparent;
+  color: rgb(var(--kushi-btn));
+}
+.template-product .kushi-btn-atc:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Wishlist / Compare */
+.template-product .kushi-comp-wish {
+  display: flex;
+  gap: 15px;
+}
+.template-product .kushi-comp-wish__btn {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--kushi-border), 0.09);
+  transition: all var(--kushi-duration) linear;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: transparent;
+}
+.template-product .kushi-comp-wish__btn:hover {
+  background: rgb(var(--kushi-hover-btn));
+  border-color: rgb(var(--kushi-hover-btn));
+  color: rgb(var(--kushi-btn-hover-text));
+}
+.template-product .kushi-comp-wish__btn:hover svg {
+  stroke: rgb(var(--kushi-btn-hover-text));
+}
+.template-product .kushi-comp-wish__btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: rgb(var(--kushi-fg));
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* Buy Now */
+.template-product .kushi-btn-buy-now {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 30px;
+  background: rgba(var(--kushi-secondary-btn));
+  color: rgb(var(--kushi-fg));
+  border: none;
+  border-radius: var(--kushi-buttons-radius);
+  font-family: var(--kushi-font);
+  font-size: calc(var(--kushi-base-size) - 2px);
+  font-weight: var(--kushi-heading-weight);
+  letter-spacing: 0.07em;
+  transition: all var(--kushi-duration) linear;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.template-product .kushi-btn-buy-now:hover {
+  background: rgb(var(--kushi-btn));
+  color: rgb(var(--kushi-btn-text));
+}
+
+/* ===== HTML SECTIONS (Shipping / Delivery) ===== */
+.template-product .kushi-html-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.template-product .kushi-html-section svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: rgb(var(--kushi-fg));
+  margin-top: 2px;
+}
+.template-product .kushi-html-section p {
+  margin: 0;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  color: rgb(var(--kushi-fg));
+  line-height: 1.6;
+}
+.template-product .kushi-html-section p b {
+  font-weight: var(--kushi-weight-medium);
+}
+.template-product .kushi-html-section + .kushi-html-section {
+  margin-top: 10px !important;
+}
+
+/* ===== PAYMENT BADGES ===== */
+.template-product .kushi-payment {
+  background: rgba(var(--kushi-fg), 0.03);
+  border: 1px solid rgba(var(--kushi-border), var(--kushi-border-opacity));
+  border-radius: var(--kushi-media-radius);
+  padding: 34px 20px;
+  margin-top: 40px;
+  position: relative;
+}
+.template-product .kushi-list-payment {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.template-product .kushi-list-payment__item {
+  display: flex;
+  align-items: center;
+}
+.template-product .kushi-list-payment__item svg {
+  width: 48px;
+  height: 32px;
+}
+.template-product .kushi-payment-text {
+  text-align: center;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-heading-weight);
+  margin: 14px 0 0;
+}
+
+/* ===== PRODUCT TABS (Bottom) ===== */
+.template-product .kushi-tabs-section {
+  margin-top: 80px;
+  margin-bottom: 40px;
+  padding: 25px;
+  border: 1px solid rgba(var(--kushi-fg), 0.1);
+}
+.template-product .kushi-tabs__nav {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+.template-product .kushi-tabs__btn {
+  padding: 12px 30px;
+  border: 1px solid rgba(var(--kushi-fg), 0.1);
+  border-radius: var(--kushi-buttons-radius);
+  background: transparent;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-weight-medium);
+  color: rgb(var(--kushi-fg));
+  cursor: pointer;
+  transition: all var(--kushi-duration) linear;
+  text-transform: capitalize;
+  line-height: normal;
+  position: relative;
+  overflow: hidden;
+}
+.template-product .kushi-tabs__btn:hover,
+.template-product .kushi-tabs__btn.active {
+  border-color: rgb(var(--kushi-fg));
+}
+.template-product .kushi-tabs__btn.active {
+  color: rgb(var(--kushi-btn));
+  font-weight: var(--kushi-heading-weight);
+}
+.template-product .kushi-tabs__panel {
+  display: none;
+  padding: 30px 0 0;
+}
+.template-product .kushi-tabs__panel.active {
+  display: block;
+}
+
+/* Tab: Description rich layout */
+.template-product .kushi-desc-layout {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+}
+.template-product .kushi-desc-layout__content {
+  flex: 1;
+  min-width: 0;
+}
+.template-product .kushi-desc-layout__image {
+  width: 420px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.template-product .kushi-desc-layout__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.template-product .kushi-desc-heading {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h3-size);
+  font-weight: var(--kushi-heading-weight);
+  margin: 0 0 16px;
+}
+.template-product .kushi-desc-text {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  line-height: 1.85;
+  color: rgba(var(--kushi-fg), 0.65);
+  margin: 0 0 30px;
+}
+.template-product .kushi-desc-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+.template-product .kushi-desc-two-col__heading {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h4-size);
+  font-weight: var(--kushi-heading-weight);
+  margin: 0 0 18px;
+}
+.template-product .kushi-desc-icon-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.template-product .kushi-desc-icon-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  line-height: 1.4;
+  color: rgba(var(--kushi-fg), 0.75);
+  margin-bottom: 16px;
+}
+.template-product .kushi-desc-icon-list li:last-child {
+  margin-bottom: 0;
+}
+.template-product .kushi-desc-icon-list li svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: rgba(var(--kushi-fg), 0.65);
+}
+.template-product .kushi-desc-icon-list li .kushi-icon-check {
+  color: #3a9e3f;
+}
+.template-product .kushi-desc-quality {
+  margin-top: 40px;
+  padding-top: 20px;
+}
+.template-product .kushi-desc-quality .kushi-desc-heading {
+  margin-bottom: 12px;
+}
+
+/* Tab: Shipping */
+.template-product .kushi-shipping-content {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  line-height: 1.85;
+  color: rgba(var(--kushi-fg), 0.65);
+}
+.template-product .kushi-shipping-content p {
+  margin: 0 0 16px;
+}
+
+/* Tab: Reviews */
+.template-product .kushi-reviews-content .kushi-review-item {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(var(--kushi-fg), 0.06);
+}
+.template-product .kushi-reviews-content .kushi-review-item:last-child {
+  border-bottom: none;
+}
+.template-product .kushi-review-stars {
+  color: #f5a623;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+.template-product .kushi-review-author {
+  font-family: var(--kushi-font);
+  font-weight: var(--kushi-heading-weight);
+  margin-right: 8px;
+}
+.template-product .kushi-review-text {
+  font-family: var(--kushi-font);
+  color: rgba(var(--kushi-fg), 0.65);
+  line-height: 1.75;
+  margin-top: 6px;
+}
+
+/* ===== JUDGE.ME REVIEWS — match Kushi theme ===== */
+.template-product .kushi-reviews-content .jdgm-widget,
+.template-product .kushi-reviews-content .jdgm-widget * {
+  font-family: var(--kushi-font);
+}
+.template-product .kushi-reviews-content .jdgm-rev-widg__title,
+.template-product .kushi-reviews-content .jdgm-all-reviews__header,
+.template-product .kushi-reviews-content .jdgm-all-reviews-widget-v2025 h2 {
+  font-family: var(--kushi-font);
+  font-weight: var(--kushi-heading-weight);
+  color: rgb(var(--kushi-fg));
+  letter-spacing: 0;
+}
+/* Links */
+.template-product .kushi-reviews-content a {
+  color: rgb(var(--kushi-fg));
+}
+/* Buttons (write review / pagination / load more) → theme pill */
+.template-product .kushi-reviews-content .jdgm-write-rev-link,
+.template-product .kushi-reviews-content .jdgm-paginate__page,
+.template-product .kushi-reviews-content .jdgm-btn,
+.template-product .kushi-reviews-content .jdgm-all-reviews-widget-v2025 button {
+  font-family: var(--kushi-font) !important;
+  border-radius: var(--kushi-buttons-radius) !important;
+  letter-spacing: 0.04em;
+}
+.template-product .kushi-reviews-content .jdgm-write-rev-link {
+  background: rgb(var(--kushi-btn)) !important;
+  color: rgb(var(--kushi-btn-text)) !important;
+  border: 1px solid rgb(var(--kushi-btn)) !important;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+  transition: opacity var(--kushi-duration) linear;
+}
+.template-product .kushi-reviews-content .jdgm-write-rev-link:hover {
+  opacity: 0.85;
+}
+/* Keep the Judge.me star glyph font (overrides the scoped Helvetica) */
+.template-product .kushi-reviews-content .jdgm-star {
+  font-family: 'JudgemeStar' !important;
+}
+
+@media (max-width: 989px) {
+  .template-product .kushi-desc-layout {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .template-product .kushi-desc-layout__image {
+    width: 100%;
+    max-height: 400px;
+  }
+  .template-product .kushi-desc-two-col {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .template-product .kushi-tabs-section {
+    padding: 15px;
+  }
+}
+@media (max-width: 749px) {
+  .template-product .kushi-tabs__nav {
+    gap: 10px;
+  }
+  .template-product .kushi-tabs__btn {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  .template-product .kushi-tabs-section {
+    margin-top: 50px;
+    margin-bottom: 40px;
+  }
+}
+@media (max-width: 576px) {
+  .template-product .kushi-desc-heading {
+    font-size: 20px;
+  }
+}
+
+/* ===== RECENTLY VIEWED ===== */
+/* Media Banner (video / image) */
+.template-product .kushi-media-banner {
+  padding: 40px 0;
+}
+.template-product .kushi-media-banner__inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+  border-radius: var(--kushi-media-radius);
+}
+.template-product .kushi-media-banner__inner img,
+.template-product .kushi-media-banner__inner video,
+.template-product .kushi-media-banner__inner iframe,
+.template-product .kushi-media-banner__inner .video-wrapper,
+.template-product .kushi-media-banner__inner deferred-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: 0;
+}
+/* Keep landscape (16:9) on mobile too */
+@media (max-width: 749px) {
+  .template-product .kushi-media-banner {
+    padding: 24px 0;
+  }
+  .template-product .kushi-media-banner__inner {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Shop The New Arrivals */
+.template-product .kushi-new-arrivals {
+  padding: 40px 0 20px;
+}
+.template-product .kushi-new-arrivals__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.template-product .kushi-new-arrivals__heading {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h2-size);
+  font-weight: var(--kushi-heading-weight);
+  margin: 0;
+}
+.template-product .kushi-new-arrivals__link {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-weight-medium);
+  color: rgb(var(--kushi-fg));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  transition: color var(--kushi-duration) linear;
+}
+.template-product .kushi-new-arrivals__link:hover {
+  color: rgba(var(--kushi-fg), 0.6);
+}
+@media (max-width: 749px) {
+  .template-product .kushi-new-arrivals__heading {
+    font-size: 22px;
+  }
+}
+
+.template-product .kushi-recently-viewed {
+  padding: 20px 0 60px;
+}
+.template-product .kushi-recently-viewed__heading {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-h2-size);
+  font-weight: var(--kushi-heading-weight);
+  text-align: left;
+  margin-bottom: 40px;
+}
+.template-product .kushi-product-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 989px) {
+  .template-product .kushi-product-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .template-product .kushi-product-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+.template-product .kushi-product-card {
+  position: relative;
+}
+.template-product .kushi-product-card a {
+  text-decoration: none;
+  color: inherit;
+}
+.template-product .kushi-product-card__image {
+  background: #f5f5f5;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  position: relative;
+}
+.template-product .kushi-product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.template-product .kushi-product-card:hover .kushi-product-card__image img {
+  transform: scale(1.05);
+}
+.template-product .kushi-product-card__info {
+  padding: 14px 0 0;
+}
+.template-product .kushi-product-card__title {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-weight-medium);
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+.template-product .kushi-product-card__price {
+  font-family: var(--kushi-font);
+  font-size: var(--kushi-base-size);
+  font-weight: var(--kushi-heading-weight);
+}
+.template-product .kushi-product-card__price s {
+  color: rgba(var(--kushi-fg), 0.45);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 749px) {
+  .template-product .kushi-product-title h2 {
+    font-size: 26px;
+  }
+  .template-product .kushi-price-item--sale {
+    font-size: 22px;
+  }
+  .template-product .kushi-price-item--regular {
+    font-size: 16px;
+  }
+  .template-product .kushi-buttons-row {
+    flex-wrap: wrap;
+  }
+  .template-product .kushi-btn-atc {
+    min-width: 100%;
+  }
+  .template-product .kushi-payment {
+    padding: 20px 12px;
+    margin-top: 20px;
+  }
+}
+@media (max-width: 480px) {
+  .template-product .kushi-comp-wish__btn {
+    width: 46px;
+    height: 46px;
+  }
+  .template-product .kushi-quantity {
+    height: 46px;
+  }
+  .template-product .kushi-btn-atc {
+    min-height: 46px;
+  }
+}
+
+/* ===== PAGE WIDTH OVERRIDE ===== */
+.template-product .kushi-page-width {
+  max-width: var(--kushi-page-width);
+  margin: 0 auto;
+  padding: 0 50px;
+}
+@media (max-width: 749px) {
+  .template-product .kushi-page-width {
+    padding: 0 15px;
+  }
+}

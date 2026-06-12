@@ -1,0 +1,842 @@
+{%- assign ct_submit_w = '100%' -%}
+{%- unless section.settings.submit_full_width -%}{%- assign ct_submit_w = 'auto' -%}{%- endunless -%}
+{%- assign ct_underline_d = 'block' -%}
+{%- unless section.settings.show_heading_underline -%}{%- assign ct_underline_d = 'none' -%}{%- endunless -%}
+
+{%- style -%}
+  /* ═══════════════════════════════════════════════════════════
+     CONTACT US — Professional split design
+     Dark info panel left | Clean form right
+  ═══════════════════════════════════════════════════════════ */
+
+  .ct2-wrap-{{ section.id }} {
+    background: {{ section.settings.page_bg }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  .ct2-container-{{ section.id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ section.settings.side_padding }}px;
+  }
+
+  /* ── Page heading above grid ─────────────────────────── */
+  .ct2-page-head-{{ section.id }} {
+    text-align: {{ section.settings.heading_align }};
+    margin-bottom: {{ section.settings.heading_bottom_gap }}px;
+  }
+
+  .ct2-page-title-{{ section.id }} {
+    display: inline-block;
+    position: relative;
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    font-style: normal;
+    color: {{ section.settings.heading_color }};
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.heading_transform }};
+    line-height: 1.15;
+    margin: 0 0 {{ section.settings.heading_sub_gap }}px;
+    padding-bottom: {{ section.settings.underline_gap }}px;
+  }
+
+  .ct2-page-title-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: {{ section.settings.underline_width }}px;
+    height: {{ section.settings.underline_h }}px;
+    background: {{ section.settings.underline_color }};
+    border-radius: {{ section.settings.underline_h }}px;
+    display: {{ ct_underline_d }};
+  }
+
+  .ct2-page-head-{{ section.id }}[data-align="left"] .ct2-page-title-{{ section.id }}::after {
+    left: 0; transform: none;
+  }
+  .ct2-page-head-{{ section.id }}[data-align="right"] .ct2-page-title-{{ section.id }}::after {
+    left: auto; right: 0; transform: none;
+  }
+
+  .ct2-page-sub-{{ section.id }} {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ section.settings.subheading_color }};
+    font-weight: {{ section.settings.subheading_weight }};
+    line-height: 1.65;
+    margin: 0;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Two-panel grid ──────────────────────────────────── */
+  .ct2-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: {{ section.settings.left_ratio }}fr {{ section.settings.right_ratio }}fr;
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    box-shadow: {{ section.settings.card_shadow }};
+  }
+
+  @media (max-width: 860px) {
+    .ct2-grid-{{ section.id }} { grid-template-columns: 1fr; }
+  }
+
+  /* ── LEFT — dark info panel ──────────────────────────── */
+  .ct2-left-{{ section.id }} {
+    background: {{ section.settings.left_bg }};
+    color: {{ section.settings.left_text }};
+    padding: {{ section.settings.panel_pad }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .ct2-left-head-{{ section.id }} {
+    margin-bottom: {{ section.settings.left_head_gap }}px;
+  }
+
+  .ct2-left-label-{{ section.id }} {
+    display: inline-block;
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: {{ section.settings.eyebrow_weight }};
+    color: {{ section.settings.accent_color }};
+    letter-spacing: {{ section.settings.eyebrow_spacing | divided_by: 100.0 }}em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .ct2-left-title-{{ section.id }} {
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-h3-weight);
+    color: {{ section.settings.left_text }};
+    line-height: 1.25;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .ct2-left-desc-{{ section.id }} {
+    font-size: {{ section.settings.left_desc_size }}px;
+    color: {{ section.settings.left_muted }};
+    line-height: 1.65;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  /* ── Divider ─────────────────────────────────────────── */
+  .ct2-divider-{{ section.id }} {
+    height: 1px;
+    background: {{ section.settings.left_divider }};
+    margin: {{ section.settings.divider_gap }}px 0;
+    opacity: 0.25;
+  }
+
+  /* ── Info items ──────────────────────────────────────── */
+  .ct2-info-list-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.info_gap }}px;
+    margin-bottom: {{ section.settings.divider_gap }}px;
+  }
+
+  .ct2-info-item-{{ section.id }} {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+    cursor: default;
+  }
+
+  .ct2-info-item-{{ section.id }}[href] { cursor: pointer; }
+  .ct2-info-item-{{ section.id }}[href]:hover { opacity: 0.75; }
+
+  .ct2-info-dot-{{ section.id }} {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: {{ section.settings.dot_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .ct2-info-dot-{{ section.id }} svg {
+    width: 16px;
+    height: 16px;
+    stroke: {{ section.settings.accent_color }};
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ct2-info-text-{{ section.id }} {}
+
+  .ct2-info-cap-{{ section.id }} {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin: 0 0 3px;
+    line-height: 1;
+    opacity: 0.85;
+  }
+
+  .ct2-info-val-{{ section.id }} {
+    font-size: {{ section.settings.info_val_size }}px;
+    font-weight: {{ section.settings.info_val_weight }};
+    color: {{ section.settings.left_text }};
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Social icons ────────────────────────────────────── */
+  .ct2-social-cap-{{ section.id }} {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin: 0 0 12px;
+    opacity: 0.85;
+  }
+
+  .ct2-socials-{{ section.id }} {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ct2-social-{{ section.id }} {
+    width: 38px;
+    height: 38px;
+    border-radius: {{ section.settings.social_radius }}px;
+    background: {{ section.settings.dot_bg }};
+    border: 1px solid {{ section.settings.left_divider }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: {{ section.settings.left_text }};
+    transition: background 0.22s, color 0.22s, transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .ct2-social-{{ section.id }}:hover {
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.left_bg }};
+    border-color: {{ section.settings.accent_color }};
+    transform: translateY(-2px);
+  }
+
+  .ct2-social-{{ section.id }} svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+
+  /* ── Map inside left panel ────────────────────────────── */
+  .ct2-map-{{ section.id }} {
+    width: 100%;
+    height: {{ section.settings.map_height }}px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: {{ section.settings.divider_gap }}px;
+    flex-shrink: 0;
+  }
+
+  .ct2-map-{{ section.id }} iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    filter: grayscale({{ section.settings.map_grayscale }}%);
+  }
+
+  /* ── RIGHT — form panel ──────────────────────────────── */
+  .ct2-right-{{ section.id }} {
+    background: {{ section.settings.form_bg }};
+    padding: {{ section.settings.panel_pad }}px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ct2-form-eyebrow-{{ section.id }} {
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: {{ section.settings.eyebrow_weight }};
+    color: {{ section.settings.accent_color }};
+    letter-spacing: {{ section.settings.eyebrow_spacing | divided_by: 100.0 }}em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+
+  .ct2-form-title-{{ section.id }} {
+    font-size: var(--font-h3-size);
+    font-weight: var(--font-h3-weight);
+    color: {{ section.settings.form_title_color }};
+    margin: 0 0 6px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .ct2-form-sub-{{ section.id }} {
+    font-size: 14px;
+    color: {{ section.settings.label_muted }};
+    margin: 0 0 {{ section.settings.form_head_gap }}px;
+    line-height: 1.5;
+  }
+
+  /* Form fields */
+  .ct2-fields-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.field_gap }}px;
+    flex: 1;
+  }
+
+  .ct2-row-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.field_gap }}px;
+  }
+
+  @media (max-width: 550px) {
+    .ct2-row-{{ section.id }} { grid-template-columns: 1fr; }
+  }
+
+  .ct2-field-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ct2-label-{{ section.id }} {
+    font-size: {{ section.settings.label_size }}px;
+    font-weight: {{ section.settings.label_weight }};
+    color: {{ section.settings.label_color }};
+    letter-spacing: 0.01em;
+  }
+
+  .ct2-input-{{ section.id }},
+  .ct2-textarea-{{ section.id }} {
+    width: 100%;
+    padding: {{ section.settings.input_py }}px {{ section.settings.input_px }}px;
+    background: {{ section.settings.input_bg }};
+    color: {{ section.settings.input_color }};
+    border: {{ section.settings.input_border }}px solid {{ section.settings.input_border_color }};
+    border-radius: {{ section.settings.input_radius }}px;
+    font-size: {{ section.settings.input_size }}px;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.22s, box-shadow 0.22s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+  }
+
+  .ct2-input-{{ section.id }}::placeholder,
+  .ct2-textarea-{{ section.id }}::placeholder { color: {{ section.settings.placeholder_color }}; }
+
+  .ct2-input-{{ section.id }}:focus,
+  .ct2-textarea-{{ section.id }}:focus {
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 0 0 3px {{ section.settings.focus_ring }};
+  }
+
+  .ct2-textarea-{{ section.id }} {
+    min-height: {{ section.settings.textarea_h }}px;
+    resize: vertical;
+  }
+
+  /* Submit */
+  .ct2-submit-{{ section.id }} {
+    margin-top: {{ section.settings.submit_top_gap }}px;
+    display: flex;
+    align-items: center;
+    justify-content: {{ section.settings.submit_justify }};
+    gap: 8px;
+    padding: {{ section.settings.submit_py }}px {{ section.settings.submit_px }}px;
+    background: {{ section.settings.submit_bg }};
+    color: {{ section.settings.submit_color }};
+    border: {{ section.settings.submit_border }}px solid {{ section.settings.submit_border_color }};
+    border-radius: {{ section.settings.submit_radius }}px;
+    font-size: {{ section.settings.submit_size }}px;
+    font-weight: {{ section.settings.submit_weight }};
+    letter-spacing: {{ section.settings.submit_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ section.settings.submit_transform }};
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.22s, color 0.22s, transform 0.18s, box-shadow 0.22s;
+    width: {{ ct_submit_w }};
+  }
+
+  .ct2-submit-{{ section.id }}:hover:not(:disabled) {
+    background: {{ section.settings.submit_bg_hover }};
+    color: {{ section.settings.submit_color_hover }};
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px {{ section.settings.focus_ring }};
+  }
+
+  .ct2-submit-{{ section.id }}:disabled { opacity: 0.6; cursor: wait; }
+
+  .ct2-submit-{{ section.id }} svg {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  /* Messages */
+  .ct2-msg-{{ section.id }} {
+    margin-top: 14px;
+    padding: 13px 16px;
+    border-radius: {{ section.settings.input_radius }}px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+    font-weight: 500;
+  }
+
+  .ct2-msg-{{ section.id }}.is-ok  { background: #d1fae5; color: #065f46; display: block; }
+  .ct2-msg-{{ section.id }}.is-err { background: #fee2e2; color: #991b1b; display: block; }
+
+  /* Required star */
+  .ct2-req-{{ section.id }} { color: {{ section.settings.accent_color }}; margin-left: 2px; }
+
+  @media (max-width: 860px) {
+    .ct2-left-{{ section.id }},
+    .ct2-right-{{ section.id }} {
+      padding: {{ section.settings.panel_pad | times: 0.7 | round: 0 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ct2-wrap-{{ section.id }}">
+  <div class="ct2-container-{{ section.id }}">
+
+    {%- if section.settings.page_heading != blank or section.settings.page_subheading != blank -%}
+      <div class="ct2-page-head-{{ section.id }}" data-align="{{ section.settings.heading_align }}">
+        {%- if section.settings.page_heading != blank -%}
+          <h2 class="ct2-page-title-{{ section.id }}">{{ section.settings.page_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.page_subheading != blank -%}
+          <p class="ct2-page-sub-{{ section.id }}">{{ section.settings.page_subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="ct2-grid-{{ section.id }}">
+
+      {%- comment -%}────── LEFT PANEL ──────{%- endcomment -%}
+      <div class="ct2-left-{{ section.id }}">
+
+        <div class="ct2-left-head-{{ section.id }}">
+          {%- if section.settings.left_eyebrow != blank -%}
+            <p class="ct2-left-label-{{ section.id }}">{{ section.settings.left_eyebrow }}</p>
+          {%- endif -%}
+          {%- if section.settings.left_title != blank -%}
+            <h3 class="ct2-left-title-{{ section.id }}">{{ section.settings.left_title }}</h3>
+          {%- endif -%}
+          {%- if section.settings.left_desc != blank -%}
+            <p class="ct2-left-desc-{{ section.id }}">{{ section.settings.left_desc }}</p>
+          {%- endif -%}
+        </div>
+
+        <div class="ct2-divider-{{ section.id }}"></div>
+
+        <div class="ct2-info-list-{{ section.id }}">
+          {%- if section.settings.address != blank -%}
+            <div class="ct2-info-item-{{ section.id }}">
+              <div class="ct2-info-dot-{{ section.id }}">
+                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="ct2-info-text-{{ section.id }}">
+                <p class="ct2-info-cap-{{ section.id }}">{{ section.settings.address_label }}</p>
+                <p class="ct2-info-val-{{ section.id }}">{{ section.settings.address | newline_to_br }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.phone != blank -%}
+            <a class="ct2-info-item-{{ section.id }}" href="tel:{{ section.settings.phone | remove: ' ' | remove: '-' | remove: '(' | remove: ')' }}">
+              <div class="ct2-info-dot-{{ section.id }}">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.9a16 16 0 0 0 6.06 6.06l.92-.92a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div class="ct2-info-text-{{ section.id }}">
+                <p class="ct2-info-cap-{{ section.id }}">{{ section.settings.phone_label }}</p>
+                <p class="ct2-info-val-{{ section.id }}">{{ section.settings.phone }}</p>
+              </div>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.email != blank -%}
+            <a class="ct2-info-item-{{ section.id }}" href="mailto:{{ section.settings.email }}">
+              <div class="ct2-info-dot-{{ section.id }}">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="ct2-info-text-{{ section.id }}">
+                <p class="ct2-info-cap-{{ section.id }}">{{ section.settings.email_label }}</p>
+                <p class="ct2-info-val-{{ section.id }}">{{ section.settings.email }}</p>
+              </div>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.hours != blank -%}
+            <div class="ct2-info-item-{{ section.id }}">
+              <div class="ct2-info-dot-{{ section.id }}">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="ct2-info-text-{{ section.id }}">
+                <p class="ct2-info-cap-{{ section.id }}">{{ section.settings.hours_label }}</p>
+                <p class="ct2-info-val-{{ section.id }}">{{ section.settings.hours | newline_to_br }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Social {%- endcomment -%}
+        {%- assign ct2_has_social = false -%}
+        {%- if section.settings.instagram_url != blank or section.settings.facebook_url != blank or section.settings.tiktok_url != blank or section.settings.twitter_url != blank or section.settings.youtube_url != blank or section.settings.snapchat_url != blank -%}
+          {%- assign ct2_has_social = true -%}
+        {%- endif -%}
+
+        {%- if ct2_has_social -%}
+          <div class="ct2-divider-{{ section.id }}"></div>
+          <p class="ct2-social-cap-{{ section.id }}">{{ section.settings.social_label }}</p>
+          <div class="ct2-socials-{{ section.id }}">
+            {%- if section.settings.instagram_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.facebook_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.tiktok_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok">
+                <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.twitter_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.twitter_url }}" target="_blank" rel="noopener" aria-label="X">
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.736l7.73-8.835L1.254 2.25H8.08l4.259 5.625zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.youtube_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.snapchat_url != blank -%}
+              <a class="ct2-social-{{ section.id }}" href="{{ section.settings.snapchat_url }}" target="_blank" rel="noopener" aria-label="Snapchat">
+                <svg viewBox="0 0 24 24"><path d="M12.017 0C8.396 0 7.064.971 6.284 1.808c-.833.9-1.296 2.1-1.296 3.492v.578c-.667.085-1.255.17-1.567.247a.592.592 0 0 0-.465.607c.01.219.124.42.312.538.023.014 1.144.726 1.72 2.508a6.5 6.5 0 0 0-1.44 1.044C2.872 11.15 2.4 12.2 2.4 13.3c0 .85.233 1.644.693 2.362.328.511.78.969 1.341 1.362-.127.382-.32.637-.567.762-.23.12-.49.152-.742.092l-.095-.026c-.335-.092-.703-.193-1.13-.193-.49 0-.94.122-1.275.36a1.78 1.78 0 0 0-.615.735 1.614 1.614 0 0 0-.01 1.282c.295.684.976 1.074 1.87 1.074.143 0 .285-.013.426-.04.44-.083.891-.054 1.284.083a4.2 4.2 0 0 1 .626.31c1.17.705 2.42 1.027 3.813 1.027a6.19 6.19 0 0 0 3.993-1.353 4.022 4.022 0 0 1 2.553-.892c.964 0 1.887.307 2.553.892a6.19 6.19 0 0 0 3.993 1.353c1.39 0 2.638-.322 3.808-1.024a4.222 4.222 0 0 1 .63-.313c.393-.137.844-.166 1.284-.083.14.027.283.04.426.04.894 0 1.575-.39 1.87-1.074.255-.591.185-1.24-.01-1.282a1.778 1.778 0 0 0-.614-.735c-.336-.238-.786-.36-1.276-.36-.427 0-.795.1-1.13.193l-.095.026c-.252.06-.513.028-.742-.092-.247-.125-.44-.38-.567-.762.561-.393 1.013-.851 1.341-1.362.46-.718.693-1.512.693-2.362 0-1.1-.472-2.15-1.148-2.722a6.5 6.5 0 0 0-1.44-1.044c.576-1.782 1.697-2.494 1.72-2.508a.614.614 0 0 0 .312-.538.592.592 0 0 0-.465-.607c-.312-.078-.9-.162-1.567-.247v-.578c0-1.392-.463-2.593-1.296-3.492C15.952.971 14.62 0 12.017 0z"/></svg>
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.map_embed != blank -%}
+          <div class="ct2-map-{{ section.id }}">
+            {{ section.settings.map_embed }}
+          </div>
+        {%- endif -%}
+
+      </div>
+
+      {%- comment -%}────── RIGHT — FORM ──────{%- endcomment -%}
+      <div class="ct2-right-{{ section.id }}">
+
+        {%- if section.settings.form_eyebrow != blank -%}
+          <p class="ct2-form-eyebrow-{{ section.id }}">{{ section.settings.form_eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.form_title != blank -%}
+          <h3 class="ct2-form-title-{{ section.id }}">{{ section.settings.form_title }}</h3>
+        {%- endif -%}
+        {%- if section.settings.form_subtitle != blank -%}
+          <p class="ct2-form-sub-{{ section.id }}">{{ section.settings.form_subtitle }}</p>
+        {%- endif -%}
+
+        <div id="ct2-msg-{{ section.id }}" class="ct2-msg-{{ section.id }}"></div>
+
+        <form id="ct2-form-{{ section.id }}" novalidate>
+          <input type="hidden" name="form_type" value="contact">
+          <input type="hidden" name="utf8" value="✓">
+          <div class="ct2-fields-{{ section.id }}">
+
+            {%- if section.settings.show_split_name -%}
+              <div class="ct2-row-{{ section.id }}">
+                <div class="ct2-field-{{ section.id }}">
+                  <label class="ct2-label-{{ section.id }}" for="ct2fn-{{ section.id }}">{{ section.settings.label_fname }}</label>
+                  <input class="ct2-input-{{ section.id }}" type="text" id="ct2fn-{{ section.id }}" name="contact[first_name]" placeholder="{{ section.settings.ph_fname }}" autocomplete="given-name">
+                </div>
+                <div class="ct2-field-{{ section.id }}">
+                  <label class="ct2-label-{{ section.id }}" for="ct2ln-{{ section.id }}">{{ section.settings.label_lname }}</label>
+                  <input class="ct2-input-{{ section.id }}" type="text" id="ct2ln-{{ section.id }}" name="contact[last_name]" placeholder="{{ section.settings.ph_lname }}" autocomplete="family-name">
+                </div>
+              </div>
+            {%- else -%}
+              <div class="ct2-field-{{ section.id }}">
+                <label class="ct2-label-{{ section.id }}" for="ct2n-{{ section.id }}">{{ section.settings.label_name }}</label>
+                <input class="ct2-input-{{ section.id }}" type="text" id="ct2n-{{ section.id }}" name="contact[name]" placeholder="{{ section.settings.ph_name }}" autocomplete="name">
+              </div>
+            {%- endif -%}
+
+            <div class="ct2-field-{{ section.id }}">
+              <label class="ct2-label-{{ section.id }}" for="ct2e-{{ section.id }}">{{ section.settings.label_email }}<span class="ct2-req-{{ section.id }}">*</span></label>
+              <input class="ct2-input-{{ section.id }}" type="email" id="ct2e-{{ section.id }}" name="contact[email]" placeholder="{{ section.settings.ph_email }}" required autocomplete="email">
+            </div>
+
+            {%- if section.settings.show_phone -%}
+              <div class="ct2-field-{{ section.id }}">
+                <label class="ct2-label-{{ section.id }}" for="ct2ph-{{ section.id }}">{{ section.settings.label_phone }}</label>
+                <input class="ct2-input-{{ section.id }}" type="tel" id="ct2ph-{{ section.id }}" name="contact[phone]" placeholder="{{ section.settings.ph_phone }}" autocomplete="tel">
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.show_subject -%}
+              <div class="ct2-field-{{ section.id }}">
+                <label class="ct2-label-{{ section.id }}" for="ct2s-{{ section.id }}">{{ section.settings.label_subject }}</label>
+                <input class="ct2-input-{{ section.id }}" type="text" id="ct2s-{{ section.id }}" name="contact[subject]" placeholder="{{ section.settings.ph_subject }}">
+              </div>
+            {%- endif -%}
+
+            <div class="ct2-field-{{ section.id }}">
+              <label class="ct2-label-{{ section.id }}" for="ct2b-{{ section.id }}">{{ section.settings.label_message }}<span class="ct2-req-{{ section.id }}">*</span></label>
+              <textarea class="ct2-textarea-{{ section.id }}" id="ct2b-{{ section.id }}" name="contact[body]" placeholder="{{ section.settings.ph_message }}" required></textarea>
+            </div>
+
+            <button type="submit" class="ct2-submit-{{ section.id }}">
+              <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>{{ section.settings.submit_label }}</span>
+            </button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SID  = '{{ section.id }}';
+  var form = document.getElementById('ct2-form-' + SID);
+  var msg  = document.getElementById('ct2-msg-'  + SID);
+  if (!form || !msg) return;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.className = 'ct2-msg-' + SID;
+    var em = form.querySelector('[name="contact[email]"]');
+    if (!em || !/\S+@\S+\.\S+/.test(em.value.trim())) {
+      msg.textContent = '{{ section.settings.err_email | escape }}';
+      msg.classList.add('is-err'); return;
+    }
+    var btn = form.querySelector('.ct2-submit-' + SID);
+    var span = btn ? btn.querySelector('span') : null;
+    var orig = span ? span.textContent : '';
+    if (span) span.textContent = '{{ section.settings.submit_sending | escape }}';
+    if (btn)  btn.disabled = true;
+    fetch('/contact#contact_form', {
+      method: 'POST', body: new FormData(form),
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(function (r) {
+      if (btn)  btn.disabled = false;
+      if (span) span.textContent = orig;
+      if (r.ok || r.status === 302) {
+        msg.textContent = '{{ section.settings.success_msg | escape }}';
+        msg.classList.add('is-ok'); form.reset();
+      } else {
+        msg.textContent = '{{ section.settings.err_msg | escape }}';
+        msg.classList.add('is-err');
+      }
+    }).catch(function () {
+      if (btn)  btn.disabled = false;
+      if (span) span.textContent = orig;
+      msg.textContent = '{{ section.settings.err_msg | escape }}';
+      msg.classList.add('is-err');
+    });
+  });
+  document.addEventListener('shopify:section:load', function (ev) {
+    if (ev.detail && ev.detail.sectionId === SID) {
+      form = document.getElementById('ct2-form-' + SID);
+      msg  = document.getElementById('ct2-msg-'  + SID);
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Contact Us",
+  "tag": "section",
+  "class": "section-contact-us",
+  "blocks": [],
+  "settings": [
+    { "type": "header", "content": "Page heading" },
+    { "type": "text",   "id": "page_heading",     "label": "Heading",       "default": "Contact Us" },
+    { "type": "textarea","id": "page_subheading",  "label": "Subheading",    "default": "We'd love to hear from you. Fill out the form and we'll get back to you shortly." },
+    { "type": "range",  "id": "heading_size",      "label": "Heading size",  "min": 24, "max": 80, "step": 2, "unit": "px", "default": 48 },
+    { "type": "select", "id": "heading_weight",    "label": "Weight",        "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "600" },
+    { "type": "select", "id": "heading_transform", "label": "Case",          "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
+    { "type": "range",  "id": "heading_spacing",   "label": "Letter spacing","min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
+    { "type": "color",  "id": "heading_color",     "label": "Colour",        "default": "#111111" },
+    { "type": "select", "id": "heading_align",     "label": "Alignment",     "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
+    { "type": "range",  "id": "subheading_size",   "label": "Subheading size","min": 13, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "select", "id": "subheading_weight", "label": "Subheading weight","options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"}], "default": "400" },
+    { "type": "color",  "id": "subheading_color",  "label": "Subheading colour", "default": "#666666" },
+    { "type": "checkbox","id": "show_heading_underline","label": "Show accent underline", "default": true },
+    { "type": "color",  "id": "underline_color",   "label": "Underline colour","default": "#e8b8b0" },
+    { "type": "range",  "id": "underline_width",   "label": "Underline width","min": 40, "max": 300, "step": 10, "unit": "px", "default": 80 },
+    { "type": "range",  "id": "underline_h",       "label": "Underline thickness","min": 2, "max": 8, "step": 1, "unit": "px", "default": 4 },
+    { "type": "range",  "id": "underline_gap",     "label": "Gap below text", "min": 4, "max": 20, "step": 2, "unit": "px", "default": 10 },
+    { "type": "range",  "id": "heading_sub_gap",   "label": "Heading to sub gap","min": 4, "max": 24, "step": 2, "unit": "px", "default": 10 },
+    { "type": "range",  "id": "heading_bottom_gap","label": "Gap to cards",   "min": 24, "max": 80, "step": 4, "unit": "px", "default": 48 },
+
+    { "type": "header", "content": "Accent colour (used both panels)" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#c8a882", "info": "Used for eyebrow text, icons, social hover, focus rings" },
+    { "type": "color", "id": "focus_ring",   "label": "Focus ring",    "default": "rgba(200,168,130,0.25)" },
+
+    { "type": "header", "content": "Left panel" },
+    { "type": "color", "id": "left_bg",    "label": "Background",    "default": "#1a1a1a" },
+    { "type": "color", "id": "left_text",  "label": "Text colour",   "default": "#ffffff" },
+    { "type": "color", "id": "left_muted", "label": "Muted colour",  "default": "rgba(255,255,255,0.55)" },
+    { "type": "color", "id": "left_divider","label": "Divider colour","default": "rgba(255,255,255,0.15)" },
+    { "type": "color", "id": "dot_bg",     "label": "Icon dot background","default": "rgba(255,255,255,0.08)" },
+    { "type": "text",  "id": "left_eyebrow","label": "Eyebrow label", "default": "Reach out" },
+    { "type": "text",  "id": "left_title", "label": "Panel title",   "default": "Let's Start a Conversation" },
+    { "type": "textarea","id": "left_desc","label": "Panel description","default": "Have a question about an order, sizing, or collaboration? We're here for you." },
+    { "type": "range", "id": "left_title_size",   "label": "Title size",  "min": 18, "max": 48, "step": 2, "unit": "px", "default": 28 },
+    { "type": "select","id": "left_title_weight",  "label": "Title weight","options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "600" },
+    { "type": "range", "id": "left_desc_size",    "label": "Desc size",   "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "info_val_size",     "label": "Info value size","min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "select","id": "info_val_weight",   "label": "Info value weight","options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"}], "default": "400" },
+    { "type": "range", "id": "info_gap",          "label": "Gap between items","min": 12, "max": 36, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range", "id": "left_head_gap",     "label": "Head gap",    "min": 16, "max": 48, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "divider_gap",       "label": "Divider spacing","min": 16, "max": 48, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Eyebrow text" },
+    { "type": "range",  "id": "eyebrow_size",    "label": "Eyebrow size",    "min": 9, "max": 14, "step": 1, "unit": "px", "default": 11 },
+    { "type": "select", "id": "eyebrow_weight",  "label": "Eyebrow weight",  "options": [{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "600" },
+    { "type": "range",  "id": "eyebrow_spacing", "label": "Letter spacing",  "min": 0, "max": 30, "step": 1, "unit": "em", "default": 14, "info": "Divided by 100" },
+
+    { "type": "header", "content": "Contact details" },
+    { "type": "text",    "id": "address_label", "label": "Address label",  "default": "Our Address" },
+    { "type": "textarea","id": "address",       "label": "Address text" },
+    { "type": "text",    "id": "phone_label",   "label": "Phone label",    "default": "Call Us" },
+    { "type": "text",    "id": "phone",         "label": "Phone number" },
+    { "type": "text",    "id": "email_label",   "label": "Email label",    "default": "Email Us" },
+    { "type": "text",    "id": "email",         "label": "Email address" },
+    { "type": "text",    "id": "hours_label",   "label": "Hours label",    "default": "Opening Hours" },
+    { "type": "textarea","id": "hours",         "label": "Hours text" },
+
+    { "type": "header", "content": "Social media" },
+    { "type": "text",  "id": "social_label",   "label": "Social heading", "default": "Follow Us" },
+    { "type": "url",   "id": "instagram_url",  "label": "Instagram" },
+    { "type": "url",   "id": "facebook_url",   "label": "Facebook" },
+    { "type": "url",   "id": "tiktok_url",     "label": "TikTok" },
+    { "type": "url",   "id": "twitter_url",    "label": "X (Twitter)" },
+    { "type": "url",   "id": "youtube_url",    "label": "YouTube" },
+    { "type": "url",   "id": "snapchat_url",   "label": "Snapchat" },
+    { "type": "range", "id": "social_radius",  "label": "Social icon radius","min": 0, "max": 50, "step": 2, "unit": "px", "default": 8 },
+
+    { "type": "header", "content": "Map" },
+    { "type": "html",   "id": "map_embed",     "label": "Google Maps embed", "info": "Paste the full <iframe> from Google Maps → Share → Embed a map" },
+    { "type": "range",  "id": "map_height",    "label": "Map height",    "min": 160, "max": 500, "step": 10, "unit": "px", "default": 220 },
+    { "type": "range",  "id": "map_grayscale", "label": "Map grayscale", "min": 0, "max": 100, "step": 10, "unit": "%",  "default": 80 },
+
+    { "type": "header", "content": "Right panel — form" },
+    { "type": "color", "id": "form_bg",           "label": "Form background", "default": "#ffffff" },
+    { "type": "text",  "id": "form_eyebrow",       "label": "Form eyebrow",   "default": "Send a message" },
+    { "type": "text",  "id": "form_title",         "label": "Form title",     "default": "We'll Get Back to You" },
+    { "type": "text",  "id": "form_subtitle",      "label": "Form subtitle",  "default": "Usually within 24 hours on business days." },
+    { "type": "range", "id": "form_title_size",    "label": "Title size",     "min": 18, "max": 40, "step": 2, "unit": "px", "default": 26 },
+    { "type": "select","id": "form_title_weight",  "label": "Title weight",   "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "600" },
+    { "type": "color", "id": "form_title_color",   "label": "Title colour",   "default": "#111111" },
+    { "type": "range", "id": "form_head_gap",      "label": "Header to fields gap","min": 16, "max": 48, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Form fields" },
+    { "type": "checkbox","id": "show_split_name",  "label": "Split name (First / Last)", "default": false },
+    { "type": "text",    "id": "label_name",       "label": "Name label",    "default": "Full Name" },
+    { "type": "text",    "id": "ph_name",          "label": "Name placeholder","default": "John Doe" },
+    { "type": "text",    "id": "label_fname",      "label": "First name label","default": "First Name" },
+    { "type": "text",    "id": "ph_fname",         "label": "First name placeholder","default": "John" },
+    { "type": "text",    "id": "label_lname",      "label": "Last name label","default": "Last Name" },
+    { "type": "text",    "id": "ph_lname",         "label": "Last name placeholder","default": "Doe" },
+    { "type": "text",    "id": "label_email",      "label": "Email label",   "default": "Email Address" },
+    { "type": "text",    "id": "ph_email",         "label": "Email placeholder","default": "you@example.com" },
+    { "type": "checkbox","id": "show_phone",        "label": "Show phone field","default": false },
+    { "type": "text",    "id": "label_phone",      "label": "Phone label",   "default": "Phone Number" },
+    { "type": "text",    "id": "ph_phone",         "label": "Phone placeholder","default": "+1 (000) 000 0000" },
+    { "type": "checkbox","id": "show_subject",      "label": "Show subject field","default": true },
+    { "type": "text",    "id": "label_subject",    "label": "Subject label", "default": "Subject" },
+    { "type": "text",    "id": "ph_subject",       "label": "Subject placeholder","default": "How can we help?" },
+    { "type": "text",    "id": "label_message",    "label": "Message label", "default": "Message" },
+    { "type": "text",    "id": "ph_message",       "label": "Message placeholder","default": "Tell us more about your inquiry..." },
+    { "type": "range",   "id": "textarea_h",       "label": "Textarea height","min": 80, "max": 300, "step": 10, "unit": "px", "default": 140 },
+
+    { "type": "header", "content": "Field styling" },
+    { "type": "range",  "id": "field_gap",      "label": "Gap between fields","min": 12, "max": 32, "step": 2, "unit": "px", "default": 18 },
+    { "type": "range",  "id": "label_size",     "label": "Label size",        "min": 11, "max": 16, "step": 1, "unit": "px", "default": 13 },
+    { "type": "select", "id": "label_weight",   "label": "Label weight",      "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
+    { "type": "color",  "id": "label_color",    "label": "Label colour",      "default": "#333333" },
+    { "type": "color",  "id": "label_muted",    "label": "Subtitle colour",   "default": "#888888" },
+    { "type": "range",  "id": "input_size",     "label": "Input font size",   "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range",  "id": "input_px",       "label": "Input padding X",   "min": 8, "max": 24, "step": 2, "unit": "px", "default": 14 },
+    { "type": "range",  "id": "input_py",       "label": "Input padding Y",   "min": 8, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range",  "id": "input_radius",   "label": "Input radius",      "min": 0, "max": 20, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range",  "id": "input_border",   "label": "Border width",      "min": 0, "max": 3, "step": 1, "unit": "px", "default": 1 },
+    { "type": "color",  "id": "input_bg",       "label": "Input background",  "default": "#f9f9f8" },
+    { "type": "color",  "id": "input_color",    "label": "Input text colour", "default": "#111111" },
+    { "type": "color",  "id": "input_border_color","label": "Input border",   "default": "#e5e5e5" },
+    { "type": "color",  "id": "placeholder_color","label": "Placeholder",     "default": "#bbbbbb" },
+
+    { "type": "header", "content": "Submit button" },
+    { "type": "text",    "id": "submit_label",    "label": "Button label",     "default": "Send Message" },
+    { "type": "text",    "id": "submit_sending",  "label": "Sending label",    "default": "Sending..." },
+    { "type": "checkbox","id": "submit_full_width","label": "Full width",      "default": true },
+    { "type": "range",   "id": "submit_size",     "label": "Font size",        "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "select",  "id": "submit_weight",   "label": "Weight",           "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "600" },
+    { "type": "select",  "id": "submit_transform","label": "Case",             "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
+    { "type": "range",   "id": "submit_spacing",  "label": "Letter spacing",   "min": 0, "max": 20, "step": 1, "unit": "em", "default": 4 },
+    { "type": "range",   "id": "submit_px",       "label": "Padding X",        "min": 16, "max": 60, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range",   "id": "submit_py",       "label": "Padding Y",        "min": 10, "max": 24, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range",   "id": "submit_radius",   "label": "Radius",           "min": 0, "max": 50, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range",   "id": "submit_border",   "label": "Border width",     "min": 0, "max": 3, "step": 1, "unit": "px", "default": 0 },
+    { "type": "select",  "id": "submit_justify",  "label": "Alignment",        "options": [{"value":"flex-start","label":"Left"},{"value":"center","label":"Center"},{"value":"flex-end","label":"Right"}], "default": "center" },
+    { "type": "range",   "id": "submit_top_gap",  "label": "Gap above button", "min": 4, "max": 32, "step": 4, "unit": "px", "default": 4 },
+    { "type": "color",   "id": "submit_bg",           "label": "Background",       "default": "#1a1a1a" },
+    { "type": "color",   "id": "submit_color",        "label": "Text colour",      "default": "#ffffff" },
+    { "type": "color",   "id": "submit_border_color", "label": "Border colour",    "default": "#1a1a1a" },
+    { "type": "color",   "id": "submit_bg_hover",     "label": "Background — hover","default": "#333333" },
+    { "type": "color",   "id": "submit_color_hover",  "label": "Text — hover",     "default": "#ffffff" },
+
+    { "type": "header", "content": "Status messages" },
+    { "type": "text",  "id": "success_msg", "label": "Success message", "default": "Message sent! We'll be in touch within 24 hours." },
+    { "type": "text",  "id": "err_msg",     "label": "Error message",   "default": "Something went wrong. Please email us directly." },
+    { "type": "text",  "id": "err_email",   "label": "Email error",     "default": "Please enter a valid email address." },
+
+    { "type": "header", "content": "Card & layout" },
+    { "type": "range",  "id": "left_ratio",   "label": "Left column width",  "min": 1, "max": 4, "step": 1, "default": 2 },
+    { "type": "range",  "id": "right_ratio",  "label": "Right column width", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "range",  "id": "panel_pad",    "label": "Panel padding",      "min": 24, "max": 80, "step": 4, "unit": "px", "default": 52 },
+    { "type": "range",  "id": "card_radius",  "label": "Card corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 16 },
+    { "type": "text",   "id": "card_shadow",  "label": "Card shadow",        "default": "0 24px 80px rgba(0,0,0,0.12)" },
+    { "type": "color",  "id": "page_bg",      "label": "Page background",    "default": "#f0efed" },
+    { "type": "range",  "id": "max_width",    "label": "Max width",          "min": 800, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range",  "id": "side_padding", "label": "Side padding",       "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range",  "id": "padding_top",  "label": "Top padding",        "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range",  "id": "padding_bottom","label": "Bottom padding",    "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "presets": [{ "name": "Contact Us" }]
+}
+{% endschema %}

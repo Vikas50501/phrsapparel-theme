@@ -1,0 +1,355 @@
+{% comment %}
+  UNSAID — Story Editorial Section
+  Matches .story-editorial from story.html + styles.css:
+    background-color: var(--card) = oklch(0.22 0.006 270) → #202026
+    img: margin-inline auto, width 100%, max-width 64rem (1024px)
+
+  The screenshot shows text overlaid on the image bottom-left
+  ("SOME THINGS / ARE BETTER LEFT / UNSAID.") — this section
+  replicates that as an optional overlay with full control.
+{% endcomment %}
+
+<section
+  id="uns-story-ed-{{ section.id }}"
+  class="uns-story-ed"
+  style="
+    --used-bg:      {{ section.settings.bg_color }};
+    --used-img-mw:  {{ section.settings.image_max_width }}px;
+    --used-ov-color: {{ section.settings.overlay_text_color }};
+    --used-ov-size:  {{ section.settings.overlay_text_size }}px;
+    --used-ov-size-m: {{ section.settings.overlay_text_size_mobile }}px;
+    --used-ov-ls:    {{ section.settings.overlay_letter_spacing }}px;
+    --used-ov-lh:    {{ section.settings.overlay_line_height | divided_by: 10.0 }};
+    --used-ov-b:     {{ section.settings.overlay_bottom }}%;
+    --used-ov-l:     {{ section.settings.overlay_left }}%;
+    --used-ov-weight: {{ section.settings.overlay_font_weight }};
+    --used-ov-maxw:  {{ section.settings.overlay_max_width }}px;
+  "
+>
+  <div class="uns-story-ed__wrap">
+
+    {%- if section.settings.image != blank -%}
+      <div class="uns-story-ed__media">
+        <img
+          src="{{ section.settings.image | image_url: width: 1280 }}"
+          srcset="
+            {{ section.settings.image | image_url: width: 800 }}  800w,
+            {{ section.settings.image | image_url: width: 1280 }} 1280w,
+            {{ section.settings.image | image_url: width: 1600 }} 1600w
+          "
+          sizes="(min-width: 1024px) 64rem, 100vw"
+          alt="{{ section.settings.image.alt | default: 'UNSAID editorial' | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="uns-story-ed__img"
+        >
+
+        {%- if section.settings.show_overlay_text and section.settings.overlay_line1 != blank -%}
+          <div
+            class="uns-story-ed__overlay"
+            style="
+              bottom: var(--used-ov-b);
+              left: var(--used-ov-l);
+            "
+          >
+            {%- if section.settings.overlay_line1 != blank -%}
+              <span>{{ section.settings.overlay_line1 | upcase | escape }}</span>
+            {%- endif -%}
+            {%- if section.settings.overlay_line2 != blank -%}
+              <span>{{ section.settings.overlay_line2 | upcase | escape }}</span>
+            {%- endif -%}
+            {%- if section.settings.overlay_line3 != blank -%}
+              <span>{{ section.settings.overlay_line3 | upcase | escape }}</span>
+            {%- endif -%}
+            {%- if section.settings.overlay_line4 != blank -%}
+              <span>{{ section.settings.overlay_line4 | upcase | escape }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+
+    {%- else -%}
+      <div class="uns-story-ed__placeholder">
+        <span>Upload editorial image</span>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+  /* ── Shell — matches .story-editorial { background-color: var(--card) } ── */
+  #uns-story-ed-{{ section.id }} {
+    background-color: var(--used-bg);
+  }
+
+  /* ── Centred wrapper ── */
+  #uns-story-ed-{{ section.id }} .uns-story-ed__wrap {
+    margin-inline: auto;
+    max-width: var(--used-img-mw);
+  }
+
+  /* ── Media container — relative for overlay positioning ── */
+  #uns-story-ed-{{ section.id }} .uns-story-ed__media {
+    position: relative;
+    line-height: 0;
+  }
+
+  /* ── Image — matches .story-editorial img ── */
+  #uns-story-ed-{{ section.id }} .uns-story-ed__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  /* ── Overlay text block ── */
+  #uns-story-ed-{{ section.id }} .uns-story-ed__overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    pointer-events: none;
+  }
+
+  #uns-story-ed-{{ section.id }} .uns-story-ed__overlay span {
+    display: block;
+    font-family: var(--font-body-family), system-ui, sans-serif;
+    font-size: var(--used-ov-size);
+    font-weight: var(--used-ov-weight);
+    letter-spacing: var(--used-ov-ls);
+    line-height: var(--used-ov-lh);
+    color: var(--used-ov-color);
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    max-width: var(--used-ov-maxw);
+  }
+
+  /* ── Placeholder ── */
+  #uns-story-ed-{{ section.id }} .uns-story-ed__placeholder {
+    background: #202026;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body-family), system-ui, sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #a8a8b0;
+  }
+
+  /* ── Mobile ── */
+  @media screen and (max-width: 749px) {
+    #uns-story-ed-{{ section.id }} .uns-story-ed__overlay span {
+      font-size: var(--used-ov-size-m);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Story Editorial",
+  "tag": "section",
+  "class": "section-unsaid-story-editorial",
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "─── Image ───"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Editorial image",
+      "info": "Original: assets/editorial-chaos.jpg — the full-width portrait product shot."
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "label": "Image max width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1020,
+      "info": "Original: 64rem = 1024px"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Background ───"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background colour",
+      "default": "#202026",
+      "info": "Matches --card: oklch(0.22 0.006 270)"
+    },
+
+    {
+      "type": "header",
+      "content": "─── Overlay Text ───"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay_text",
+      "label": "Show text overlay on image",
+      "default": true,
+      "info": "The text 'SOME THINGS / ARE BETTER LEFT / UNSAID.' seen in the screenshot."
+    },
+    {
+      "type": "text",
+      "id": "overlay_line1",
+      "label": "Line 1",
+      "default": "Some things"
+    },
+    {
+      "type": "text",
+      "id": "overlay_line2",
+      "label": "Line 2",
+      "default": "are better left"
+    },
+    {
+      "type": "text",
+      "id": "overlay_line3",
+      "label": "Line 3",
+      "default": "UNSAID."
+    },
+    {
+      "type": "text",
+      "id": "overlay_line4",
+      "label": "Line 4 (optional)",
+      "info": "Leave blank to hide."
+    },
+
+    {
+      "type": "header",
+      "content": "─── Overlay Typography ───"
+    },
+    {
+      "type": "color",
+      "id": "overlay_text_color",
+      "label": "Text colour",
+      "default": "#c8c3bc",
+      "info": "Muted warm white, matching the screenshot."
+    },
+    {
+      "type": "range",
+      "id": "overlay_text_size",
+      "label": "Font size — desktop",
+      "min": 8,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "overlay_text_size_mobile",
+      "label": "Font size — mobile",
+      "min": 8,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "overlay_font_weight",
+      "label": "Font weight",
+      "default": "500",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semi-bold (600)" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "overlay_line_height",
+      "label": "Line height (÷10)",
+      "min": 10,
+      "max": 25,
+      "step": 1,
+      "unit": "/10",
+      "default": 18,
+      "info": "e.g. 18 = 1.8"
+    },
+    {
+      "type": "range",
+      "id": "overlay_max_width",
+      "label": "Text block max width",
+      "min": 80,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 200
+    },
+
+    {
+      "type": "header",
+      "content": "─── Overlay Position ───"
+    },
+    {
+      "type": "range",
+      "id": "overlay_bottom",
+      "label": "Distance from bottom",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "default": 35,
+      "info": "As % of image height. Matches screenshot: ~35% from bottom."
+    },
+    {
+      "type": "range",
+      "id": "overlay_left",
+      "label": "Distance from left",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "default": 7,
+      "info": "As % of image width. Matches screenshot: ~7% from left."
+    }
+
+  ],
+  "presets": [
+    {
+      "name": "Story Editorial",
+      "settings": {
+        "bg_color": "#202026",
+        "image_max_width": 1020,
+        "show_overlay_text": true,
+        "overlay_line1": "Some things",
+        "overlay_line2": "are better left",
+        "overlay_line3": "UNSAID.",
+        "overlay_text_color": "#c8c3bc",
+        "overlay_text_size": 13,
+        "overlay_text_size_mobile": 10,
+        "overlay_font_weight": "500",
+        "overlay_letter_spacing": 4,
+        "overlay_line_height": 18,
+        "overlay_max_width": 200,
+        "overlay_bottom": 35,
+        "overlay_left": 7
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "notes": {
+      "type": "notes-page",
+      "settings": {
+        "eyebrow": "Album 01",
+        "heading": "Fragrance Notes",
+        "intro": "<p>Every UNSAID fragrance is built with intention. Each note is chosen not for trend, but for emotional resonance — the way a top note catches you off guard, the way a base holds you long after you expected it to.</p>",
+        "glossary_heading": "Note Glossary",
+        "album_heading": "Album 01 — By Fragrance",
+        "padding_top": 80,
+        "padding_bottom": 80
+      },
+      "blocks": {
+        "row-1": { "type": "note_row", "settings": { "name": "Bergamot", "tier": "Top", "character": "Citrus, Fresh, Bright", "family": "Citrus" } },
+        "row-2": { "type": "note_row", "settings": { "name": "Pink Pepper", "tier": "Top", "character": "Spicy, Vibrant, Radiant", "family": "Spice" } },
+        "row-3": { "type": "note_row", "settings": { "name": "Cardamom", "tier": "Top", "character": "Warm, Spicy, Aromatic", "family": "Spice" } },
+        "row-4": { "type": "note_row", "settings": { "name": "Saffron", "tier": "Top", "character": "Rich, Exotic, Powdery", "family": "Oriental" } },
+        "row-5": { "type": "note_row", "settings": { "name": "Patchouli", "tier": "Heart", "character": "Earthy, Mossy, Deep", "family": "Woody" } },
+        "row-6": { "type": "note_row", "settings": { "name": "Labdanum", "tier": "Heart", "character": "Resinous, Ambery, Deep", "family": "Resinous" } },
+        "row-7": { "type": "note_row", "settings": { "name": "Leather", "tier": "Heart", "character": "Smoky, Rich, Animalic", "family": "Leather" } },
+        "row-8": { "type": "note_row", "settings": { "name": "Vetiver", "tier": "Base", "character": "Smoky, Earthy, Clean", "family": "Woody" } },
+        "row-9": { "type": "note_row", "settings": { "name": "Cedarwood", "tier": "Base", "character": "Woody, Dry, Clean", "family": "Woody" } },
+        "row-10": { "type": "note_row", "settings": { "name": "Amber", "tier": "Base", "character": "Warm, Soft, Resinous", "family": "Oriental" } },
+        "row-11": { "type": "note_row", "settings": { "name": "Oud", "tier": "Base", "character": "Woody, Rich, Animalic", "family": "Woody" } },
+        "card-1": { "type": "album_card", "settings": { "title": "Before It Happens", "top": "Bergamot", "heart": "Pink Pepper, Patchouli", "base": "Cedarwood, Benzoin, Amber accords" } },
+        "card-2": { "type": "album_card", "settings": { "title": "Clear Smoke", "top": "Bergamot, Cardamom", "heart": "Labdanum, Vetiver", "base": "Sandalwood, Musk, Incense" } },
+        "card-3": { "type": "album_card", "settings": { "title": "Controlled Chaos", "top": "Saffron, Aldehydes", "heart": "Leather, Rose absolute", "base": "Oud, Amber, Tonka Bean" } }
+      },
+      "block_order": ["row-1","row-2","row-3","row-4","row-5","row-6","row-7","row-8","row-9","row-10","row-11","card-1","card-2","card-3"]
+    }
+  },
+  "order": ["notes"]
+}

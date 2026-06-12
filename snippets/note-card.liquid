@@ -1,0 +1,15 @@
+<div class="note-card">
+  <div class="note-card__icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      {%- case note.tier -%}
+        {%- when 'top' -%}
+          <circle cx="12" cy="12" r="6"/><path d="M12 6V3"/><path d="M15 4.5l-1 1.5"/>
+        {%- when 'heart' -%}
+          <path d="M12 21v-9"/><path d="M12 12c-3-2-5-5-5-9 4 0 7 3 7 6"/><path d="M12 12c3-2 5-5 5-9-4 0-7 3-7 6"/>
+        {%- else -%}
+          <ellipse cx="12" cy="13" rx="5" ry="6"/><path d="M12 7V4"/>
+      {%- endcase -%}
+    </svg>
+  </div>
+  <p class="note-card__name">{{ note.name }}<span class="note-card__tier">{{ note.tier }}</span></p>
+</div>

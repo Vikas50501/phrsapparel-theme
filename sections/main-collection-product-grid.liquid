@@ -1,0 +1,686 @@
+{%- liquid
+  assign cols_desktop = section.settings.columns_desktop | default: 3
+  assign show_tagline = section.settings.show_tagline
+  assign show_volume = section.settings.show_volume
+  assign volume_text = section.settings.volume_text | default: '50ml | 1.7 oz'
+  assign card_gap_desktop = section.settings.card_gap_desktop | default: 40
+  assign image_padding = section.settings.image_padding | default: 40
+  assign info_margin_top = section.settings.info_margin_top | default: 24
+  assign page_max_width = section.settings.page_max_width | default: 1280
+  assign section_padding_v = section.settings.section_padding_v | default: 80
+  assign section_padding_h = section.settings.section_padding_h | default: 24
+-%}
+
+<style>
+  .cg-{{ section.id }} {
+    --font-display: "Cormorant Garamond", "Times New Roman", serif;
+    --font-sans: "Inter", system-ui, sans-serif;
+    --background: {{ section.settings.color_background | default: '#1c1c22' }};
+    --foreground: {{ section.settings.color_foreground | default: '#f5f5f7' }};
+    --card: {{ section.settings.color_card | default: '#222228' }};
+    --muted-foreground: {{ section.settings.color_muted | default: '#888895' }};
+    --border-soft: {{ section.settings.color_border | default: '#3a3a44' }};
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-display);
+  }
+
+  .cg-{{ section.id }} .shop-wrap {
+    max-width: {{ page_max_width }}px;
+    margin-inline: auto;
+    padding: {{ section_padding_v }}px {{ section_padding_h }}px;
+  }
+
+  /* ── Desktop grid ── */
+  .cg-{{ section.id }} .shop-grid {
+    display: grid;
+    grid-template-columns: repeat({{ cols_desktop }}, 1fr);
+    gap: {{ card_gap_desktop }}px;
+  }
+
+  /* ── Product card ── */
+  .cg-{{ section.id }} .product-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cg-{{ section.id }} .product-card__image {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    background-color: var(--card);
+  }
+
+  .cg-{{ section.id }} .product-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: {{ image_padding }}px;
+    box-sizing: border-box;
+    transition: transform {{ section.settings.hover_duration | default: 700 }}ms ease;
+  }
+
+  .cg-{{ section.id }} .product-card:hover .product-card__image img {
+    transform: scale({{ section.settings.hover_scale | default: '1.05' }});
+  }
+
+  .cg-{{ section.id }} .product-card__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, oklch(0.18 0.005 270 / 60%), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .cg-{{ section.id }} .product-card:hover .product-card__image::after {
+    opacity: 1;
+  }
+
+  .cg-{{ section.id }} .product-card__info {
+    margin-top: {{ info_margin_top }}px;
+  }
+
+  .cg-{{ section.id }} .product-card__info h3 {
+    font-size: {{ section.settings.title_font_size | default: 24 }}px;
+    font-weight: {{ section.settings.title_font_weight | default: 400 }};
+    font-family: var(--font-display);
+    color: var(--foreground);
+    margin: 0;
+    line-height: 1.15;
+  }
+
+  .cg-{{ section.id }} .product-card__info .tagline {
+    margin-top: {{ section.settings.tagline_margin_top | default: 8 }}px;
+    font-size: {{ section.settings.tagline_font_size | default: 14 }}px;
+    font-style: italic;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    color: var(--muted-foreground);
+    line-height: 1.5;
+  }
+
+  .cg-{{ section.id }} .product-card__info .price-row {
+    margin-top: {{ section.settings.price_row_margin_top | default: 16 }}px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cg-{{ section.id }} .text-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: {{ section.settings.eyebrow_font_weight | default: 400 }};
+    color: var(--foreground);
+  }
+
+  .cg-{{ section.id }} .text-eyebrow.size {
+    color: var(--muted-foreground);
+  }
+
+  /* ── Mobile carousel ── */
+  @media (max-width: 767px) {
+    .cg-{{ section.id }} .shop-wrap {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .cg-{{ section.id }} .shop-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: {{ section.settings.mobile_card_gap | default: 16 }}px;
+      padding: 0 {{ section_padding_h }}px {{ section.settings.mobile_dots_space | default: 32 }}px;
+      grid-template-columns: unset;
+    }
+
+    .cg-{{ section.id }} .shop-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cg-{{ section.id }} .product-card {
+      flex: 0 0 {{ section.settings.mobile_card_width | default: 80 }}vw;
+      max-width: {{ section.settings.mobile_card_max_width | default: 320 }}px;
+      scroll-snap-align: start;
+    }
+
+    .cg-{{ section.id }} .product-card__image img {
+      padding: {{ section.settings.mobile_image_padding | default: 24 }}px;
+    }
+
+    .cg-{{ section.id }} .product-card__info h3 {
+      font-size: {{ section.settings.mobile_title_font_size | default: 20 }}px;
+    }
+
+    /* Dots indicator */
+    .cg-{{ section.id }} .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 {{ section_padding_h }}px;
+      margin-top: {{ section.settings.dots_margin_top | default: 16 }}px;
+    }
+
+    .cg-{{ section.id }} .carousel-dots__dot {
+      width: {{ section.settings.dot_size | default: 5 }}px;
+      height: {{ section.settings.dot_size | default: 5 }}px;
+      border-radius: 50%;
+      background: var(--border-soft);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+    .cg-{{ section.id }} .carousel-dots__dot.active {
+      background: var(--foreground);
+      transform: scale(1.4);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .cg-{{ section.id }} .carousel-dots { display: none; }
+  }
+
+  /* ── Empty / pagination ── */
+  .cg-{{ section.id }} .shop-grid__empty {
+    font-family: var(--font-sans);
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .cg-{{ section.id }} .pagination {
+    margin-top: {{ section.settings.pagination_margin_top | default: 64 }}px;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 {{ section_padding_h }}px;
+  }
+
+  .cg-{{ section.id }} .pagination a,
+  .cg-{{ section.id }} .pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--foreground);
+    border: 1px solid var(--border-soft);
+    background: transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .cg-{{ section.id }} .pagination a:hover { border-color: var(--foreground); }
+  .cg-{{ section.id }} .pagination span { border-color: var(--foreground); }
+</style>
+
+{%- paginate collection.products by section.settings.products_per_page -%}
+<div class="cg-{{ section.id }}">
+  <div class="shop-wrap">
+
+    <div class="shop-grid" id="shopGrid-{{ section.id }}">
+      {%- for product in collection.products -%}
+        <a href="{{ product.url }}" class="product-card" data-card-index="{{ forloop.index0 }}">
+          <div class="product-card__image">
+            {%- if product.featured_image -%}
+              <img
+                src="{{ product.featured_image | image_url: width: 800 }}"
+                alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                loading="lazy"
+                width="800"
+              >
+            {%- endif -%}
+          </div>
+          <div class="product-card__info">
+            <h3>{{ product.title }}</h3>
+            {%- if show_tagline -%}
+              {%- assign tagline = product.metafields.custom.tagline.value -%}
+              {%- if tagline != blank -%}
+                <p class="tagline">{{ tagline }}</p>
+              {%- elsif product.description != blank -%}
+                <p class="tagline">{{ product.description | strip_html | truncate: 90 }}</p>
+              {%- endif -%}
+            {%- endif -%}
+            <div class="price-row">
+              <span class="text-eyebrow">{{ product.price | money }}</span>
+              {%- if show_volume -%}
+                {%- assign vol = product.metafields.custom.volume.value | default: volume_text -%}
+                <span class="text-eyebrow size">{{ vol }}</span>
+              {%- endif -%}
+            </div>
+          </div>
+        </a>
+      {%- else -%}
+        <p class="shop-grid__empty">No products found in this collection.</p>
+      {%- endfor -%}
+    </div>
+
+    {%- assign product_count = collection.products_count -%}
+    {%- if product_count > 1 -%}
+      <div class="carousel-dots" id="carouselDots-{{ section.id }}">
+        {%- for i in (1..product_count) -%}
+          <button class="carousel-dots__dot{% if forloop.first %} active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to product {{ forloop.index }}"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if paginate.pages > 1 -%}
+      <div class="pagination">
+        {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&#8592;</a>{%- endif -%}
+        {%- for part in paginate.parts -%}
+          {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+          {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+        {%- endfor -%}
+        {%- if paginate.next -%}<a href="{{ paginate.next.url }}">&#8594;</a>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+{%- endpaginate -%}
+
+<script>
+(function() {
+  var grid = document.getElementById('shopGrid-{{ section.id }}');
+  var dotsWrap = document.getElementById('carouselDots-{{ section.id }}');
+  if (!grid || !dotsWrap) return;
+
+  var dots = dotsWrap.querySelectorAll('.carousel-dots__dot');
+  var cards = grid.querySelectorAll('.product-card');
+
+  // Dot click → scroll to card
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      var idx = parseInt(dot.getAttribute('data-index'), 10);
+      var card = cards[idx];
+      if (card) {
+        grid.scrollTo({ left: card.offsetLeft - grid.offsetLeft, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Scroll → update active dot
+  var ticking = false;
+  grid.addEventListener('scroll', function() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function() {
+      var scrollLeft = grid.scrollLeft;
+      var closest = 0;
+      var minDist = Infinity;
+      cards.forEach(function(card, i) {
+        var dist = Math.abs(card.offsetLeft - grid.offsetLeft - scrollLeft);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      dots.forEach(function(d, i) {
+        d.classList.toggle('active', i === closest);
+      });
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Product Grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 3,
+      "max": 48,
+      "step": 3,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Desktop Grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_gap_desktop",
+      "label": "Gap between cards (px)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Mobile Carousel"
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "label": "Card width (vw)",
+      "min": 60,
+      "max": 95,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_max_width",
+      "label": "Card max width (px)",
+      "min": 240,
+      "max": 400,
+      "step": 20,
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_gap",
+      "label": "Gap between cards (px)",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_padding",
+      "label": "Mobile image padding (px)",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_font_size",
+      "label": "Mobile title font size (px)",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Carousel Dots"
+    },
+    {
+      "type": "range",
+      "id": "dot_size",
+      "label": "Dot size (px)",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "dots_margin_top",
+      "label": "Dots margin top (px)",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_dots_space",
+      "label": "Bottom padding for dots space (px)",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "page_max_width",
+      "label": "Max width (px)",
+      "min": 800,
+      "max": 1600,
+      "step": 40,
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "section_padding_v",
+      "label": "Vertical padding (px)",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_h",
+      "label": "Horizontal padding (px)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Design Tokens"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Page background",
+      "default": "#1c1c22"
+    },
+    {
+      "type": "color",
+      "id": "color_foreground",
+      "label": "Text / foreground",
+      "default": "#f5f5f7"
+    },
+    {
+      "type": "color",
+      "id": "color_card",
+      "label": "Card background",
+      "default": "#222228"
+    },
+    {
+      "type": "color",
+      "id": "color_muted",
+      "label": "Muted text",
+      "default": "#888895"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "Border color",
+      "default": "#3a3a44"
+    },
+    {
+      "type": "header",
+      "content": "Card Image"
+    },
+    {
+      "type": "range",
+      "id": "image_padding",
+      "label": "Image padding inside card (px)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Hover Effect"
+    },
+    {
+      "type": "range",
+      "id": "hover_duration",
+      "label": "Image zoom duration (ms)",
+      "min": 200,
+      "max": 1200,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "select",
+      "id": "hover_scale",
+      "label": "Image zoom amount",
+      "options": [
+        { "value": "1.03", "label": "Subtle (1.03×)" },
+        { "value": "1.05", "label": "Default (1.05×)" },
+        { "value": "1.08", "label": "Strong (1.08×)" },
+        { "value": "1.12", "label": "Max (1.12×)" }
+      ],
+      "default": "1.05"
+    },
+    {
+      "type": "header",
+      "content": "Card Info"
+    },
+    {
+      "type": "range",
+      "id": "info_margin_top",
+      "label": "Space between card and info (px)",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size (px)",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Title font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Tagline"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tagline",
+      "label": "Show tagline",
+      "default": true,
+      "info": "Uses metafield custom.tagline, falls back to product description"
+    },
+    {
+      "type": "range",
+      "id": "tagline_font_size",
+      "label": "Tagline font size (px)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "tagline_margin_top",
+      "label": "Space above tagline (px)",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Price Row"
+    },
+    {
+      "type": "range",
+      "id": "price_row_margin_top",
+      "label": "Space above price row (px)",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_font_weight",
+      "label": "Price / volume font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "Volume"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_volume",
+      "label": "Show volume spec",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "volume_text",
+      "label": "Default volume text",
+      "default": "50ml | 1.7 oz",
+      "info": "Used when metafield custom.volume is not set"
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "range",
+      "id": "pagination_margin_top",
+      "label": "Pagination margin top (px)",
+      "min": 16,
+      "max": 120,
+      "step": 8,
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Product Grid"
+    }
+  ]
+}
+{% endschema %}

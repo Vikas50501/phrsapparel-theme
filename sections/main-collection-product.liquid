@@ -1,0 +1,411 @@
+{%- comment -%}
+  Section: PHARELIGIONS Collection Page (Kushi-style)
+  Self-contained rebuild. Filters are driven by Shopify's collection.filters
+  (configure groups in Settings > Search & discovery > Filters).
+  CSS scoped to .template-collection · font: Helvetica.
+{%- endcomment -%}
+
+{{ 'collection-page.css' | asset_url | stylesheet_tag }}
+
+<div class="template-collection">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+  <div class="kc-wrap">
+
+    {%- comment -%} ===================== SIDEBAR ===================== {%- endcomment -%}
+    <aside class="kc-sidebar">
+
+      {%- comment -%} Filter header {%- endcomment -%}
+      <div class="kc-filter-header">
+        <span class="kc-filter-header__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+          Filter
+        </span>
+        <a href="{{ collection.url }}" class="kc-remove-all">Remove all</a>
+      </div>
+
+      {%- comment -%} Collapsible body (collapses on mobile via JS) {%- endcomment -%}
+      <div class="kc-filter-body">
+
+      {%- comment -%} Active filter tags {%- endcomment -%}
+      {%- assign has_active = false -%}
+      {%- for filter in collection.filters -%}
+        {%- if filter.active_values.size > 0 -%}{%- assign has_active = true -%}{%- endif -%}
+        {%- if filter.type == 'price_range' and filter.min_value.value != blank or filter.type == 'price_range' and filter.max_value.value != blank -%}{%- assign has_active = true -%}{%- endif -%}
+      {%- endfor -%}
+      {%- if has_active -%}
+        <div class="kc-active-tags">
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}
+              <a class="kc-tag" href="{{ value.url_to_remove }}">{{ value.label }} <span>&times;</span></a>
+            {%- endfor -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+                <a class="kc-tag" href="{{ filter.url_to_remove }}">{{ filter.min_value.value | default: 0 | money }} - {{ filter.max_value.value | default: filter.range_max | money }} <span>&times;</span></a>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Filter groups {%- endcomment -%}
+      {%- if collection.filters.size > 0 -%}
+        <form id="kc-filters" method="get" action="{{ collection.url }}">
+          {%- if collection.sort_by != blank -%}
+            <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+          {%- endif -%}
+          {%- comment -%} Preserve other active filters when the price form submits {%- endcomment -%}
+          {%- for f in collection.filters -%}
+            {%- unless f.type == 'price_range' -%}
+              {%- for v in f.active_values -%}
+                <input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">
+              {%- endfor -%}
+            {%- endunless -%}
+          {%- endfor -%}
+
+          {%- for filter in collection.filters -%}
+            {%- assign lbl = filter.label | downcase -%}
+            <div class="kc-group" data-open="true">
+              <button type="button" class="kc-group__head" onclick="kcolToggle(this)">
+                <span>{{ filter.label }}</span>
+                <span class="kc-group__icon">&ndash;</span>
+              </button>
+              <div class="kc-group__body">
+
+                {%- case filter.type -%}
+                  {%- when 'price_range' -%}
+                    {%- assign pmax = filter.range_max | money_without_currency | replace: ',', '' -%}
+                    {%- assign cmin = filter.min_value.value | money_without_currency | replace: ',', '' -%}
+                    {%- assign cmax = filter.max_value.value | money_without_currency | replace: ',', '' -%}
+                    <p class="kc-price__caption">The highest price is {{ filter.range_max | money }}</p>
+                    <div class="kc-range" id="kc-range">
+                      <div class="kc-range__track"></div>
+                      <div class="kc-range__fill"></div>
+                      <input class="kc-range__min" type="range" min="0" max="{{ pmax }}" step="1" value="{%- if filter.min_value.value != blank -%}{{ cmin }}{%- else -%}0{%- endif -%}">
+                      <input class="kc-range__max" type="range" min="0" max="{{ pmax }}" step="1" value="{%- if filter.max_value.value != blank -%}{{ cmax }}{%- else -%}{{ pmax }}{%- endif -%}">
+                    </div>
+                    <div class="kc-price__inputs">
+                      <div class="kc-price__field">
+                        <span>{{ cart.currency.symbol }}</span>
+                        <input type="text" inputmode="decimal" id="kc-price-min" name="{{ filter.min_value.param_name }}" placeholder="0" {%- if filter.min_value.value != blank %} value="{{ cmin }}"{% endif %}>
+                      </div>
+                      <div class="kc-price__field">
+                        <span>{{ cart.currency.symbol }}</span>
+                        <input type="text" inputmode="decimal" id="kc-price-max" name="{{ filter.max_value.param_name }}" placeholder="{{ pmax }}" {%- if filter.max_value.value != blank %} value="{{ cmax }}"{% endif %}>
+                      </div>
+                    </div>
+                    <button type="submit" class="kc-price__apply">Apply</button>
+
+                  {%- else -%}
+                    {%- if lbl contains 'colour' or lbl contains 'color' -%}
+                      <div class="kc-swatches">
+                        {%- for value in filter.values -%}
+                          {%- capture sw_hex %}{% render 'kcol-color-hex', color: value.label %}{% endcapture -%}
+                          <a
+                            href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"
+                            class="kc-swatch{% if value.active %} is-active{% endif %}"
+                            title="{{ value.label }} ({{ value.count }})"
+                            {%- if value.swatch.image -%}
+                              style="background-image:url('{{ value.swatch.image | image_url: width: 60 }}'); background-size:cover; background-position:center;"
+                            {%- elsif value.swatch.color -%}
+                              style="background-color: {{ value.swatch.color }};"
+                            {%- else -%}
+                              style="background-color: {{ sw_hex | strip }};"
+                            {%- endif -%}
+                            aria-label="{{ value.label }}"
+                          ></a>
+                        {%- endfor -%}
+                      </div>
+
+                    {%- elsif lbl contains 'size' -%}
+                      <div class="kc-sizes">
+                        {%- for value in filter.values -%}
+                          <a
+                            href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"
+                            class="kc-size{% if value.active %} is-active{% endif %}"
+                          >{{ value.label }}</a>
+                        {%- endfor -%}
+                      </div>
+
+                    {%- elsif lbl contains 'categor' or lbl contains 'type' -%}
+                      <ul class="kc-catlist">
+                        {%- for value in filter.values -%}
+                          <li>
+                            <a
+                              href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"
+                              class="{% if value.active %}is-active{% endif %}"
+                            >{{ value.label }}</a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+
+                    {%- else -%}
+                      <ul class="kc-checklist">
+                        {%- for value in filter.values -%}
+                          <li>
+                            <a
+                              href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"
+                              class="kc-check{% if value.active %} is-active{% endif %}"
+                            >
+                              <span class="kc-check__box"></span>
+                              <span>{{ value.label }}</span>
+                              <span class="kc-check__count">({{ value.count }})</span>
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                {%- endcase -%}
+
+              </div>
+            </div>
+          {%- endfor -%}
+        </form>
+      {%- endif -%}
+
+      </div>{%- comment -%} /.kc-filter-body {%- endcomment -%}
+
+      {%- comment -%} Editorial banner {%- endcomment -%}
+      <a class="kc-editorial" href="{{ section.settings.editorial_link | default: '/pages/about' }}">
+        {%- if section.settings.editorial_image != blank -%}
+          <img src="{{ section.settings.editorial_image | image_url: width: 600 }}" alt="{{ section.settings.editorial_title | escape }}" loading="lazy">
+        {%- endif -%}
+        <div class="kc-editorial__content">
+          <span class="kc-editorial__title">{{ section.settings.editorial_title | default: 'The Story Behind' }}</span>
+          <span class="kc-editorial__btn">{{ section.settings.editorial_cta | default: 'Read More' }}</span>
+        </div>
+      </a>
+
+    </aside>
+
+    {%- comment -%} ===================== MAIN ===================== {%- endcomment -%}
+    <div class="kc-main">
+
+      {%- comment -%} Toolbar {%- endcomment -%}
+      <div class="kc-toolbar">
+        {%- assign start_idx = paginate.current_offset | plus: 1 -%}
+        {%- assign end_idx = paginate.current_offset | plus: collection.products.size -%}
+        <div class="kc-count">
+          {%- if paginate.items > 0 -%}
+            Showing {{ start_idx }}&ndash;{{ end_idx }} of {{ paginate.items }} Results
+          {%- else -%}
+            No products found
+          {%- endif -%}
+        </div>
+        <div class="kc-toolbar__right">
+          <div class="kc-views">
+            <button type="button" data-cols="2" aria-label="2 columns">
+              <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+            </button>
+            <button type="button" data-cols="3" class="is-active" aria-label="3 columns">
+              <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="3" width="5" height="8"/><rect x="9.5" y="3" width="5" height="8"/><rect x="17" y="3" width="5" height="8"/><rect x="2" y="13" width="5" height="8"/><rect x="9.5" y="13" width="5" height="8"/><rect x="17" y="13" width="5" height="8"/></svg>
+            </button>
+            <button type="button" data-cols="4" aria-label="4 columns">
+              <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="4" width="3.5" height="7"/><rect x="7" y="4" width="3.5" height="7"/><rect x="12" y="4" width="3.5" height="7"/><rect x="17" y="4" width="3.5" height="7"/><rect x="2" y="13" width="3.5" height="7"/><rect x="7" y="13" width="3.5" height="7"/><rect x="12" y="13" width="3.5" height="7"/><rect x="17" y="13" width="3.5" height="7"/></svg>
+            </button>
+          </div>
+          <div class="kc-sort">
+            <select onchange="kcolSort(this.value)" aria-label="Sort by">
+              {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value }}"{% if option.value == current_sort %} selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Grid {%- endcomment -%}
+      <div class="kc-grid" id="kc-grid" data-cols="{{ section.settings.columns_desktop | default: 3 }}">
+        {%- for product in collection.products -%}
+          {%- assign is_new = false -%}
+          {%- if product.tags contains 'New' or product.tags contains 'new' -%}{%- assign is_new = true -%}{%- endif -%}
+          {%- assign default_img = product.featured_image | image_url: width: 600 -%}
+          <div class="kc-card">
+            <div class="kc-card__media">
+              <a href="{{ product.url }}" class="kc-card__media-link" aria-label="{{ product.title | escape }}">
+                {%- if product.featured_image != blank -%}
+                  <img class="kc-card__img" data-default="{{ default_img }}" src="{{ default_img }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {%- endif -%}
+              </a>
+              {%- if is_new -%}<span class="kc-badge kc-badge--new">New</span>{%- endif -%}
+              {%- unless product.available -%}<span class="kc-badge kc-badge--sold">Sold Out</span>{%- endunless -%}
+
+              {%- comment -%} Hover quick actions {%- endcomment -%}
+              <div class="kc-card__actions">
+                <a class="kc-card__action" href="{{ product.url }}" title="View product" aria-label="View {{ product.title | escape }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                </a>
+                {%- if product.available -%}
+                  {%- if product.has_only_default_variant -%}
+                    <button type="button" class="kc-card__action kc-card__atc" data-variant="{{ product.selected_or_first_available_variant.id }}" title="Add to cart" aria-label="Add {{ product.title | escape }} to cart">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    </button>
+                  {%- else -%}
+                    <a class="kc-card__action" href="{{ product.url }}" title="Choose options" aria-label="Choose options for {{ product.title | escape }}">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    </a>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+
+              {%- comment -%} Size options on hover (only if product has a Size option) {%- endcomment -%}
+              {%- for option in product.options_with_values -%}
+                {%- assign on = option.name | downcase -%}
+                {%- if on contains 'size' -%}
+                  <div class="kc-card__sizes">
+                    {%- for value in option.values -%}
+                      <a class="kc-card__size" href="{{ product.url }}">{{ value }}</a>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+
+            <div class="kc-card__info">
+              {%- assign rating = product.metafields.reviews.rating.value -%}
+              {%- if rating != blank -%}
+                {%- assign r = rating.rating | round -%}
+                <div class="kc-card__stars" aria-label="Rated {{ r }} out of 5">
+                  {%- for i in (1..5) -%}<span class="{% if i <= r %}is-on{% endif %}">&#9733;</span>{%- endfor -%}
+                </div>
+              {%- endif -%}
+              <a href="{{ product.url }}" class="kc-card__title">{{ product.title }}</a>
+              <div class="kc-card__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="kc-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
+                {%- else -%}
+                  {{ product.price | money }}
+                {%- endif -%}
+              </div>
+              {%- comment -%} Variant colour swatches — hover/click changes the card image {%- endcomment -%}
+              {%- for option in product.options_with_values -%}
+                {%- assign on = option.name | downcase -%}
+                {%- if on contains 'color' or on contains 'colour' -%}
+                  <div class="kc-card__swatches">
+                    {%- for value in option.values limit: section.settings.max_swatches -%}
+                      {%- capture cdot %}{% render 'kcol-color-hex', color: value %}{% endcapture -%}
+                      {%- comment -%} find this colour's variant image {%- endcomment -%}
+                      {%- assign sw_img = '' -%}
+                      {%- for variant in product.variants -%}
+                        {%- case option.position -%}
+                          {%- when 1 -%}{%- assign vopt = variant.option1 -%}
+                          {%- when 2 -%}{%- assign vopt = variant.option2 -%}
+                          {%- when 3 -%}{%- assign vopt = variant.option3 -%}
+                        {%- endcase -%}
+                        {%- if vopt == value and variant.image != blank -%}{%- assign sw_img = variant.image | image_url: width: 600 -%}{%- break -%}{%- endif -%}
+                      {%- endfor -%}
+                      <span class="kc-card__swatch{% if forloop.first %} is-active{% endif %}" data-img="{{ sw_img }}"
+                        {%- if value.swatch.image -%}
+                          style="background-image:url('{{ value.swatch.image | image_url: width: 40 }}'); background-size:cover; background-position:center;"
+                        {%- elsif value.swatch.color -%}
+                          style="background-color: {{ value.swatch.color }};"
+                        {%- else -%}
+                          style="background-color: {{ cdot | strip }};"
+                        {%- endif -%}
+                        title="{{ value }}"></span>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="kc-empty">No products match your filters.</div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Pagination {%- endcomment -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="kc-pagination" role="navigation" aria-label="Pagination">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" aria-label="Previous">&lsaquo;</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span class="{% if part.title == paginate.current_page %}kc-page-current{% endif %}">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" aria-label="Next">&rsaquo;</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+
+    </div>
+  </div>
+  {%- endpaginate -%}
+</div>
+
+<script src="{{ 'collection-page.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "tag": "section",
+  "class": "section-kc-collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Default columns (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "max_swatches",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 6,
+      "label": "Max colour swatches on card"
+    },
+    {
+      "type": "header",
+      "content": "Sidebar editorial banner"
+    },
+    {
+      "type": "text",
+      "id": "editorial_title",
+      "label": "Title",
+      "default": "The Story Behind"
+    },
+    {
+      "type": "text",
+      "id": "editorial_cta",
+      "label": "Button label",
+      "default": "Read More"
+    },
+    {
+      "type": "url",
+      "id": "editorial_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "editorial_image",
+      "label": "Background image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid"
+    }
+  ]
+}
+{% endschema %}
