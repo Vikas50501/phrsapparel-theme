@@ -131,6 +131,32 @@
     letter-spacing: 0.01em;
   }
 
+  /* Hero Logo */
+
+.hero-{{ section.id }}-logo{
+  display:block;
+  width:100%;
+  max-width:500px;
+  height:auto;
+  margin:0 auto;
+}
+
+@media screen and (max-width:749px){
+
+  .hero-{{ section.id }}-logo{
+    max-width:280px;
+  }
+
+  /* Move logo + button slightly down */
+  .hero-{{ section.id }}-content-inner{
+    transform:translateY(60px);
+  }
+
+  .hero-{{ section.id }}-script{
+    margin-bottom:8px;
+  }
+}
+
   /* ── Main heading (BIG uppercase) ────────────────────── */
   .hero-{{ section.id }}-heading {
     font-size: var(--font-h2-size);
