@@ -1,1 +1,1301 @@
-{"sections":{"custom_liquid_wDEELX":{"type":"custom-liquid","disabled":true,"name":"t:sections.custom-liquid.presets.name","settings":{"custom_liquid":"<div style=\"display:block;opacity: 0; height: 80vh;\"><\/div>","color_scheme":"","padding_top":40,"padding_bottom":52}},"image_banner":{"type":"image-banner","blocks":{"heading":{"type":"heading","settings":{"heading":"EYE CATCHING STREETWEAR","heading_size":"h1"}},"button":{"type":"buttons","settings":{"button_label_1":"Shop all","button_link_1":"shopify:\/\/collections\/all","button_style_secondary_1":true,"button_label_2":"","button_link_2":"","button_style_secondary_2":false}}},"block_order":["heading","button"],"disabled":true,"settings":{"image":"shopify:\/\/shop_images\/PHA-RELIGIONS-Slide-1.jpg","image_overlay_opacity":10,"image_height":"adapt","image_behavior":"ambient","desktop_content_position":"bottom-center","desktop_content_alignment":"center","show_text_box":false,"color_scheme":"scheme-4","stack_images_on_mobile":false,"mobile_content_alignment":"center","show_text_below":false}},"rich_text_3jUAqJ":{"type":"rich-text","blocks":{"heading_6WRFBC":{"type":"heading","settings":{"heading":"BEST SELLERS","heading_size":"h2"}}},"block_order":["heading_6WRFBC"],"disabled":true,"name":"t:sections.rich-text.presets.name","settings":{"desktop_content_position":"center","content_alignment":"center","color_scheme":"","full_width":true,"padding_top":40,"padding_bottom":0}},"featured_collection":{"type":"featured-collection","disabled":true,"settings":{"collection":"all","products_to_show":8,"title":"","heading_size":"h2","description":"","show_description":false,"description_style":"body","columns_desktop":6,"enable_desktop_slider":true,"full_width":true,"show_view_all":false,"view_all_style":"solid","color_scheme":"scheme-1","image_ratio":"portrait","image_shape":"default","show_secondary_image":true,"show_vendor":false,"show_rating":false,"quick_add":"none","columns_mobile":"2","swipe_on_mobile":true,"padding_top":0,"padding_bottom":36}},"rich_text_cBkjPH":{"type":"rich-text","blocks":{"heading_HeXEYn":{"type":"heading","settings":{"heading":"ACCESSORIES","heading_size":"h2"}}},"block_order":["heading_HeXEYn"],"disabled":true,"name":"t:sections.rich-text.presets.name","settings":{"desktop_content_position":"center","content_alignment":"center","color_scheme":"","full_width":true,"padding_top":40,"padding_bottom":0}},"featured_collection_f6Yz4b":{"type":"featured-collection","disabled":true,"settings":{"collection":"accessories","products_to_show":8,"title":"","heading_size":"h2","description":"","show_description":false,"description_style":"body","columns_desktop":6,"enable_desktop_slider":true,"full_width":true,"show_view_all":false,"view_all_style":"solid","color_scheme":"scheme-1","image_ratio":"portrait","image_shape":"default","show_secondary_image":true,"show_vendor":false,"show_rating":false,"quick_add":"none","columns_mobile":"2","swipe_on_mobile":true,"padding_top":0,"padding_bottom":36}},"hero_section_4GaPbK":{"type":"hero-section","blocks":{"slide_7QRwDx":{"type":"slide","disabled":true,"settings":{"image_desktop":"shopify:\/\/shop_images\/HERO_SLIDER.png","image_focal_point":"center top","script_text":"HOT TRENDINGS","script_color":"#121212","heading":"COUPLE COLLECTION","text_color":"#ffffff","description":"","button_label":"SHOP NOW","button_link":"","button_bg":"#121212","button_text_color":"","button_border_color":"#121212","button_bg_hover":"#ffffff","button_text_hover":"#121212","button2_label":"","button2_link":"","button2_bg":"","button2_text_color":"","button2_border_color":"","content_box_bg":"#ffffff","content_box_opacity":30,"content_box_pad_y":24,"content_box_pad_x":32,"content_box_radius":0,"content_box_blur":0,"align_h":"center","align_v":"middle","content_width":"auto"}},"slide_KHExFi":{"type":"slide","disabled":true,"settings":{"image_desktop":"shopify:\/\/shop_images\/WO.png","image_focal_point":"","script_text":"New Arrival","script_color":"#121212","heading":"SS 2025 NEW ARRIVAL","text_color":"#ffffff","description":"","button_label":"Discover","button_link":"","button_bg":"#121212","button_text_color":"","button_border_color":"#121212","button_bg_hover":"#ffffff","button_text_hover":"#121212","button2_label":"","button2_link":"","button2_bg":"","button2_text_color":"","button2_border_color":"","content_box_bg":"#ffffff","content_box_opacity":30,"content_box_pad_y":24,"content_box_pad_x":32,"content_box_radius":0,"content_box_blur":0,"align_h":"center","align_v":"middle","content_width":"auto"}},"slide_4Eft4F":{"type":"slide","settings":{"image_desktop":"shopify:\/\/shop_images\/PHA-RELIGIONS-Slide-1.jpg","image_mobile":"shopify:\/\/shop_images\/PHA-RELIGIONS-Mobile-Slide-newwww.jpg","image_focal_point":"","script_text":"Our Story Unfolds","script_color":"#121212","heading":"PHARELIGIONS","text_color":"#ffffff","description":"","button_label":"Explore Now","button_link":"","button_bg":"#121212","button_text_color":"#ffffff","button_border_color":"#121212","button_bg_hover":"#ffffff","button_text_hover":"#121212","button2_label":"","button2_link":"","button2_bg":"","button2_text_color":"","button2_border_color":"","content_box_bg":"#ffffff","content_box_opacity":25,"content_box_pad_y":24,"content_box_pad_x":32,"content_box_radius":0,"content_box_blur":0,"align_h":"center","align_v":"middle","content_width":"auto"}}},"block_order":["slide_7QRwDx","slide_KHExFi","slide_4Eft4F"],"name":"Hero Carousel","settings":{"hero_height_mode":"fullscreen","hero_height_desktop":620,"hero_height_mobile":480,"vh_offset":80,"image_fit":"cover","image_position":"center center","enable_kenburns":false,"content_max_width":720,"content_gap":8,"content_padding_x":16,"content_padding_y":32,"script_size":22,"heading_size":68,"heading_weight":"800","heading_transform":"uppercase","heading_spacing":2,"description_size":16,"description_max_width":560,"button_size":14,"button_weight":"500","button_transform":"none","button_spacing":4,"button_pad_x":28,"button_pad_y":14,"button_radius":0,"button_border_width":1,"enable_autoplay":true,"autoplay_speed":5000,"transition_speed":80,"show_arrows":false,"arrow_size":48,"arrow_bg":"#ffffffd9","arrow_color":"#111111","arrow_bg_hover":"#ffffff","arrow_color_hover":"#000000","show_dots":true,"dot_size":8,"dots_bottom":28,"dot_color":"#ffffff","dot_active_color":"#ffffff","show_progress":false,"progress_color":"#ffffff","bg_color":"#f0efed"}},"circle_category_Dzgfaw":{"type":"circle-category","blocks":{"category_4QgK6z":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/1_f9689385-4ff7-4b25-b170-c5d788e7a758.jpg","label":"BEANIES","link":""}},"category_MExtAJ":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/2_Phareligions_1_a5aae830-a7c1-476c-84a3-fa5adecf9c58.jpg","label":"biknis","link":"shopify:\/\/collections\/bikini"}},"category_8Q3XEG":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/9_655b7689-7bc2-49cb-a84f-9721d875a118.jpg","label":"iPhone Cases","link":"https:\/\/phrsapparel.myshopify.com\/collections\/accessories\/category_phone_case"}},"category_mYfV3c":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/JERSEYS_2.png","label":"jerseys","link":"https:\/\/phrsapparel.myshopify.com\/collections\/t-shirts\/graphic_statement"}},"category_NnBxyr":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/Silicon-Hoodie-Set.jpg","label":"PH SILICONE SET","link":"shopify:\/\/collections\/sets"}},"category_RD3QHz":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/IMG_6505.jpg","label":"SINGLETS","link":"https:\/\/phrsapparel.myshopify.com\/collections\/accessories\/series_ipac"}},"category_MrTYDJ":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/SKATEBOARDS.png","label":"SKATEBOARDS","link":"shopify:\/\/collections\/skateboards"}},"category_yKtFGj":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/13_bf37764a-daff-4877-92ff-8b68160e4074.jpg","label":"socks","link":"https:\/\/phrsapparel.myshopify.com\/collections\/accessories\/category_socks"}},"category_GMCbtY":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/4_ph_1.jpg","label":"t-shirts","link":"shopify:\/\/collections\/t-shirts"}},"category_YzXyRd":{"type":"category","settings":{"image":"shopify:\/\/shop_images\/Billionaire-Religion-Tracksuit.jpg","label":"tracksuits","link":"shopify:\/\/collections\/sets"}}},"block_order":["category_4QgK6z","category_MExtAJ","category_8Q3XEG","category_mYfV3c","category_NnBxyr","category_RD3QHz","category_MrTYDJ","category_yKtFGj","category_GMCbtY","category_YzXyRd"],"name":"Category Circles Slider","settings":{"heading":"Our Collections","heading_size":36,"heading_weight":"400","heading_spacing":0,"heading_align":"center","heading_color":"#111111","heading_gap":36,"show_underline":true,"underline_color":"#c47a5a","underline_width":100,"underline_height":3,"underline_gap":10,"circle_size":188,"image_padding":20,"circle_bg":"#ffffff","circle_border_width":1,"circle_border_color":"#e8e8e8","circle_border_hover":"#bbbbbb","hover_rotate":-15,"hover_scale":106,"label_size":14,"label_weight":"400","label_transform":"uppercase","label_spacing":0,"label_color":"#111111","label_hover_color":"#555555","label_gap":14,"track_start_pad":40,"items_per_page":6,"item_gap":24,"slider_pad_y":12,"edge_fade":40,"enable_autoplay":false,"autoplay_speed":40,"enable_loop":true,"show_dots":true,"dot_size":9,"dot_gap":8,"dots_margin_top":24,"dot_color":"#111111","dot_active_color":"#111111","bg_color":"#ffffff","max_width":1400,"padding_top":60,"padding_bottom":60}},"top_selling_XgWzRw":{"type":"top-selling","blocks":{"card_WDXw38":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/Billionaire-Religion-Tracksuit.jpg","link":"shopify:\/\/products\/billionaire-religion-tracksuit","title":"","price":"","card_width":25,"rating":0}},"card_WFjxE8":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/Silicon-Hoodie-Set.jpg","link":"shopify:\/\/products\/ph-silicon-hoodie-set","title":"","price":"","card_width":25,"rating":0}},"card_w4qdCH":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/1_ph_1.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/ph-panel-tshirt?variant=52759299850604","title":"","price":"","card_width":25,"rating":0}},"card_dMHDU8":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/4_ph_1.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/angel-wings-tshirt?_pos=1&_fid=a4ad3cea4&_ss=c&variant=52787357548908","title":"","price":"","card_width":25,"rating":0}}},"block_order":["card_WDXw38","card_WFjxE8","card_w4qdCH","card_dMHDU8"],"name":"Top Selling Products","settings":{"badge_text":"SEE MORE PRODUCTS","badge_link":"","badge_bg":"#ffffff","badge_color":"#111111","badge_border":"#dddddd","badge_radius":40,"badge_size":13,"badge_pad_x":18,"badge_pad_y":9,"badge_gap":12,"heading":"Our Top Sellers","heading_size":40,"heading_weight":"700","heading_transform":"none","heading_spacing":0,"heading_line_height":120,"heading_color":"#111111","description":"Worn by trendsetters around the world, \nour collection represents the perfect balance of quality, authenticity, \nand streetwear excellence.","desc_size":14,"desc_color":"#666666","desc_max_width":280,"desc_btn_gap":20,"cta_label":"SHOP NOW","cta_link":"","cta_bg":"#ffffff","cta_color":"#111111","cta_border":"#111111","cta_radius":40,"cta_size":14,"cta_pad_x":24,"cta_pad_y":12,"arrow_size":40,"arrow_radius":40,"arrow_bg":"#ffffff","arrow_color":"#111111","arrow_border":"#dddddd","arrow_bottom_gap":16,"cards_visible":4,"card_gap":20,"card_height":320,"card_radius":20,"info_gap":6,"img_bg":"#f0efed","hover_arrow_size":40,"hover_arrow_offset":12,"hover_arrow_bg":"#ffffff","hover_arrow_color":"#111111","title_size":14,"title_weight":"500","title_color":"#111111","price_size":14,"price_weight":"600","price_color":"#111111","show_rating":true,"rating_size":12,"star_color":"#f59e0b","rating_color":"#888888","max_width":1400,"side_padding":24,"header_bottom":28,"bg_color":"#f0efed","padding_top":64,"padding_bottom":64}},"marquee_images_YyjmJr":{"type":"marquee-images","blocks":{"row1_item_pgpkGn":{"type":"row1_item","settings":{"text":"NEW Arrivals","link":"","image":"shopify:\/\/shop_images\/1_ph_1.jpg"}},"row1_item_Dmwagy":{"type":"row1_item","settings":{"text":"PHARELIGIONS","link":"","image":"shopify:\/\/shop_images\/IMG_6509.jpg"}},"row1_item_jVLcPA":{"type":"row1_item","settings":{"text":"NEW Arrivals","link":"","image":"shopify:\/\/shop_images\/3_Phareligions_1.jpg"}},"row2_item_YacqVJ":{"type":"row2_item","settings":{"text":"PHARELIGIONS","link":"","image":"shopify:\/\/shop_images\/9.jpg"}},"row2_item_D8Ncn6":{"type":"row2_item","settings":{"text":"PHARELIGIONS","link":"","image":"shopify:\/\/shop_images\/Purple-Skateboard-1.jpg"}}},"block_order":["row1_item_pgpkGn","row1_item_Dmwagy","row1_item_jVLcPA","row2_item_YacqVJ","row2_item_D8Ncn6"],"name":"Marquee Ticker","settings":{"text_size":60,"text_weight":"300","text_transform":"uppercase","text_spacing":15,"text_color":"#111111","text_hover_color":"#111111","img_width":132,"img_height":100,"show_separator":false,"separator":"✦","sep_color":"#c8c8c8","sep_size":16,"sep_opacity":60,"row_height":100,"item_gap":48,"row1_speed":20,"row2_speed":25,"row2_direction":"reverse","pause_on_hover":true,"divider_width":1,"divider_color":"#e5e5e5","border_width":1,"border_color":"#e5e5e5","bg_color":"#ffffff","padding_top":0,"padding_bottom":0}},"trending_products_kdCqCQ":{"type":"trending-products","blocks":{"image_eG8Umq":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/IMG_6486.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/white-ipac-singlet-1?variant=53079061463404"}},"image_zMpi3P":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/IMG_6498.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/white-ipac-singlet-1?variant=52759310991724"}},"image_JaPGBB":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/IMG_6485.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/white-ipac-singlet-1?variant=52787347095916&pb=0"}},"image_YXqGcP":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/IMG_6499.jpg","link":"https:\/\/phrsapparel.myshopify.com\/products\/white-ipac-singlet-1?variant=52787347030380&pb=0"}}},"block_order":["image_eG8Umq","image_zMpi3P","image_JaPGBB","image_YXqGcP"],"name":"Trending Products","settings":{"product_source":"gallery","collection":"streetwear","heading":"TRENDING PRODUCTS","heading_weight":"400","heading_transform":"none","heading_spacing":0,"heading_color":"#111111","heading_align":"center","heading_gap":40,"show_underline":true,"underline_width":260,"underline_thickness":4,"underline_gap":8,"underline_color":"#e8b8b0","grid_gap":24,"image_radius":4,"image_bg":"#f5f5f5","button_label":"VIEW ALL","button_link":"","button_gap":48,"button_size":14,"button_weight":"600","button_transform":"uppercase","button_spacing":10,"button_pad_x":36,"button_pad_y":14,"button_radius":0,"button_border_width":0,"button_bg":"#111111","button_color":"#ffffff","button_border":"#111111","button_bg_hover":"#333333","button_color_hover":"#ffffff","bg_color":"#f0efed","max_width":1400,"side_padding":24,"padding_top":64,"padding_bottom":64}},"service_features_7mK4RG":{"type":"service-features","blocks":{"feature_YawmrT":{"type":"feature","settings":{"icon":"headphone","title":"24 Hr Service","subtitle":"Instant customer support","link":""}},"feature_QXATqb":{"type":"feature","settings":{"icon":"lock","title":"Secure Payment","subtitle":"Accept major credit cards.","link":""}},"feature_3FNNHp":{"type":"feature","settings":{"icon":"truck","title":"Fast Delivery","subtitle":"And packaged with love.","link":""}},"feature_ftN9Ft":{"type":"feature","settings":{"icon":"refresh","title":"Free Returns","subtitle":"Consultations via email.","link":""}}},"block_order":["feature_YawmrT","feature_QXATqb","feature_3FNNHp","feature_ftN9Ft"],"name":"Service Features","settings":{"columns":4,"item_align":"row","item_gap":24,"icon_gap":18,"text_gap":4,"item_pad_x":0,"item_pad_y":8,"icon_size":44,"icon_stroke":1,"icon_color":"#111111","icon_hover_color":"#111111","title_size":17,"title_weight":"600","title_transform":"none","title_spacing":0,"title_color":"#111111","sub_size":13,"sub_weight":"400","sub_color":"#888888","border_top":false,"border_bottom":false,"border_width":1,"border_color":"#eeeeee","bg_color":"#ffffff","max_width":1400,"side_padding":24,"padding_top":40,"padding_bottom":40}},"lookbook_WqjCKQ":{"type":"lookbook","blocks":{"image_UUjGBq":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/3.webp","alt":"","hs1_enabled":true,"hs1_product":"ph-silicon-hoodie-set","hs2_enabled":false,"hs2_product":"","hs3_enabled":false,"hs3_product":"","hs4_enabled":false,"hs4_product":"","hs5_enabled":false,"hs5_product":""}},"image_VdgeWE":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/2.webp","alt":"","hs1_enabled":true,"hs1_product":"ph-silicon-hoodie-set","hs2_enabled":false,"hs2_product":"","hs3_enabled":false,"hs3_product":"","hs4_enabled":false,"hs4_product":"","hs5_enabled":false,"hs5_product":""}},"image_zNQUqn":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/1.webp","alt":"","hs1_enabled":true,"hs1_product":"ph-silicon-hoodie-set","hs2_enabled":false,"hs2_product":"","hs3_enabled":false,"hs3_product":"","hs4_enabled":false,"hs4_product":"","hs5_enabled":false,"hs5_product":""}}},"block_order":["image_UUjGBq","image_VdgeWE","image_zNQUqn"],"name":"Lookbook","settings":{"heading":"OUR LOOKBOOK","heading_size":32,"heading_weight":"500","heading_transform":"none","heading_spacing":0,"heading_color":"#111111","heading_align":"center","heading_pad_x":24,"heading_pad_bottom":24,"columns":3,"columns_mobile":"1","grid_gap":4,"max_width":1400,"side_padding":0,"image_aspect":"2\/3","img_radius":0,"img_hover_scale":104,"img_placeholder_bg":"#f0efed","popup_width":240,"popup_radius":8,"popup_shadow":"0 8px 32px rgba(0,0,0,0.14)","popup_bg":"#ffffff","popup_offset_y":16,"popup_offset_x":12,"popup_gap":8,"popup_img_bg":"#f5f5f5","popup_thumb_size":80,"popup_info_pad":16,"popup_title_size":14,"popup_title_weight":"500","popup_title_color":"#111111","popup_price_size":14,"popup_price_weight":"400","popup_price_color":"#444444","popup_btn_gap":12,"popup_btn_label":"Shop Now","popup_btn_size":12,"popup_btn_weight":"500","popup_btn_pad_x":16,"popup_btn_pad_y":10,"popup_btn_radius":4,"popup_btn_bg":"#111111","popup_btn_color":"#ffffff","popup_btn_border":"#111111","popup_btn_bg_hover":"#333333","popup_btn_color_hover":"#ffffff","viewmore_enabled":true,"viewmore_label":"VIEW FULL LOOKBOOK","viewmore_url":"shopify:\/\/pages\/lookbook","viewmore_new_tab":false,"viewmore_show_arrow":false,"viewmore_align":"center","viewmore_pad_top":48,"bg_color":"#f0efed","padding_top":36,"padding_bottom":36}},"media_row_c9GWpV":{"type":"media-row","name":"Sticky Card Stack","settings":{"section_heading":"","section_heading_size":36,"section_heading_weight":"500","section_heading_transform":"none","section_heading_spacing":0,"section_heading_color":"#111111","section_heading_align":"center","section_heading_gap":32,"height_mode":"fixed","row_height_desktop":480,"row_height_mobile":320,"row_aspect":"16\/9","row_gap":4,"row_radius":0,"media_fit":"cover","eyebrow_size":13,"eyebrow_weight":"400","eyebrow_transform":"uppercase","eyebrow_spacing":20,"heading_size":72,"heading_weight":"500","heading_transform":"none","heading_spacing":0,"heading_line_height":115,"subheading_size":17,"subheading_weight":"400","subheading_spacing":0,"subheading_max_width":580,"content_max_width":700,"content_pad_x":40,"content_pad_y":60,"content_gap":18,"btn_size":14,"btn_weight":"500","btn_transform":"none","btn_spacing":4,"btn_pad_x":28,"btn_pad_y":14,"btn_radius":50,"btn_border_width":1,"btn_gap":14,"btn1_bg":"#ffffff","btn1_color":"#111111","btn1_border":"#ffffff","btn1_bg_hover":"#111111","btn1_color_hover":"#ffffff","btn1_border_hover":"#111111","btn2_bg":"rgba(0,0,0,0)","btn2_color":"#ffffff","btn2_border":"#ffffff","btn2_bg_hover":"#ffffff","btn2_color_hover":"#111111","btn2_border_hover":"#ffffff","bg_color":"#f0efed","padding_top":0,"padding_bottom":0,"max_width":1400,"side_padding":24}},"media_row_zRnCzC":{"type":"media-row","blocks":{"row_VHJywK":{"type":"row","settings":{"video":"shopify:\/\/files\/videos\/Video 2.mp4","row_height_override":0,"row_height_mobile_override":0,"row_aspect_override":"","overlay_color":"#000000","overlay_opacity":25,"content_color":"#ffffff","eyebrow":"","heading":"BILLIONAIRE RELIGION TRACKSUIT","subheading":"","content_box_color":"#ffffff","content_box_opacity":35,"content_box_padding":24,"content_box_radius":8,"align_h":"center","align_v":"middle","btn1_label":"SHOP NOW","btn1_link":"","btn1_bg":"","btn1_color":"","btn1_border":"","btn2_label":"VIEW ALL","btn2_link":"","btn2_bg":"","btn2_color":"","btn2_border":""}},"row_HzYWwz":{"type":"row","settings":{"image":"shopify:\/\/shop_images\/cropped_summer.jpg","row_height_override":0,"row_height_mobile_override":0,"row_aspect_override":"","overlay_color":"#000000","overlay_opacity":20,"content_color":"#ffffff","eyebrow":"","heading":"SUMMER ESSENTIALS","subheading":"","content_box_color":"#ffffff","content_box_opacity":20,"content_box_padding":24,"content_box_radius":8,"align_h":"center","align_v":"middle","btn1_label":"EXPLORE","btn1_link":"","btn1_bg":"","btn1_color":"","btn1_border":"","btn2_label":"","btn2_link":"","btn2_bg":"","btn2_color":"","btn2_border":""}},"row_ALA8iy":{"type":"row","settings":{"video":"shopify:\/\/files\/videos\/0001.mp4","row_height_override":0,"row_height_mobile_override":0,"row_aspect_override":"","overlay_color":"#000000","overlay_opacity":30,"content_color":"#ffffff","eyebrow":"","heading":"EXCLUSIVES","subheading":"","content_box_color":"#ffffff","content_box_opacity":20,"content_box_padding":24,"content_box_radius":8,"align_h":"center","align_v":"middle","btn1_label":"SHOP NOW","btn1_link":"","btn1_bg":"","btn1_color":"","btn1_border":"","btn2_label":"LEARN MORE","btn2_link":"","btn2_bg":"","btn2_color":"","btn2_border":""}}},"block_order":["row_VHJywK","row_HzYWwz","row_ALA8iy"],"name":"Media Rows","settings":{"section_heading":"JOIN OUR COMMUNITY","section_heading_size":36,"section_heading_weight":"500","section_heading_transform":"uppercase","section_heading_spacing":0,"section_heading_color":"#111111","section_heading_align":"center","section_heading_gap":32,"height_mode":"ratio","row_height_desktop":480,"row_height_mobile":320,"row_aspect":"16\/9","row_gap":4,"row_radius":0,"media_fit":"cover","eyebrow_size":13,"eyebrow_weight":"400","eyebrow_transform":"uppercase","eyebrow_spacing":20,"heading_size":56,"heading_weight":"700","heading_transform":"none","heading_spacing":0,"heading_line_height":115,"subheading_size":16,"subheading_weight":"400","subheading_spacing":0,"subheading_max_width":560,"content_max_width":700,"content_pad_x":40,"content_pad_y":60,"content_gap":18,"btn_size":14,"btn_weight":"500","btn_transform":"none","btn_spacing":4,"btn_pad_x":28,"btn_pad_y":14,"btn_radius":50,"btn_border_width":1,"btn_gap":14,"btn1_bg":"#ffffff","btn1_color":"#111111","btn1_border":"#ffffff","btn1_bg_hover":"#111111","btn1_color_hover":"#ffffff","btn1_border_hover":"#111111","btn2_bg":"rgba(0,0,0,0)","btn2_color":"#ffffff","btn2_border":"#ffffff","btn2_bg_hover":"#ffffff","btn2_color_hover":"#111111","btn2_border_hover":"#ffffff","bg_color":"#ffffff","padding_top":36,"padding_bottom":0,"max_width":1400,"side_padding":28}},"image_duo_TgL8NX":{"type":"image-duo","blocks":{"card_KLnyC9":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/6_Phareligions_2_b9c439a1-ba53-4798-a0bb-ff8c179e8da6.jpg","title":"Man","link_label":"SHOP THE LOOK","link":""}},"card_n7T6D3":{"type":"card","settings":{"image":"shopify:\/\/shop_images\/1_Phareligions_1.jpg","title":"Women","link_label":"SHOP THE LOOK","link":""}}},"block_order":["card_KLnyC9","card_n7T6D3"],"disabled":true,"name":"Image Duo","settings":{"heading":"Products featuring the thing you love by an artist who loves it too.","heading_size":42,"heading_weight":"400","heading_transform":"none","heading_spacing":0,"heading_line_height":125,"heading_max_width":900,"heading_color":"#111111","heading_gap":8,"show_wave":true,"wave_width":80,"wave_stroke":2,"wave_color":"#111111","wave_gap_top":8,"wave_gap_bottom":40,"columns":2,"grid_gap":24,"image_aspect":"4\/3","image_radius":4,"image_hover_scale":104,"image_placeholder_bg":"#f0efed","card_title_size":30,"card_title_weight":"400","card_title_spacing":0,"card_title_color":"#111111","link_size":13,"link_weight":"500","link_transform":"uppercase","link_spacing":10,"link_color":"#111111","link_color_hover":"#666666","link_underline_thickness":1,"link_underline_color":"#111111","link_underline_color_hover":"#666666","info_gap":24,"title_link_gap":14,"bg_color":"#f0efed","max_width":1400,"side_padding":40,"padding_top":72,"padding_bottom":72}},"1777010956d8398faa":{"type":"apps","blocks":{"storista_widget_wEbz49":{"type":"shopify:\/\/apps\/storista\/blocks\/widget\/f115f4d7-a3d3-4324-9eed-5a084ef1bd5a","settings":{"display_mode":"auto","widget_id":"z6qpNQbCyiAVGKW","padding":"10","heading":"<h3><strong>Watch Now <\/strong><\/h3>","heading_css":""}}},"block_order":["storista_widget_wEbz49"],"settings":{"include_margins":false}},"1780565161339aef59":{"type":"_blocks","settings":{}}},"order":["custom_liquid_wDEELX","image_banner","rich_text_3jUAqJ","featured_collection","rich_text_cBkjPH","featured_collection_f6Yz4b","hero_section_4GaPbK","circle_category_Dzgfaw","top_selling_XgWzRw","marquee_images_YyjmJr","trending_products_kdCqCQ","service_features_7mK4RG","lookbook_WqjCKQ","media_row_c9GWpV","media_row_zRnCzC","image_duo_TgL8NX","1777010956d8398faa","1780565161339aef59"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_liquid_wDEELX": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<div style=\"display:block;opacity: 0; height: 80vh;\"></div>",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "image_banner": {
+      "type": "image-banner",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "EYE CATCHING STREETWEAR",
+            "heading_size": "h1"
+          }
+        },
+        "button": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Shop all",
+            "button_link_1": "shopify://collections/all",
+            "button_style_secondary_1": true,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "button"
+      ],
+      "disabled": true,
+      "settings": {
+        "image": "shopify://shop_images/PHA-RELIGIONS-Slide-1.jpg",
+        "image_overlay_opacity": 10,
+        "image_height": "adapt",
+        "image_behavior": "ambient",
+        "desktop_content_position": "bottom-center",
+        "desktop_content_alignment": "center",
+        "show_text_box": false,
+        "color_scheme": "scheme-4",
+        "stack_images_on_mobile": false,
+        "mobile_content_alignment": "center",
+        "show_text_below": false
+      }
+    },
+    "rich_text_3jUAqJ": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_6WRFBC": {
+          "type": "heading",
+          "settings": {
+            "heading": "BEST SELLERS",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "heading_6WRFBC"
+      ],
+      "disabled": true,
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "disabled": true,
+      "settings": {
+        "collection": "all",
+        "products_to_show": 8,
+        "title": "",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 6,
+        "enable_desktop_slider": true,
+        "full_width": true,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 0,
+        "padding_bottom": 36
+      }
+    },
+    "rich_text_cBkjPH": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_HeXEYn": {
+          "type": "heading",
+          "settings": {
+            "heading": "ACCESSORIES",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "heading_HeXEYn"
+      ],
+      "disabled": true,
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    },
+    "featured_collection_f6Yz4b": {
+      "type": "featured-collection",
+      "disabled": true,
+      "settings": {
+        "collection": "accessories",
+        "products_to_show": 8,
+        "title": "",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 6,
+        "enable_desktop_slider": true,
+        "full_width": true,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 0,
+        "padding_bottom": 36
+      }
+    },
+    "hero_section_4GaPbK": {
+      "type": "hero-section",
+      "blocks": {
+        "slide_7QRwDx": {
+          "type": "slide",
+          "disabled": true,
+          "settings": {
+            "image_desktop": "shopify://shop_images/HERO_SLIDER.png",
+            "image_focal_point": "center top",
+            "script_text": "HOT TRENDINGS",
+            "script_color": "#121212",
+            "heading": "COUPLE COLLECTION",
+            "text_color": "#ffffff",
+            "description": "",
+            "button_label": "SHOP NOW",
+            "button_link": "",
+            "button_bg": "#121212",
+            "button_text_color": "",
+            "button_border_color": "#121212",
+            "button_bg_hover": "#ffffff",
+            "button_text_hover": "#121212",
+            "button2_label": "",
+            "button2_link": "",
+            "button2_bg": "",
+            "button2_text_color": "",
+            "button2_border_color": "",
+            "content_box_bg": "#ffffff",
+            "content_box_opacity": 30,
+            "content_box_pad_y": 24,
+            "content_box_pad_x": 32,
+            "content_box_radius": 0,
+            "content_box_blur": 0,
+            "align_h": "center",
+            "align_v": "middle",
+            "content_width": "auto"
+          }
+        },
+        "slide_KHExFi": {
+          "type": "slide",
+          "disabled": true,
+          "settings": {
+            "image_desktop": "shopify://shop_images/WO.png",
+            "image_focal_point": "",
+            "script_text": "New Arrival",
+            "script_color": "#121212",
+            "heading": "SS 2025 NEW ARRIVAL",
+            "text_color": "#ffffff",
+            "description": "",
+            "button_label": "Discover",
+            "button_link": "",
+            "button_bg": "#121212",
+            "button_text_color": "",
+            "button_border_color": "#121212",
+            "button_bg_hover": "#ffffff",
+            "button_text_hover": "#121212",
+            "button2_label": "",
+            "button2_link": "",
+            "button2_bg": "",
+            "button2_text_color": "",
+            "button2_border_color": "",
+            "content_box_bg": "#ffffff",
+            "content_box_opacity": 30,
+            "content_box_pad_y": 24,
+            "content_box_pad_x": 32,
+            "content_box_radius": 0,
+            "content_box_blur": 0,
+            "align_h": "center",
+            "align_v": "middle",
+            "content_width": "auto"
+          }
+        },
+        "slide_4Eft4F": {
+          "type": "slide",
+          "settings": {
+            "image_desktop": "shopify://shop_images/PHA-RELIGIONS-Slide-1.jpg",
+            "image_mobile": "shopify://shop_images/PHA-RELIGIONS-Mobile-Slide-newwww.jpg",
+            "image_focal_point": "",
+            "script_text": "Our Story Unfolds",
+            "script_color": "#121212",
+            "heading": "PHARELIGIONS",
+            "text_color": "#ffffff",
+            "description": "",
+            "button_label": "Explore Now",
+            "button_link": "",
+            "button_bg": "#121212",
+            "button_text_color": "#ffffff",
+            "button_border_color": "#121212",
+            "button_bg_hover": "#ffffff",
+            "button_text_hover": "#121212",
+            "button2_label": "",
+            "button2_link": "",
+            "button2_bg": "",
+            "button2_text_color": "",
+            "button2_border_color": "",
+            "content_box_bg": "#ffffff",
+            "content_box_opacity": 25,
+            "content_box_pad_y": 20,
+            "content_box_pad_x": 32,
+            "content_box_radius": 0,
+            "content_box_blur": 0,
+            "align_h": "center",
+            "align_v": "middle",
+            "content_width": "auto"
+          }
+        }
+      },
+      "block_order": [
+        "slide_7QRwDx",
+        "slide_KHExFi",
+        "slide_4Eft4F"
+      ],
+      "name": "Hero Carousel",
+      "settings": {
+        "hero_height_mode": "fullscreen",
+        "hero_height_desktop": 620,
+        "hero_height_mobile": 480,
+        "vh_offset": 80,
+        "image_fit": "cover",
+        "image_position": "center center",
+        "enable_kenburns": false,
+        "content_max_width": 720,
+        "content_gap": 8,
+        "content_padding_x": 16,
+        "content_padding_y": 32,
+        "script_size": 22,
+        "heading_size": 68,
+        "heading_weight": "800",
+        "heading_transform": "uppercase",
+        "heading_spacing": 2,
+        "description_size": 16,
+        "description_max_width": 560,
+        "button_size": 14,
+        "button_weight": "500",
+        "button_transform": "none",
+        "button_spacing": 4,
+        "button_pad_x": 28,
+        "button_pad_y": 14,
+        "button_radius": 0,
+        "button_border_width": 1,
+        "enable_autoplay": true,
+        "autoplay_speed": 5000,
+        "transition_speed": 80,
+        "show_arrows": false,
+        "arrow_size": 48,
+        "arrow_bg": "#ffffffd9",
+        "arrow_color": "#111111",
+        "arrow_bg_hover": "#ffffff",
+        "arrow_color_hover": "#000000",
+        "show_dots": true,
+        "dot_size": 8,
+        "dots_bottom": 28,
+        "dot_color": "#ffffff",
+        "dot_active_color": "#ffffff",
+        "show_progress": false,
+        "progress_color": "#ffffff",
+        "bg_color": "#f0efed"
+      }
+    },
+    "circle_category_Dzgfaw": {
+      "type": "circle-category",
+      "blocks": {
+        "category_4QgK6z": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/1_f9689385-4ff7-4b25-b170-c5d788e7a758.jpg",
+            "label": "BEANIES",
+            "link": ""
+          }
+        },
+        "category_MExtAJ": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/2_Phareligions_1_a5aae830-a7c1-476c-84a3-fa5adecf9c58.jpg",
+            "label": "biknis",
+            "link": "shopify://collections/bikini"
+          }
+        },
+        "category_8Q3XEG": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/9_655b7689-7bc2-49cb-a84f-9721d875a118.jpg",
+            "label": "iPhone Cases",
+            "link": "https://phrsapparel.myshopify.com/collections/accessories/category_phone_case"
+          }
+        },
+        "category_mYfV3c": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/JERSEYS_2.png",
+            "label": "jerseys",
+            "link": "https://phrsapparel.myshopify.com/collections/t-shirts/graphic_statement"
+          }
+        },
+        "category_NnBxyr": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Silicon-Hoodie-Set.jpg",
+            "label": "PH SILICONE SET",
+            "link": "shopify://collections/sets"
+          }
+        },
+        "category_RD3QHz": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/IMG_6505.jpg",
+            "label": "SINGLETS",
+            "link": "https://phrsapparel.myshopify.com/collections/accessories/series_ipac"
+          }
+        },
+        "category_MrTYDJ": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/SKATEBOARDS.png",
+            "label": "SKATEBOARDS",
+            "link": "shopify://collections/skateboards"
+          }
+        },
+        "category_yKtFGj": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/13_bf37764a-daff-4877-92ff-8b68160e4074.jpg",
+            "label": "socks",
+            "link": "https://phrsapparel.myshopify.com/collections/accessories/category_socks"
+          }
+        },
+        "category_GMCbtY": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/4_ph_1.jpg",
+            "label": "t-shirts",
+            "link": "shopify://collections/t-shirts"
+          }
+        },
+        "category_YzXyRd": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Billionaire-Religion-Tracksuit.jpg",
+            "label": "tracksuits",
+            "link": "shopify://collections/sets"
+          }
+        }
+      },
+      "block_order": [
+        "category_4QgK6z",
+        "category_MExtAJ",
+        "category_8Q3XEG",
+        "category_mYfV3c",
+        "category_NnBxyr",
+        "category_RD3QHz",
+        "category_MrTYDJ",
+        "category_yKtFGj",
+        "category_GMCbtY",
+        "category_YzXyRd"
+      ],
+      "name": "Category Circles Slider",
+      "settings": {
+        "heading": "Our Collections",
+        "heading_size": 36,
+        "heading_weight": "400",
+        "heading_spacing": 0,
+        "heading_align": "center",
+        "heading_color": "#111111",
+        "heading_gap": 36,
+        "show_underline": true,
+        "underline_color": "#c47a5a",
+        "underline_width": 100,
+        "underline_height": 3,
+        "underline_gap": 10,
+        "circle_size": 188,
+        "image_padding": 20,
+        "circle_bg": "#ffffff",
+        "circle_border_width": 1,
+        "circle_border_color": "#e8e8e8",
+        "circle_border_hover": "#bbbbbb",
+        "hover_rotate": -15,
+        "hover_scale": 106,
+        "label_size": 14,
+        "label_weight": "400",
+        "label_transform": "uppercase",
+        "label_spacing": 0,
+        "label_color": "#111111",
+        "label_hover_color": "#555555",
+        "label_gap": 14,
+        "track_start_pad": 40,
+        "items_per_page": 6,
+        "item_gap": 24,
+        "slider_pad_y": 12,
+        "edge_fade": 40,
+        "enable_autoplay": false,
+        "autoplay_speed": 40,
+        "enable_loop": true,
+        "show_dots": true,
+        "dot_size": 9,
+        "dot_gap": 8,
+        "dots_margin_top": 24,
+        "dot_color": "#111111",
+        "dot_active_color": "#111111",
+        "bg_color": "#ffffff",
+        "max_width": 1400,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "top_selling_XgWzRw": {
+      "type": "top-selling",
+      "blocks": {
+        "card_WDXw38": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/Billionaire-Religion-Tracksuit.jpg",
+            "link": "shopify://products/billionaire-religion-tracksuit",
+            "title": "",
+            "price": "",
+            "card_width": 25,
+            "rating": 0
+          }
+        },
+        "card_WFjxE8": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/Silicon-Hoodie-Set.jpg",
+            "link": "shopify://products/ph-silicon-hoodie-set",
+            "title": "",
+            "price": "",
+            "card_width": 25,
+            "rating": 0
+          }
+        },
+        "card_w4qdCH": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/1_ph_1.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/ph-panel-tshirt?variant=52759299850604",
+            "title": "",
+            "price": "",
+            "card_width": 25,
+            "rating": 0
+          }
+        },
+        "card_dMHDU8": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/4_ph_1.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/angel-wings-tshirt?_pos=1&_fid=a4ad3cea4&_ss=c&variant=52787357548908",
+            "title": "",
+            "price": "",
+            "card_width": 25,
+            "rating": 0
+          }
+        }
+      },
+      "block_order": [
+        "card_WDXw38",
+        "card_WFjxE8",
+        "card_w4qdCH",
+        "card_dMHDU8"
+      ],
+      "name": "Top Selling Products",
+      "settings": {
+        "badge_text": "SEE MORE PRODUCTS",
+        "badge_link": "",
+        "badge_bg": "#ffffff",
+        "badge_color": "#111111",
+        "badge_border": "#dddddd",
+        "badge_radius": 40,
+        "badge_size": 13,
+        "badge_pad_x": 18,
+        "badge_pad_y": 9,
+        "badge_gap": 12,
+        "heading": "Our Top Sellers",
+        "heading_size": 40,
+        "heading_weight": "700",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_line_height": 120,
+        "heading_color": "#111111",
+        "description": "Worn by trendsetters around the world, \nour collection represents the perfect balance of quality, authenticity, \nand streetwear excellence.",
+        "desc_size": 14,
+        "desc_color": "#666666",
+        "desc_max_width": 280,
+        "desc_btn_gap": 20,
+        "cta_label": "SHOP NOW",
+        "cta_link": "",
+        "cta_bg": "#ffffff",
+        "cta_color": "#111111",
+        "cta_border": "#111111",
+        "cta_radius": 40,
+        "cta_size": 14,
+        "cta_pad_x": 24,
+        "cta_pad_y": 12,
+        "arrow_size": 40,
+        "arrow_radius": 40,
+        "arrow_bg": "#ffffff",
+        "arrow_color": "#111111",
+        "arrow_border": "#dddddd",
+        "arrow_bottom_gap": 16,
+        "cards_visible": 4,
+        "card_gap": 20,
+        "card_height": 320,
+        "card_radius": 20,
+        "info_gap": 6,
+        "img_bg": "#f0efed",
+        "hover_arrow_size": 40,
+        "hover_arrow_offset": 12,
+        "hover_arrow_bg": "#ffffff",
+        "hover_arrow_color": "#111111",
+        "title_size": 14,
+        "title_weight": "500",
+        "title_color": "#111111",
+        "price_size": 14,
+        "price_weight": "600",
+        "price_color": "#111111",
+        "show_rating": true,
+        "rating_size": 12,
+        "star_color": "#f59e0b",
+        "rating_color": "#888888",
+        "max_width": 1400,
+        "side_padding": 24,
+        "header_bottom": 28,
+        "bg_color": "#f0efed",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "marquee_images_YyjmJr": {
+      "type": "marquee-images",
+      "blocks": {
+        "row1_item_pgpkGn": {
+          "type": "row1_item",
+          "settings": {
+            "text": "NEW Arrivals",
+            "link": "",
+            "image": "shopify://shop_images/1_ph_1.jpg"
+          }
+        },
+        "row1_item_Dmwagy": {
+          "type": "row1_item",
+          "settings": {
+            "text": "PHARELIGIONS",
+            "link": "",
+            "image": "shopify://shop_images/IMG_6509.jpg"
+          }
+        },
+        "row1_item_jVLcPA": {
+          "type": "row1_item",
+          "settings": {
+            "text": "NEW Arrivals",
+            "link": "",
+            "image": "shopify://shop_images/3_Phareligions_1.jpg"
+          }
+        },
+        "row2_item_YacqVJ": {
+          "type": "row2_item",
+          "settings": {
+            "text": "PHARELIGIONS",
+            "link": "",
+            "image": "shopify://shop_images/9.jpg"
+          }
+        },
+        "row2_item_D8Ncn6": {
+          "type": "row2_item",
+          "settings": {
+            "text": "PHARELIGIONS",
+            "link": "",
+            "image": "shopify://shop_images/Purple-Skateboard-1.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "row1_item_pgpkGn",
+        "row1_item_Dmwagy",
+        "row1_item_jVLcPA",
+        "row2_item_YacqVJ",
+        "row2_item_D8Ncn6"
+      ],
+      "name": "Marquee Ticker",
+      "settings": {
+        "text_size": 60,
+        "text_weight": "300",
+        "text_transform": "uppercase",
+        "text_spacing": 15,
+        "text_color": "#111111",
+        "text_hover_color": "#111111",
+        "img_width": 132,
+        "img_height": 100,
+        "show_separator": false,
+        "separator": "✦",
+        "sep_color": "#c8c8c8",
+        "sep_size": 16,
+        "sep_opacity": 60,
+        "row_height": 100,
+        "item_gap": 48,
+        "row1_speed": 20,
+        "row2_speed": 25,
+        "row2_direction": "reverse",
+        "pause_on_hover": true,
+        "divider_width": 1,
+        "divider_color": "#e5e5e5",
+        "border_width": 1,
+        "border_color": "#e5e5e5",
+        "bg_color": "#ffffff",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "trending_products_kdCqCQ": {
+      "type": "trending-products",
+      "blocks": {
+        "image_eG8Umq": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_6486.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=53079061463404"
+          }
+        },
+        "image_zMpi3P": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_6498.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52759310991724"
+          }
+        },
+        "image_JaPGBB": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_6485.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52787347095916&pb=0"
+          }
+        },
+        "image_YXqGcP": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_6499.jpg",
+            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52787347030380&pb=0"
+          }
+        }
+      },
+      "block_order": [
+        "image_eG8Umq",
+        "image_zMpi3P",
+        "image_JaPGBB",
+        "image_YXqGcP"
+      ],
+      "name": "Trending Products",
+      "settings": {
+        "product_source": "gallery",
+        "collection": "streetwear",
+        "heading": "TRENDING PRODUCTS",
+        "heading_weight": "400",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_color": "#111111",
+        "heading_align": "center",
+        "heading_gap": 40,
+        "show_underline": true,
+        "underline_width": 260,
+        "underline_thickness": 4,
+        "underline_gap": 8,
+        "underline_color": "#e8b8b0",
+        "grid_gap": 24,
+        "image_radius": 4,
+        "image_bg": "#f5f5f5",
+        "button_label": "VIEW ALL",
+        "button_link": "",
+        "button_gap": 48,
+        "button_size": 14,
+        "button_weight": "600",
+        "button_transform": "uppercase",
+        "button_spacing": 10,
+        "button_pad_x": 36,
+        "button_pad_y": 14,
+        "button_radius": 0,
+        "button_border_width": 0,
+        "button_bg": "#111111",
+        "button_color": "#ffffff",
+        "button_border": "#111111",
+        "button_bg_hover": "#333333",
+        "button_color_hover": "#ffffff",
+        "bg_color": "#f0efed",
+        "max_width": 1400,
+        "side_padding": 24,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "service_features_7mK4RG": {
+      "type": "service-features",
+      "blocks": {
+        "feature_YawmrT": {
+          "type": "feature",
+          "settings": {
+            "icon": "headphone",
+            "title": "24 Hr Service",
+            "subtitle": "Instant customer support",
+            "link": ""
+          }
+        },
+        "feature_QXATqb": {
+          "type": "feature",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure Payment",
+            "subtitle": "Accept major credit cards.",
+            "link": ""
+          }
+        },
+        "feature_3FNNHp": {
+          "type": "feature",
+          "settings": {
+            "icon": "truck",
+            "title": "Fast Delivery",
+            "subtitle": "And packaged with love.",
+            "link": ""
+          }
+        },
+        "feature_ftN9Ft": {
+          "type": "feature",
+          "settings": {
+            "icon": "refresh",
+            "title": "Free Returns",
+            "subtitle": "Consultations via email.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "feature_YawmrT",
+        "feature_QXATqb",
+        "feature_3FNNHp",
+        "feature_ftN9Ft"
+      ],
+      "name": "Service Features",
+      "settings": {
+        "columns": 4,
+        "item_align": "row",
+        "item_gap": 24,
+        "icon_gap": 18,
+        "text_gap": 4,
+        "item_pad_x": 0,
+        "item_pad_y": 8,
+        "icon_size": 44,
+        "icon_stroke": 1,
+        "icon_color": "#111111",
+        "icon_hover_color": "#111111",
+        "title_size": 17,
+        "title_weight": "600",
+        "title_transform": "none",
+        "title_spacing": 0,
+        "title_color": "#111111",
+        "sub_size": 13,
+        "sub_weight": "400",
+        "sub_color": "#888888",
+        "border_top": false,
+        "border_bottom": false,
+        "border_width": 1,
+        "border_color": "#eeeeee",
+        "bg_color": "#ffffff",
+        "max_width": 1400,
+        "side_padding": 24,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "lookbook_WqjCKQ": {
+      "type": "lookbook",
+      "blocks": {
+        "image_UUjGBq": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/3.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "ph-silicon-hoodie-set",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_VdgeWE": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/2.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "ph-silicon-hoodie-set",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_zNQUqn": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/1.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "ph-silicon-hoodie-set",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_UUjGBq",
+        "image_VdgeWE",
+        "image_zNQUqn"
+      ],
+      "name": "Lookbook",
+      "settings": {
+        "heading": "OUR LOOKBOOK",
+        "heading_size": 32,
+        "heading_weight": "500",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_color": "#111111",
+        "heading_align": "center",
+        "heading_pad_x": 24,
+        "heading_pad_bottom": 24,
+        "columns": 3,
+        "columns_mobile": "1",
+        "grid_gap": 4,
+        "max_width": 1400,
+        "side_padding": 0,
+        "image_aspect": "2/3",
+        "img_radius": 0,
+        "img_hover_scale": 104,
+        "img_placeholder_bg": "#f0efed",
+        "popup_width": 240,
+        "popup_radius": 8,
+        "popup_shadow": "0 8px 32px rgba(0,0,0,0.14)",
+        "popup_bg": "#ffffff",
+        "popup_offset_y": 16,
+        "popup_offset_x": 12,
+        "popup_gap": 8,
+        "popup_img_bg": "#f5f5f5",
+        "popup_thumb_size": 80,
+        "popup_info_pad": 16,
+        "popup_title_size": 14,
+        "popup_title_weight": "500",
+        "popup_title_color": "#111111",
+        "popup_price_size": 14,
+        "popup_price_weight": "400",
+        "popup_price_color": "#444444",
+        "popup_btn_gap": 12,
+        "popup_btn_label": "Shop Now",
+        "popup_btn_size": 12,
+        "popup_btn_weight": "500",
+        "popup_btn_pad_x": 16,
+        "popup_btn_pad_y": 10,
+        "popup_btn_radius": 4,
+        "popup_btn_bg": "#111111",
+        "popup_btn_color": "#ffffff",
+        "popup_btn_border": "#111111",
+        "popup_btn_bg_hover": "#333333",
+        "popup_btn_color_hover": "#ffffff",
+        "viewmore_enabled": true,
+        "viewmore_label": "VIEW FULL LOOKBOOK",
+        "viewmore_url": "shopify://pages/lookbook",
+        "viewmore_new_tab": false,
+        "viewmore_show_arrow": false,
+        "viewmore_align": "center",
+        "viewmore_pad_top": 48,
+        "bg_color": "#f0efed",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "media_row_c9GWpV": {
+      "type": "media-row",
+      "name": "Sticky Card Stack",
+      "settings": {
+        "section_heading": "",
+        "section_heading_size": 36,
+        "section_heading_weight": "500",
+        "section_heading_transform": "none",
+        "section_heading_spacing": 0,
+        "section_heading_color": "#111111",
+        "section_heading_align": "center",
+        "section_heading_gap": 32,
+        "height_mode": "fixed",
+        "row_height_desktop": 480,
+        "row_height_mobile": 320,
+        "row_aspect": "16/9",
+        "row_gap": 4,
+        "row_radius": 0,
+        "media_fit": "cover",
+        "eyebrow_size": 13,
+        "eyebrow_weight": "400",
+        "eyebrow_transform": "uppercase",
+        "eyebrow_spacing": 20,
+        "heading_size": 72,
+        "heading_weight": "500",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_line_height": 115,
+        "subheading_size": 17,
+        "subheading_weight": "400",
+        "subheading_spacing": 0,
+        "subheading_max_width": 580,
+        "content_max_width": 700,
+        "content_pad_x": 40,
+        "content_pad_y": 60,
+        "content_gap": 18,
+        "btn_size": 14,
+        "btn_weight": "500",
+        "btn_transform": "none",
+        "btn_spacing": 4,
+        "btn_pad_x": 28,
+        "btn_pad_y": 14,
+        "btn_radius": 50,
+        "btn_border_width": 1,
+        "btn_gap": 14,
+        "btn1_bg": "#ffffff",
+        "btn1_color": "#111111",
+        "btn1_border": "#ffffff",
+        "btn1_bg_hover": "#111111",
+        "btn1_color_hover": "#ffffff",
+        "btn1_border_hover": "#111111",
+        "btn2_bg": "rgba(0,0,0,0)",
+        "btn2_color": "#ffffff",
+        "btn2_border": "#ffffff",
+        "btn2_bg_hover": "#ffffff",
+        "btn2_color_hover": "#111111",
+        "btn2_border_hover": "#ffffff",
+        "bg_color": "#f0efed",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "max_width": 1400,
+        "side_padding": 24
+      }
+    },
+    "media_row_zRnCzC": {
+      "type": "media-row",
+      "blocks": {
+        "row_VHJywK": {
+          "type": "row",
+          "settings": {
+            "video": "shopify://files/videos/Video 2.mp4",
+            "row_height_override": 0,
+            "row_height_mobile_override": 0,
+            "row_aspect_override": "",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25,
+            "content_color": "#ffffff",
+            "eyebrow": "",
+            "heading": "BILLIONAIRE RELIGION TRACKSUIT",
+            "subheading": "",
+            "content_box_color": "#ffffff",
+            "content_box_opacity": 35,
+            "content_box_padding": 24,
+            "content_box_radius": 8,
+            "align_h": "center",
+            "align_v": "middle",
+            "btn1_label": "SHOP NOW",
+            "btn1_link": "",
+            "btn1_bg": "",
+            "btn1_color": "",
+            "btn1_border": "",
+            "btn2_label": "VIEW ALL",
+            "btn2_link": "",
+            "btn2_bg": "",
+            "btn2_color": "",
+            "btn2_border": ""
+          }
+        },
+        "row_HzYWwz": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/cropped_summer.jpg",
+            "row_height_override": 0,
+            "row_height_mobile_override": 0,
+            "row_aspect_override": "",
+            "overlay_color": "#000000",
+            "overlay_opacity": 20,
+            "content_color": "#ffffff",
+            "eyebrow": "",
+            "heading": "SUMMER ESSENTIALS",
+            "subheading": "",
+            "content_box_color": "#ffffff",
+            "content_box_opacity": 20,
+            "content_box_padding": 24,
+            "content_box_radius": 8,
+            "align_h": "center",
+            "align_v": "middle",
+            "btn1_label": "EXPLORE",
+            "btn1_link": "",
+            "btn1_bg": "",
+            "btn1_color": "",
+            "btn1_border": "",
+            "btn2_label": "",
+            "btn2_link": "",
+            "btn2_bg": "",
+            "btn2_color": "",
+            "btn2_border": ""
+          }
+        },
+        "row_ALA8iy": {
+          "type": "row",
+          "settings": {
+            "video": "shopify://files/videos/0001.mp4",
+            "row_height_override": 0,
+            "row_height_mobile_override": 0,
+            "row_aspect_override": "",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30,
+            "content_color": "#ffffff",
+            "eyebrow": "",
+            "heading": "EXCLUSIVES",
+            "subheading": "",
+            "content_box_color": "#ffffff",
+            "content_box_opacity": 20,
+            "content_box_padding": 24,
+            "content_box_radius": 8,
+            "align_h": "center",
+            "align_v": "middle",
+            "btn1_label": "SHOP NOW",
+            "btn1_link": "",
+            "btn1_bg": "",
+            "btn1_color": "",
+            "btn1_border": "",
+            "btn2_label": "LEARN MORE",
+            "btn2_link": "",
+            "btn2_bg": "",
+            "btn2_color": "",
+            "btn2_border": ""
+          }
+        }
+      },
+      "block_order": [
+        "row_VHJywK",
+        "row_HzYWwz",
+        "row_ALA8iy"
+      ],
+      "name": "Media Rows",
+      "settings": {
+        "section_heading": "JOIN OUR COMMUNITY",
+        "section_heading_size": 36,
+        "section_heading_weight": "500",
+        "section_heading_transform": "uppercase",
+        "section_heading_spacing": 0,
+        "section_heading_color": "#111111",
+        "section_heading_align": "center",
+        "section_heading_gap": 32,
+        "height_mode": "ratio",
+        "row_height_desktop": 480,
+        "row_height_mobile": 320,
+        "row_aspect": "16/9",
+        "row_gap": 4,
+        "row_radius": 0,
+        "media_fit": "cover",
+        "eyebrow_size": 13,
+        "eyebrow_weight": "400",
+        "eyebrow_transform": "uppercase",
+        "eyebrow_spacing": 20,
+        "heading_size": 56,
+        "heading_weight": "700",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_line_height": 115,
+        "subheading_size": 16,
+        "subheading_weight": "400",
+        "subheading_spacing": 0,
+        "subheading_max_width": 560,
+        "content_max_width": 700,
+        "content_pad_x": 40,
+        "content_pad_y": 60,
+        "content_gap": 18,
+        "btn_size": 14,
+        "btn_weight": "500",
+        "btn_transform": "none",
+        "btn_spacing": 4,
+        "btn_pad_x": 28,
+        "btn_pad_y": 14,
+        "btn_radius": 50,
+        "btn_border_width": 1,
+        "btn_gap": 14,
+        "btn1_bg": "#ffffff",
+        "btn1_color": "#111111",
+        "btn1_border": "#ffffff",
+        "btn1_bg_hover": "#111111",
+        "btn1_color_hover": "#ffffff",
+        "btn1_border_hover": "#111111",
+        "btn2_bg": "rgba(0,0,0,0)",
+        "btn2_color": "#ffffff",
+        "btn2_border": "#ffffff",
+        "btn2_bg_hover": "#ffffff",
+        "btn2_color_hover": "#111111",
+        "btn2_border_hover": "#ffffff",
+        "bg_color": "#ffffff",
+        "padding_top": 36,
+        "padding_bottom": 0,
+        "max_width": 1400,
+        "side_padding": 28
+      }
+    },
+    "image_duo_TgL8NX": {
+      "type": "image-duo",
+      "blocks": {
+        "card_KLnyC9": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/6_Phareligions_2_b9c439a1-ba53-4798-a0bb-ff8c179e8da6.jpg",
+            "title": "Man",
+            "link_label": "SHOP THE LOOK",
+            "link": ""
+          }
+        },
+        "card_n7T6D3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/1_Phareligions_1.jpg",
+            "title": "Women",
+            "link_label": "SHOP THE LOOK",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_KLnyC9",
+        "card_n7T6D3"
+      ],
+      "disabled": true,
+      "name": "Image Duo",
+      "settings": {
+        "heading": "Products featuring the thing you love by an artist who loves it too.",
+        "heading_size": 42,
+        "heading_weight": "400",
+        "heading_transform": "none",
+        "heading_spacing": 0,
+        "heading_line_height": 125,
+        "heading_max_width": 900,
+        "heading_color": "#111111",
+        "heading_gap": 8,
+        "show_wave": true,
+        "wave_width": 80,
+        "wave_stroke": 2,
+        "wave_color": "#111111",
+        "wave_gap_top": 8,
+        "wave_gap_bottom": 40,
+        "columns": 2,
+        "grid_gap": 24,
+        "image_aspect": "4/3",
+        "image_radius": 4,
+        "image_hover_scale": 104,
+        "image_placeholder_bg": "#f0efed",
+        "card_title_size": 30,
+        "card_title_weight": "400",
+        "card_title_spacing": 0,
+        "card_title_color": "#111111",
+        "link_size": 13,
+        "link_weight": "500",
+        "link_transform": "uppercase",
+        "link_spacing": 10,
+        "link_color": "#111111",
+        "link_color_hover": "#666666",
+        "link_underline_thickness": 1,
+        "link_underline_color": "#111111",
+        "link_underline_color_hover": "#666666",
+        "info_gap": 24,
+        "title_link_gap": 14,
+        "bg_color": "#f0efed",
+        "max_width": 1400,
+        "side_padding": 40,
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "1777010956d8398faa": {
+      "type": "apps",
+      "blocks": {
+        "storista_widget_wEbz49": {
+          "type": "shopify://apps/storista/blocks/widget/f115f4d7-a3d3-4324-9eed-5a084ef1bd5a",
+          "settings": {
+            "display_mode": "auto",
+            "widget_id": "z6qpNQbCyiAVGKW",
+            "padding": "10",
+            "heading": "<h3><strong>Watch Now </strong></h3>",
+            "heading_css": ""
+          }
+        }
+      },
+      "block_order": [
+        "storista_widget_wEbz49"
+      ],
+      "settings": {
+        "include_margins": false
+      }
+    },
+    "1780565161339aef59": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "custom_liquid_wDEELX",
+    "image_banner",
+    "rich_text_3jUAqJ",
+    "featured_collection",
+    "rich_text_cBkjPH",
+    "featured_collection_f6Yz4b",
+    "hero_section_4GaPbK",
+    "circle_category_Dzgfaw",
+    "top_selling_XgWzRw",
+    "marquee_images_YyjmJr",
+    "trending_products_kdCqCQ",
+    "service_features_7mK4RG",
+    "lookbook_WqjCKQ",
+    "media_row_c9GWpV",
+    "media_row_zRnCzC",
+    "image_duo_TgL8NX",
+    "1777010956d8398faa",
+    "1780565161339aef59"
+  ]
+}
