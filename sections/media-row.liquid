@@ -215,6 +215,72 @@
     border-color: var(--mr-btn2-border-h, {{ section.settings.btn2_border_hover }});
   }
 
+  /* ── Corner layout: text bottom-left + arrow button bottom-right ── */
+  .mr-corner-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: left;
+    padding: {{ section.settings.content_pad_y }}px {{ section.settings.content_pad_x }}px;
+    pointer-events: none;
+  }
+  /* Subtle bottom scrim so text stays legible over any media */
+  .mr-corner-{{ section.id }}::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 55%;
+    background: linear-gradient(to top, rgba(0,0,0,{{ section.settings.corner_scrim | divided_by: 100.0 }}), rgba(0,0,0,0));
+    pointer-events: none;
+    z-index: -1;
+  }
+  .mr-corner-text-{{ section.id }} {
+    position: relative;
+    max-width: {{ section.settings.content_max_width }}px;
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.content_gap }}px;
+    pointer-events: auto;
+  }
+  /* Reserve room so long headings never sit under the arrow button */
+  .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size | plus: 24 }}px; }
+
+  .mr-arrow-btn-{{ section.id }} {
+    position: absolute;
+    z-index: 3;
+    right: {{ section.settings.corner_btn_offset }}px;
+    bottom: {{ section.settings.corner_btn_offset }}px;
+    width: {{ section.settings.corner_btn_size }}px;
+    height: {{ section.settings.corner_btn_size }}px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mr-btn1-bg, {{ section.settings.btn1_bg }});
+    color: var(--mr-btn1-color, {{ section.settings.btn1_color }});
+    border: {{ section.settings.btn_border_width }}px solid var(--mr-btn1-border, {{ section.settings.btn1_border }});
+    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .mr-arrow-btn-{{ section.id }}:hover {
+    background: var(--mr-btn1-bg-h, {{ section.settings.btn1_bg_hover }});
+    color: var(--mr-btn1-color-h, {{ section.settings.btn1_color_hover }});
+    border-color: var(--mr-btn1-border-h, {{ section.settings.btn1_border_hover }});
+    transform: scale(1.06) translateY(-1px);
+  }
+  .mr-arrow-btn-{{ section.id }} svg {
+    width: 42%;
+    height: 42%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   /* Mobile adjustments */
   @media (max-width: 749px) {
     .mr-content-{{ section.id }} {
@@ -222,6 +288,17 @@
     }
     .mr-heading-{{ section.id }} { font-size: var(--font-h2-size); }
     .mr-btn-row-{{ section.id }} { justify-content: center; }
+
+    .mr-corner-{{ section.id }} {
+      padding: {{ section.settings.content_pad_y | times: 0.55 | round: 0 }}px {{ section.settings.content_pad_x | times: 0.55 | round: 0 }}px;
+    }
+    .mr-arrow-btn-{{ section.id }} {
+      width: {{ section.settings.corner_btn_size_mobile }}px;
+      height: {{ section.settings.corner_btn_size_mobile }}px;
+      right: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
+      bottom: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
+    }
+    .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
   }
 {%- endstyle -%}
 
@@ -322,7 +399,34 @@
             {%- assign has_content = true -%}
           {%- endif -%}
 
-          {%- if has_content -%}
+          {%- if section.settings.content_layout == 'corner' -%}
+            {%- comment -%} Corner layout: text bottom-left, arrow button bottom-right {%- endcomment -%}
+            {%- if has_content -%}
+              <div class="mr-corner-{{ section.id }}" style="color: {{ content_color }};">
+                <div class="mr-corner-text-{{ section.id }}">
+                  {%- if block.settings.eyebrow != blank -%}
+                    <p class="mr-eyebrow-{{ section.id }}">{{ block.settings.eyebrow | escape }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.heading != blank -%}
+                    <h2 class="mr-heading-{{ section.id }}">{{ block.settings.heading }}</h2>
+                  {%- endif -%}
+                  {%- if block.settings.subheading != blank -%}
+                    <p class="mr-subheading-{{ section.id }}">{{ block.settings.subheading }}</p>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+            {%- if block.settings.btn1_link != blank or block.settings.btn1_label != blank -%}
+              <a
+                class="mr-arrow-btn-{{ section.id }}"
+                href="{{ block.settings.btn1_link | default: '#' }}"
+                aria-label="{{ block.settings.btn1_label | default: block.settings.heading | strip_html | escape | default: 'View' }}"
+              >
+                <svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
+              </a>
+            {%- endif -%}
+
+          {%- elsif has_content -%}
             <div class="mr-content-{{ section.id }}" style="color: {{ content_color }};">
               <div class="mr-content-inner-{{ section.id }}">
 
@@ -619,10 +723,38 @@
       "min": 4, "max": 40, "step": 2, "unit": "px", "default": 18
     },
 
+    { "type": "header", "content": "Content layout" },
+    {
+      "type": "select", "id": "content_layout", "label": "Layout style",
+      "options": [
+        { "value": "corner",  "label": "Corner — text bottom-left, ↗ arrow button bottom-right" },
+        { "value": "overlay", "label": "Overlay — text + buttons (uses position settings)" }
+      ],
+      "default": "corner",
+      "info": "Corner keeps the image/video visible. The arrow button links to Button 1's link."
+    },
+    {
+      "type": "range", "id": "corner_btn_size", "label": "Arrow button size (desktop)",
+      "min": 36, "max": 96, "step": 2, "unit": "px", "default": 58
+    },
+    {
+      "type": "range", "id": "corner_btn_size_mobile", "label": "Arrow button size (mobile)",
+      "min": 30, "max": 72, "step": 2, "unit": "px", "default": 44
+    },
+    {
+      "type": "range", "id": "corner_btn_offset", "label": "Arrow button edge offset",
+      "min": 8, "max": 60, "step": 2, "unit": "px", "default": 24
+    },
+    {
+      "type": "range", "id": "corner_scrim", "label": "Bottom shade for text legibility",
+      "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35,
+      "info": "Subtle dark gradient behind the bottom-left text (corner layout only)."
+    },
+
     { "type": "header", "content": "Buttons — default colours" },
     {
       "type": "paragraph",
-      "content": "Each row can override these individually."
+      "content": "Each row can override these individually. In Corner layout, the arrow button uses Button 1's colours."
     },
     { "type": "range",  "id": "btn_size",         "label": "Font size",         "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
     { "type": "select", "id": "btn_weight",        "label": "Weight",            "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
