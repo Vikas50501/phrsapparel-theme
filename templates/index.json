@@ -247,7 +247,7 @@
             "image_mobile": "shopify://shop_images/PHA-RELIGIONS-Mobile-Slide-newwww.jpg",
             "image_focal_point": "",
             "script_text": "Our Story Unfolds",
-            "script_color": "#121212",
+            "script_color": "#ffffff",
             "heading_logo": "shopify://shop_images/PHAREL_FINAL_LOGO_1.png",
             "heading": "PHARELIGIONS",
             "text_color": "#ffffff",
@@ -265,7 +265,7 @@
             "button2_text_color": "",
             "button2_border_color": "",
             "content_box_bg": "#f1f1f1",
-            "content_box_opacity": 20,
+            "content_box_opacity": 0,
             "content_box_pad_y": 20,
             "content_box_pad_x": 32,
             "content_box_radius": 0,
@@ -325,7 +325,9 @@
         "dot_active_color": "#ffffff",
         "show_progress": false,
         "progress_color": "#ffffff",
-        "bg_color": "#f0efed"
+        "bg_color": "#f0efed",
+        "overlay_color": "#000000",
+        "overlay_opacity": 20
       }
     },
     "circle_category_Dzgfaw": {
