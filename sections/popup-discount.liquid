@@ -124,6 +124,7 @@
     line-height: 1.15;
     font-weight: 700;
     letter-spacing: -0.01em;
+    text-transform: none;
     color: var(--pd-heading, var(--pd-text, rgb(var(--color-foreground))));
   }
   #pd-{{ uid }} .pd-sub {
@@ -324,7 +325,7 @@
           <p class="pd-sub">{{ s.subheading }}</p>
         {%- endif -%}
 
-        {%- form 'customer', id: 'pd-form-' | append: uid, class: 'pd-form', novalidate: 'novalidate' -%}
+        {%- form 'customer', class: 'pd-form' -%}
           <input type="hidden" name="contact[tags]" value="newsletter, popup-discount">
 
           <div class="pd-field">
@@ -528,6 +529,8 @@
 
     /* ---- submit (AJAX → Shopify customer form) ---- */
     if (form) {
+      form.setAttribute('novalidate', 'novalidate'); // use our own inline validation UI
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         clearError();
