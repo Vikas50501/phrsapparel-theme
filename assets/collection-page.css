@@ -629,16 +629,27 @@
     transform: rotate(-135deg);
   }
 
-  /* Collapsible body */
-  .template-collection .kc-sidebar.kc-collapsible .kc-filter-body {
+  /* Collapsed: hide the filter content below the bar.
+     Targets the wrapper AND the form/tags directly, so collapse works
+     even if the section HTML hasn't been updated with .kc-filter-body. */
+  .template-collection .kc-sidebar.kc-collapsible:not(.is-open) .kc-filter-body,
+  .template-collection .kc-sidebar.kc-collapsible:not(.is-open) #kc-filters,
+  .template-collection .kc-sidebar.kc-collapsible:not(.is-open) .kc-active-tags {
     display: none;
-    padding-bottom: 16px;
   }
-  .template-collection .kc-sidebar.kc-collapsible.is-open .kc-filter-body {
-    display: block;
-    padding-top: 4px;
-    border-top: 1px solid var(--kc-line);
+
+  /* Open: a clean, tight separation under the bar */
+  .template-collection .kc-sidebar.kc-collapsible.is-open .kc-filter-header {
+    border-bottom: 1px solid var(--kc-line);
   }
+  .template-collection .kc-sidebar.kc-collapsible .kc-filter-body {
+    padding-bottom: 12px;
+  }
+
+  /* Tighter, less sparse filter rows on mobile */
+  .template-collection .kc-sidebar.kc-collapsible .kc-group { padding: 12px 0; }
+  .template-collection .kc-sidebar.kc-collapsible .kc-group:last-of-type { border-bottom: none; }
+  .template-collection .kc-sidebar.kc-collapsible .kc-active-tags { margin-top: 14px; margin-bottom: 4px; }
 
   /* Editorial banner is sidebar decoration — hide on mobile so it
      doesn't wedge a tall image between the filters and the products */
