@@ -20,9 +20,19 @@
   assign use_custom = s.enable_custom_colors
   assign delay_ms = s.delay_seconds | times: 1000
   assign code = s.discount_code | strip | default: 'WELCOME10'
+  assign desktop_image = s.image
+  assign mobile_image = s.mobile_image | default: s.image
+  comment
+    has_image drives the desktop landscape layout (needs a desktop image).
+    show_media renders the image block when either a desktop or mobile image is set.
+  endcomment
   assign has_image = false
-  if s.image != blank
+  if desktop_image != blank
     assign has_image = true
+  endif
+  assign show_media = false
+  if desktop_image != blank or s.mobile_image != blank
+    assign show_media = true
   endif
 -%}
 
@@ -112,28 +122,30 @@
 
   #pd-{{ uid }} .pd-body { padding: 36px; overflow-y: auto; max-height: calc(100vh - 40px); }
 
-  /* Close */
+  /* Close — white, large, no background */
   #pd-{{ uid }} .pd-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 44px;
-    height: 44px;
+    top: 10px;
+    right: 10px;
+    width: 48px;
+    height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: none;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.06);
-    color: inherit;
-    font-size: 22px;
+    background: transparent;
+    color: #ffffff;
+    font-size: 38px;
     line-height: 1;
     cursor: pointer;
     z-index: 4;
-    transition: background 0.2s ease, transform 0.2s ease;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
-  #pd-{{ uid }} .pd-close:hover { background: rgba(0, 0, 0, 0.12); transform: rotate(90deg); }
-  #pd-{{ uid }} .pd-close:focus-visible { outline: 2px solid rgba(var(--color-foreground), 0.6); outline-offset: 2px; }
+  #pd-{{ uid }} .pd-close span { display: block; margin-top: -4px; }
+  #pd-{{ uid }} .pd-close:hover { transform: rotate(90deg); opacity: 0.85; }
+  #pd-{{ uid }} .pd-close:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
 
   /* Typography */
   #pd-{{ uid }} .pd-heading {
@@ -300,17 +312,26 @@
       <span aria-hidden="true">&times;</span>
     </button>
 
-    {%- if has_image -%}
+    {%- if show_media -%}
+      {%- assign main_image = desktop_image | default: mobile_image -%}
       <div class="pd-media">
-        <img
-          src="{{ s.image | image_url: width: 960 }}"
-          srcset="{{ s.image | image_url: width: 480 }} 480w, {{ s.image | image_url: width: 960 }} 960w"
-          sizes="(max-width: 749px) 100vw, 400px"
-          alt="{{ s.heading | strip_html | escape }}"
-          width="{{ s.image.width }}"
-          height="{{ s.image.height }}"
-          loading="lazy"
-        >
+        <picture>
+          {%- if mobile_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="{{ mobile_image | image_url: width: 600 }} 600w, {{ mobile_image | image_url: width: 1000 }} 1000w"
+            >
+          {%- endif -%}
+          <img
+            src="{{ main_image | image_url: width: 960 }}"
+            srcset="{{ main_image | image_url: width: 480 }} 480w, {{ main_image | image_url: width: 960 }} 960w"
+            sizes="(max-width: 749px) 100vw, 400px"
+            alt="{{ s.heading | strip_html | escape }}"
+            width="{{ main_image.width }}"
+            height="{{ main_image.height }}"
+            loading="lazy"
+          >
+        </picture>
       </div>
     {%- endif -%}
 
@@ -650,7 +671,13 @@
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Popup image (shown beside the form on desktop)"
+      "label": "Popup image — desktop (shown beside the form)"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Popup image — mobile",
+      "info": "Optional. Used on phones instead of the desktop image. Falls back to the desktop image if left empty."
     },
     {
       "type": "header",
