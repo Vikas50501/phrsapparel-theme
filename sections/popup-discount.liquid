@@ -1,0 +1,769 @@
+{%- comment -%}
+  Section: Popup Discount (popup-discount.liquid)
+  Premium homepage email-capture popup with discount reveal.
+
+  - Matches the theme automatically via the chosen color scheme (theme buttons reused).
+  - Optional custom colors override the scheme.
+  - Submits the native Shopify {% form 'customer' %} over AJAX, so subscribers land
+    in Customers / Email Marketing without a page reload. Falls back gracefully.
+  - Helvetica throughout, soft shadows, rounded corners, fully responsive.
+  - Trigger: after a configurable delay, once per N days (localStorage).
+  - Closes via X, outside click, or Esc. Focus-trapped + accessible.
+
+  Add this section to your Home page template (Online Store 2.0).
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign uid = section.id
+  assign use_custom = s.enable_custom_colors
+  assign delay_ms = s.delay_seconds | times: 1000
+  assign code = s.discount_code | strip | default: 'WELCOME10'
+-%}
+
+{%- capture custom_vars -%}
+  {%- if use_custom -%}
+    --pd-bg: {{ s.popup_bg }};
+    --pd-text: {{ s.text_color }};
+    --pd-heading: {{ s.heading_color | default: s.text_color }};
+    --color-button: {{ s.button_color | color_extract: 'red' }} {{ s.button_color | color_extract: 'green' }} {{ s.button_color | color_extract: 'blue' }};
+    --color-button-text: {{ s.button_text_color | color_extract: 'red' }} {{ s.button_text_color | color_extract: 'green' }} {{ s.button_text_color | color_extract: 'blue' }};
+    --alpha-button-background: 1;
+    --alpha-button-border: 1;
+  {%- endif -%}
+{%- endcapture -%}
+
+<style>
+  #pd-{{ uid }} {
+    --pd-font: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    --pd-radius: 16px;
+    --pd-maxw: 480px;
+    --pd-pad: 36px;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 15, 20, 0.55);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+    font-family: var(--pd-font);
+  }
+  #pd-{{ uid }}[hidden] { display: none; }
+  #pd-{{ uid }}.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.35s ease;
+  }
+
+  #pd-{{ uid }} .pd-modal {
+    position: relative;
+    width: 100%;
+    max-width: var(--pd-maxw);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: var(--pd-bg, rgb(var(--color-background)));
+    color: var(--pd-text, rgb(var(--color-foreground)));
+    border-radius: var(--pd-radius);
+    box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.45), 0 8px 24px -12px rgba(0, 0, 0, 0.35);
+    transform: translateY(18px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    font-family: var(--pd-font);
+  }
+  #pd-{{ uid }}.is-open .pd-modal { transform: translateY(0) scale(1); opacity: 1; }
+
+  #pd-{{ uid }} *,
+  #pd-{{ uid }} *::before,
+  #pd-{{ uid }} *::after { box-sizing: border-box; font-family: var(--pd-font); }
+
+  /* Optional image header */
+  #pd-{{ uid }} .pd-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--pd-radius) var(--pd-radius) 0 0;
+    background: rgba(var(--color-foreground), 0.05);
+  }
+  #pd-{{ uid }} .pd-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  #pd-{{ uid }} .pd-body { padding: var(--pd-pad); }
+
+  /* Close button */
+  #pd-{{ uid }} .pd-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  #pd-{{ uid }} .pd-close:hover { background: rgba(0, 0, 0, 0.12); transform: rotate(90deg); }
+  #pd-{{ uid }} .pd-close:focus-visible { outline: 2px solid rgba(var(--color-foreground), 0.6); outline-offset: 2px; }
+
+  /* Typography */
+  #pd-{{ uid }} .pd-heading {
+    margin: 0 0 10px;
+    font-size: 28px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--pd-heading, var(--pd-text, rgb(var(--color-foreground))));
+  }
+  #pd-{{ uid }} .pd-sub {
+    margin: 0 0 24px;
+    font-size: 15px;
+    line-height: 1.55;
+    opacity: 0.75;
+  }
+
+  /* Fields */
+  #pd-{{ uid }} .pd-field { margin-bottom: 14px; text-align: left; }
+  #pd-{{ uid }} .pd-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+  #pd-{{ uid }} .pd-label .pd-opt { font-weight: 400; opacity: 0.6; text-transform: none; letter-spacing: 0; }
+  #pd-{{ uid }} .pd-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    font-size: 15px;
+    color: inherit;
+    background: rgba(var(--color-foreground), 0.03);
+    border: 1px solid rgba(var(--color-foreground), 0.18);
+    border-radius: 10px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  #pd-{{ uid }} .pd-input::placeholder { color: rgba(var(--color-foreground), 0.4); }
+  #pd-{{ uid }} .pd-input:focus {
+    outline: none;
+    border-color: rgba(var(--color-foreground), 0.55);
+    box-shadow: 0 0 0 3px rgba(var(--color-foreground), 0.12);
+  }
+  #pd-{{ uid }} .pd-input[aria-invalid="true"] {
+    border-color: #d92d20;
+    box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.14);
+  }
+
+  /* Inline error */
+  #pd-{{ uid }} .pd-error {
+    display: none;
+    margin: 2px 0 14px;
+    color: #d92d20;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+  }
+  #pd-{{ uid }} .pd-error.is-visible { display: block; }
+
+  /* Submit button — reuses theme .button .button--primary */
+  #pd-{{ uid }} .pd-submit { margin-top: 6px; }
+  #pd-{{ uid }} .pd-submit .pd-spinner { display: none; }
+  #pd-{{ uid }} .pd-submit.is-loading { pointer-events: none; }
+  #pd-{{ uid }} .pd-submit.is-loading .pd-submit__label { visibility: hidden; }
+  #pd-{{ uid }} .pd-submit.is-loading .pd-spinner {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border: 2.5px solid rgba(var(--color-button-text), 0.35);
+    border-top-color: rgb(var(--color-button-text));
+    border-radius: 50%;
+    animation: pd-spin 0.7s linear infinite;
+  }
+  @keyframes pd-spin { to { transform: rotate(360deg); } }
+
+  #pd-{{ uid }} .pd-fineprint {
+    margin: 14px 0 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    opacity: 0.55;
+  }
+
+  /* Success state */
+  #pd-{{ uid }} .pd-state[hidden] { display: none; }
+  #pd-{{ uid }} .pd-success { text-align: center; }
+  #pd-{{ uid }} .pd-check {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: rgba(34, 160, 90, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pd-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  #pd-{{ uid }} .pd-check svg { width: 30px; height: 30px; stroke: #1d9b56; }
+  #pd-{{ uid }} .pd-check svg path {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: pd-draw 0.5s ease 0.18s forwards;
+  }
+  @keyframes pd-pop { from { transform: scale(0); } to { transform: scale(1); } }
+  @keyframes pd-draw { to { stroke-dashoffset: 0; } }
+
+  #pd-{{ uid }} .pd-code {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin: 20px 0 18px;
+  }
+  #pd-{{ uid }} .pd-code__value {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    min-height: 50px;
+    font-family: var(--pd-font);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    border: 1.5px dashed rgba(var(--color-foreground), 0.35);
+    border-radius: 10px;
+    background: rgba(var(--color-foreground), 0.03);
+  }
+  #pd-{{ uid }} .pd-copy {
+    min-width: 0;
+    white-space: nowrap;
+  }
+  #pd-{{ uid }} .pd-copy.is-copied { opacity: 1; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    #pd-{{ uid }},
+    #pd-{{ uid }} .pd-modal,
+    #pd-{{ uid }} .pd-close,
+    #pd-{{ uid }} .pd-check,
+    #pd-{{ uid }} .pd-check svg path { transition: none !important; animation: none !important; }
+    #pd-{{ uid }} .pd-check svg path { stroke-dashoffset: 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 749px) {
+    #pd-{{ uid }} { padding: 0; align-items: flex-end; }
+    #pd-{{ uid }} .pd-modal {
+      max-width: 100%;
+      max-height: 92vh;
+      border-radius: 18px 18px 0 0;
+      transform: translateY(100%);
+    }
+    #pd-{{ uid }}.is-open .pd-modal { transform: translateY(0); }
+    #pd-{{ uid }} .pd-media { border-radius: 18px 18px 0 0; aspect-ratio: 16 / 7; }
+    #pd-{{ uid }} .pd-body { padding: 28px 22px 26px; }
+    #pd-{{ uid }} .pd-heading { font-size: 24px; }
+    #pd-{{ uid }} .pd-code { flex-direction: column; }
+  }
+</style>
+
+<div
+  id="pd-{{ uid }}"
+  class="color-{{ s.color_scheme }}"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pd-title-{{ uid }}"
+  hidden
+  {% if custom_vars != blank %}style="{{ custom_vars | strip_newlines }}"{% endif %}
+  data-pd
+  data-delay="{{ delay_ms }}"
+  data-frequency-days="{{ s.frequency_days }}"
+  data-storage-key="pd-popup-{{ uid }}"
+>
+  <div class="pd-modal">
+    <button type="button" class="pd-close" data-pd-close aria-label="Close popup">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+    {%- if s.image != blank -%}
+      <div class="pd-media">
+        <img
+          src="{{ s.image | image_url: width: 960 }}"
+          srcset="{{ s.image | image_url: width: 480 }} 480w, {{ s.image | image_url: width: 960 }} 960w"
+          sizes="(max-width: 749px) 100vw, 480px"
+          alt="{{ s.heading | strip_html | escape }}"
+          width="{{ s.image.width }}"
+          height="{{ s.image.height }}"
+          loading="lazy"
+        >
+      </div>
+    {%- endif -%}
+
+    <div class="pd-body">
+      {%- comment -%} ---------- FORM STATE ---------- {%- endcomment -%}
+      <div class="pd-state pd-state--form" data-pd-form-state>
+        <h2 id="pd-title-{{ uid }}" class="pd-heading">{{ s.heading }}</h2>
+        {%- if s.subheading != blank -%}
+          <p class="pd-sub">{{ s.subheading }}</p>
+        {%- endif -%}
+
+        {%- form 'customer', id: 'pd-form-' | append: uid, class: 'pd-form', novalidate: 'novalidate' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter, popup-discount">
+
+          <div class="pd-field">
+            <label class="pd-label" for="pd-first-{{ uid }}">First name</label>
+            <input
+              class="pd-input"
+              id="pd-first-{{ uid }}"
+              type="text"
+              name="contact[first_name]"
+              autocomplete="given-name"
+              placeholder="Your first name"
+              aria-required="true"
+              required
+            >
+          </div>
+
+          <div class="pd-field">
+            <label class="pd-label" for="pd-email-{{ uid }}">Email address</label>
+            <input
+              class="pd-input"
+              id="pd-email-{{ uid }}"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="off"
+              placeholder="you@example.com"
+              aria-required="true"
+              required
+            >
+          </div>
+
+          <div class="pd-field">
+            <label class="pd-label" for="pd-phone-{{ uid }}">
+              Phone number <span class="pd-opt">(optional)</span>
+            </label>
+            <input
+              class="pd-input"
+              id="pd-phone-{{ uid }}"
+              type="tel"
+              name="contact[phone]"
+              autocomplete="tel"
+              placeholder="+971 50 000 0000"
+            >
+          </div>
+
+          <p class="pd-error" data-pd-error role="alert" aria-live="assertive"></p>
+
+          <button type="submit" class="button button--full-width pd-submit" data-pd-submit>
+            <span class="pd-submit__label">{{ s.button_label | default: 'Get My Discount' }}</span>
+            <span class="pd-spinner" aria-hidden="true"></span>
+          </button>
+
+          {%- if s.fineprint != blank -%}
+            <p class="pd-fineprint">{{ s.fineprint }}</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} ---------- SUCCESS STATE ---------- {%- endcomment -%}
+      <div class="pd-state pd-state--success pd-success" data-pd-success-state hidden aria-live="polite">
+        <div class="pd-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 class="pd-heading">{{ s.success_heading | default: '🎉 Your Discount is Ready!' }}</h2>
+        <p class="pd-sub">{{ s.success_message }}</p>
+
+        <div class="pd-code">
+          <code class="pd-code__value" data-pd-code>{{ code }}</code>
+          <button type="button" class="button button--secondary pd-copy" data-pd-copy data-code="{{ code | escape }}">
+            Copy code
+          </button>
+        </div>
+
+        <button type="button" class="button button--full-width" data-pd-close>
+          {{ s.success_button_label | default: 'Continue Shopping' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('pd-{{ uid }}');
+    if (!root) return;
+
+    var modal = root.querySelector('.pd-modal');
+    var form = root.querySelector('.pd-form');
+    var submitBtn = root.querySelector('[data-pd-submit]');
+    var errorEl = root.querySelector('[data-pd-error]');
+    var formState = root.querySelector('[data-pd-form-state]');
+    var successState = root.querySelector('[data-pd-success-state]');
+    var emailInput = root.querySelector('input[type="email"]');
+    var firstInput = root.querySelector('input[name="contact[first_name]"]');
+
+    var delay = parseInt(root.getAttribute('data-delay'), 10) || 0;
+    var days = parseInt(root.getAttribute('data-frequency-days'), 10);
+    var storageKey = root.getAttribute('data-storage-key');
+    var designMode = !!(window.Shopify && window.Shopify.designMode);
+
+    var lastFocused = null;
+    var openTimer = null;
+
+    /* ---- frequency cap (localStorage, cookie fallback) ---- */
+    function getSeen() {
+      try {
+        var v = window.localStorage.getItem(storageKey);
+        if (v) return parseInt(v, 10);
+      } catch (e) {}
+      var m = document.cookie.match(new RegExp('(?:^|; )' + storageKey + '=([^;]+)'));
+      return m ? parseInt(m[1], 10) : 0;
+    }
+    function setSeen() {
+      var now = Date.now();
+      try { window.localStorage.setItem(storageKey, String(now)); } catch (e) {}
+      var maxAge = (days > 0 ? days : 365) * 86400;
+      document.cookie = storageKey + '=' + now + ';path=/;max-age=' + maxAge + ';SameSite=Lax';
+    }
+    function shouldShow() {
+      if (designMode) return true;          // always preview in the theme editor
+      if (days <= 0) return true;           // 0 = show every visit
+      var seen = getSeen();
+      if (!seen) return true;
+      return (Date.now() - seen) > days * 86400000;
+    }
+
+    /* ---- focus trap ---- */
+    function focusables() {
+      return Array.prototype.slice.call(
+        root.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])')
+      ).filter(function (el) {
+        return el.offsetParent !== null && !el.closest('[hidden]');
+      });
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key !== 'Tab') return;
+      var f = focusables();
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+
+    /* ---- open / close ---- */
+    function open() {
+      if (root.dataset.open === 'true') return;
+      root.dataset.open = 'true';
+      lastFocused = document.activeElement;
+      root.hidden = false;
+      // next frame so the transition runs
+      requestAnimationFrame(function () { requestAnimationFrame(function () { root.classList.add('is-open'); }); });
+      document.documentElement.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKeydown);
+      if (!designMode) setSeen();
+      var target = firstInput || root.querySelector('[data-pd-close]');
+      if (target) setTimeout(function () { target.focus({ preventScroll: true }); }, 380);
+    }
+    function close() {
+      root.dataset.open = 'false';
+      root.classList.remove('is-open');
+      document.documentElement.style.overflow = '';
+      document.removeEventListener('keydown', onKeydown);
+      var done = function () {
+        root.hidden = true;
+        root.removeEventListener('transitionend', done);
+      };
+      root.addEventListener('transitionend', done);
+      setTimeout(done, 450); // fallback
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
+
+    /* close interactions */
+    root.addEventListener('click', function (e) {
+      if (e.target === root) close();                       // click outside the modal
+      if (e.target.closest('[data-pd-close]')) close();     // X / continue buttons
+    });
+
+    /* ---- validation ---- */
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function showError(msg, field) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('is-visible');
+      if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+    }
+    function clearError() {
+      errorEl.textContent = '';
+      errorEl.classList.remove('is-visible');
+      [firstInput, emailInput].forEach(function (el) { if (el) el.removeAttribute('aria-invalid'); });
+    }
+
+    function showSuccess() {
+      formState.hidden = true;
+      successState.hidden = false;
+      var h = successState.querySelector('.pd-heading');
+      if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+    }
+
+    /* ---- submit (AJAX → Shopify customer form) ---- */
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearError();
+
+        var firstVal = (firstInput && firstInput.value || '').trim();
+        var emailVal = (emailInput && emailInput.value || '').trim();
+
+        if (!firstVal) { showError('Please enter your first name.', firstInput); return; }
+        if (!emailVal) { showError('Please enter your email address.', emailInput); return; }
+        if (!isEmail(emailVal)) { showError('Please enter a valid email address.', emailInput); return; }
+
+        submitBtn.classList.add('is-loading');
+        submitBtn.setAttribute('aria-busy', 'true');
+
+        var action = form.getAttribute('action') || window.location.pathname;
+        fetch(action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'text/html', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+          .then(function (res) {
+            // Shopify returns 200 (or a redirect we follow). Treat reachable as success;
+            // email format is already validated client-side.
+            if (res.ok || res.status === 0 || res.type === 'opaqueredirect') return true;
+            throw new Error('bad status');
+          })
+          .then(function () { showSuccess(); })
+          .catch(function () {
+            showError('Something went wrong. Please try again.');
+          })
+          .finally(function () {
+            submitBtn.classList.remove('is-loading');
+            submitBtn.removeAttribute('aria-busy');
+          });
+      });
+
+      [firstInput, emailInput].forEach(function (el) {
+        if (el) el.addEventListener('input', clearError);
+      });
+    }
+
+    /* ---- copy code ---- */
+    var copyBtn = root.querySelector('[data-pd-copy]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var codeVal = copyBtn.getAttribute('data-code') || '';
+        var original = copyBtn.textContent;
+        var feedback = function () {
+          copyBtn.classList.add('is-copied');
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () { copyBtn.textContent = original; copyBtn.classList.remove('is-copied'); }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(codeVal).then(feedback).catch(function () {
+            legacyCopy(codeVal); feedback();
+          });
+        } else { legacyCopy(codeVal); feedback(); }
+      });
+    }
+    function legacyCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    /* ---- trigger ---- */
+    function init() {
+      if (!shouldShow()) return;
+      if (designMode) { open(); return; }   // show right away in editor
+      openTimer = setTimeout(open, delay);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else { init(); }
+
+    /* re-render safety for the theme editor */
+    document.addEventListener('shopify:section:select', function (e) {
+      if (e.detail && e.detail.sectionId === '{{ uid }}') open();
+    });
+    document.addEventListener('shopify:section:deselect', function (e) {
+      if (e.detail && e.detail.sectionId === '{{ uid }}') close();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup Discount",
+  "tag": "section",
+  "class": "section section-popup-discount",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Premium email-capture popup. Add it to your Home page. Submissions are added to Customers / Email Marketing (tagged 'popup-discount')."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Headline",
+      "default": "🎉 Get 10% Off Your First Order"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Join our community and receive an exclusive discount code instantly."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button text",
+      "default": "Get My Discount"
+    },
+    {
+      "type": "textarea",
+      "id": "fineprint",
+      "label": "Fine print (below button)",
+      "default": "By signing up you agree to receive marketing emails. Unsubscribe anytime."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Popup image (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Discount & Success State"
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Discount code",
+      "default": "WELCOME10",
+      "info": "Create a matching code in Discounts. This text is what shoppers copy."
+    },
+    {
+      "type": "text",
+      "id": "success_heading",
+      "label": "Success headline",
+      "default": "🎉 Your Discount is Ready!"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Use the code below at checkout to get 10% off your first order."
+    },
+    {
+      "type": "text",
+      "id": "success_button_label",
+      "label": "Success button text",
+      "default": "Continue Shopping"
+    },
+    {
+      "type": "header",
+      "content": "Trigger"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "label": "Delay before showing",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "frequency_days",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "d",
+      "label": "Show again after (days)",
+      "info": "Set to 0 to show on every visit (useful for testing).",
+      "default": 7
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "info": "Popup matches this scheme — including the theme button — automatically.",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_custom_colors",
+      "label": "Use custom colors instead",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "popup_bg",
+      "label": "Popup background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1c1c22"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup Discount"
+    }
+  ]
+}
+{% endschema %}
