@@ -1168,7 +1168,7 @@
         "content_gap": 18,
         "btn_size": 14,
         "btn_weight": "500",
-        "btn_transform": "none",
+        "btn_transform": "uppercase",
         "btn_spacing": 4,
         "btn_pad_x": 28,
         "btn_pad_y": 14,
