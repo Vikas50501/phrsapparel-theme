@@ -89,6 +89,33 @@
     display: block;
   }
 
+  /* Hover zoom on the media */
+  {%- if section.settings.media_hover_zoom -%}
+    .mr-media-{{ section.id }} img,
+    .mr-media-{{ section.id }} video,
+    .mr-media-{{ section.id }} .mr-video-wrap > video {
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} img,
+    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} video,
+    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} .mr-video-wrap > video {
+      transform: scale(1.03);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} img,
+      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} video,
+      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} .mr-video-wrap > video { transform: none; }
+    }
+  {%- endif -%}
+
+  /* Whole-row clickable overlay (corner layout) */
+  .mr-row-link-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+  }
+
   /* ── Overlay tint ────────────────────────────────────── */
   .mr-overlay-{{ section.id }} {
     position: absolute;
@@ -244,7 +271,7 @@
     display: flex;
     flex-direction: column;
     gap: {{ section.settings.content_gap }}px;
-    pointer-events: auto;
+    pointer-events: none;
   }
   /* Reserve room so long headings never sit under the arrow button */
   .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size | plus: 24 }}px; }
@@ -401,6 +428,14 @@
 
           {%- if section.settings.content_layout == 'corner' -%}
             {%- comment -%} Corner layout: text bottom-left, arrow button bottom-right {%- endcomment -%}
+            {%- if block.settings.btn1_link != blank -%}
+              <a
+                class="mr-row-link-{{ section.id }}"
+                href="{{ block.settings.btn1_link }}"
+                aria-hidden="true"
+                tabindex="-1"
+              ></a>
+            {%- endif -%}
             {%- if has_content -%}
               <div class="mr-corner-{{ section.id }}" style="color: {{ content_color }};">
                 <div class="mr-corner-text-{{ section.id }}">
@@ -640,6 +675,10 @@
         { "value": "contain", "label": "Contain" }
       ],
       "default": "cover"
+    },
+    {
+      "type": "checkbox", "id": "media_hover_zoom", "label": "Zoom media on hover",
+      "default": true
     },
 
     { "type": "header", "content": "Eyebrow text" },
