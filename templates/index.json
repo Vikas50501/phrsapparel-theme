@@ -1211,7 +1211,7 @@
       "name": "Popup Discount",
       "settings": {
         "heading": "Get 20% Off Your First Order",
-        "subheading": "Join our community and receive an exclusive discount code instantly.",
+        "subheading": "",
         "button_label": "Get My Discount",
         "fineprint": "By signing up you agree to receive marketing emails. Unsubscribe anytime.",
         "image": "shopify://shop_images/3.webp",
