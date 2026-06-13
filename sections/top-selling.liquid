@@ -9,12 +9,20 @@
 
 {%- liquid
   assign coll = section.settings.collection
+  assign picked = section.settings.products
   assign limit = section.settings.products_count
   assign gap = section.settings.card_gap
   assign cols_d = section.settings.columns_desktop
   assign cols_t = section.settings.columns_tablet
   assign cols_m = section.settings.columns_mobile
   assign shop_url = section.settings.button_link | default: coll.url | default: '/collections/all'
+
+  # Hand-picked products take priority, otherwise fall back to the collection
+  if picked != blank and picked.size > 0
+    assign product_items = picked
+  elsif coll != blank
+    assign product_items = coll.products
+  endif
 -%}
 
 {%- style -%}
@@ -241,8 +249,8 @@
     </div>
 
     <div class="ts-grid" id="ts-grid-{{ section.id }}">
-      {%- if coll != blank and coll.products.size > 0 -%}
-        {%- for product in coll.products limit: limit -%}
+      {%- if product_items != blank and product_items.size > 0 -%}
+        {%- for product in product_items limit: limit -%}
           {%- assign is_new = false -%}
           {%- if product.tags contains 'New' or product.tags contains 'new' -%}{%- assign is_new = true -%}{%- endif -%}
           {%- assign default_img = product.featured_image | image_url: width: 600 -%}
@@ -462,8 +470,9 @@
     { "type": "range", "id": "header_gap", "label": "Gap below header", "min": 16, "max": 64, "step": 4, "unit": "px", "default": 28 },
 
     { "type": "header", "content": "Products" },
-    { "type": "collection", "id": "collection", "label": "Collection", "info": "Products shown in the grid. Leave empty to use manual cards below." },
-    { "type": "range", "id": "products_count", "label": "Products to show", "min": 2, "max": 16, "step": 1, "default": 8 },
+    { "type": "product_list", "id": "products", "label": "Pick products", "limit": 16, "info": "Hand-pick the exact products to feature. Takes priority over the collection below." },
+    { "type": "collection", "id": "collection", "label": "Or use a collection", "info": "Used only when no products are picked above." },
+    { "type": "range", "id": "products_count", "label": "Max products to show", "min": 2, "max": 16, "step": 1, "default": 8 },
 
     { "type": "header", "content": "Grid layout" },
     { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
