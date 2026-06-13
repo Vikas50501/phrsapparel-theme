@@ -265,9 +265,10 @@
         "image_D8Laf7": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/a5916248-0f3c-4d03-b59b-5076f28cf909.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
+            "hs1_product": "ph-silicon-hoodie-set",
             "hs2_enabled": false,
             "hs2_product": "",
             "hs3_enabled": false,
