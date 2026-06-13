@@ -303,6 +303,8 @@
         "heading_spacing": 2,
         "description_size": 16,
         "description_max_width": 560,
+        "button_style": "theme",
+        "button_color_scheme": "",
         "button_size": 14,
         "button_weight": "500",
         "button_transform": "none",
@@ -667,7 +669,7 @@
       ],
       "custom_css": [
         "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading, h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {font-size: 25px !important; } h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {padding-bottom: 10px !important; }}",
-        ".tp-button-wrap-template--27682793849196__trending_products_kdCqCQ.color-scheme-1{background:transparent !important;}"
+        ".tp-button-wrap-template--27682793849196__trending_products_kdCqCQ.color-scheme-1 {background: transparent !important;}"
       ],
       "name": "Trending Products",
       "settings": {
@@ -692,7 +694,7 @@
         "button_link": "",
         "button_color_scheme": "scheme-1",
         "button_gap": 48,
-        "bg_color": "#F0EFED",
+        "bg_color": "#f0efed",
         "max_width": 1400,
         "side_padding": 24,
         "padding_top": 64,
@@ -770,7 +772,7 @@
         "border_bottom": false,
         "border_width": 1,
         "border_color": "#eeeeee",
-        "bg_color": "#FFFFFF",
+        "bg_color": "#ffffff",
         "max_width": 1400,
         "side_padding": 24,
         "padding_top": 40,
@@ -894,9 +896,10 @@
         "viewmore_url": "shopify://pages/lookbook",
         "viewmore_new_tab": false,
         "viewmore_show_arrow": false,
+        "viewmore_color_scheme": "",
         "viewmore_align": "center",
         "viewmore_pad_top": 48,
-        "bg_color": "#FFFFFF",
+        "bg_color": "#ffffff",
         "padding_top": 36,
         "padding_bottom": 36
       }
@@ -1091,6 +1094,7 @@
     },
     "popup_discount_XdWmaA": {
       "type": "popup-discount",
+      "disabled": true,
       "name": "Popup Discount",
       "settings": {
         "show_launcher": true,
@@ -1110,7 +1114,7 @@
         "auto_open": true,
         "delay_seconds": 5,
         "frequency_days": 0,
-        "color_scheme": "",
+        "color_scheme": "scheme-2",
         "enable_custom_colors": false,
         "popup_bg": "#ffffff",
         "text_color": "#1c1c22",
