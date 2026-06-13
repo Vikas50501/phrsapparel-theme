@@ -99,35 +99,11 @@
     transform: scale(1.05);
   }
 
-  /* ── VIEW ALL button ───────────────────────────────── */
+  /* ── VIEW ALL button (uses the theme .button component) ─── */
   .tp-button-wrap-{{ section.id }} {
     display: flex;
     justify-content: center;
     margin-top: {{ section.settings.button_gap }}px;
-  }
-
-  .tp-button-{{ section.id }} {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: {{ section.settings.button_pad_y }}px {{ section.settings.button_pad_x }}px;
-    background: {{ section.settings.button_bg }};
-    color: {{ section.settings.button_color }};
-    border: {{ section.settings.button_border_width }}px solid {{ section.settings.button_border }};
-    border-radius: {{ section.settings.button_radius }}px;
-    font-size: {{ section.settings.button_size }}px;
-    font-weight: {{ section.settings.button_weight }};
-    letter-spacing: {{ section.settings.button_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.button_transform }};
-    text-decoration: none;
-    transition: background 0.25s, color 0.25s, transform 0.2s;
-    white-space: nowrap;
-  }
-
-  .tp-button-{{ section.id }}:hover {
-    background: {{ section.settings.button_bg_hover }};
-    color: {{ section.settings.button_color_hover }};
-    transform: translateY(-1px);
   }
 
 {%- endstyle -%}
@@ -254,8 +230,8 @@
     </div>
 
     {%- if section.settings.button_label != blank -%}
-      <div class="tp-button-wrap-{{ section.id }}">
-        <a class="tp-button-{{ section.id }}" href="{{ section.settings.button_link | default: '#' }}">
+      <div class="tp-button-wrap-{{ section.id }} color-{{ section.settings.button_color_scheme }}">
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}">
           {{ section.settings.button_label }}
         </a>
       </div>
@@ -422,42 +398,9 @@
     { "type": "header", "content": "View all button" },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "VIEW ALL" },
     { "type": "url",  "id": "button_link",  "label": "Button link" },
+    { "type": "color_scheme", "id": "button_color_scheme", "label": "Button colour scheme", "default": "scheme-1", "info": "The button uses the theme's standard button styling from this colour scheme." },
     { "type": "range", "id": "button_gap", "label": "Gap above button",
       "min": 16, "max": 80, "step": 4, "unit": "px", "default": 40 },
-    { "type": "range", "id": "button_size", "label": "Font size",
-      "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    {
-      "type": "select", "id": "button_weight", "label": "Weight",
-      "options": [
-        { "value": "400", "label": "Regular" }, { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" }, { "value": "700", "label": "Bold" }
-      ],
-      "default": "600"
-    },
-    {
-      "type": "select", "id": "button_transform", "label": "Case",
-      "options": [
-        { "value": "uppercase",  "label": "UPPERCASE" },
-        { "value": "none",       "label": "As typed" },
-        { "value": "capitalize", "label": "Capitalize" }
-      ],
-      "default": "uppercase"
-    },
-    { "type": "range", "id": "button_spacing", "label": "Letter spacing",
-      "min": 0, "max": 30, "step": 1, "default": 10 },
-    { "type": "range", "id": "button_pad_x", "label": "Padding X",
-      "min": 16, "max": 60, "step": 2, "unit": "px", "default": 36 },
-    { "type": "range", "id": "button_pad_y", "label": "Padding Y",
-      "min": 8, "max": 24, "step": 1, "unit": "px", "default": 14 },
-    { "type": "range", "id": "button_radius", "label": "Corner radius",
-      "min": 0, "max": 50, "step": 2, "unit": "px", "default": 0 },
-    { "type": "range", "id": "button_border_width", "label": "Border width",
-      "min": 0, "max": 4, "step": 1, "unit": "px", "default": 1 },
-    { "type": "color", "id": "button_bg",           "label": "Background",        "default": "#111111" },
-    { "type": "color", "id": "button_color",        "label": "Text colour",       "default": "#ffffff" },
-    { "type": "color", "id": "button_border",       "label": "Border colour",     "default": "#111111" },
-    { "type": "color", "id": "button_bg_hover",     "label": "Background — hover","default": "#333333" },
-    { "type": "color", "id": "button_color_hover",  "label": "Text — hover",      "default": "#ffffff" },
 
     { "type": "header", "content": "Layout & background" },
     { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
