@@ -246,12 +246,45 @@
             "hs5_product": ""
           }
         },
-        "image_mbUq9d": {
+        "image_XzLrKP": {
           "type": "image",
           "settings": {
             "alt": "",
             "hs1_enabled": true,
             "hs1_product": "",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_D8Laf7": {
+          "type": "image",
+          "settings": {
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_mbUq9d": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_0529.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "futura-bikini-brazil",
             "hs2_enabled": false,
             "hs2_product": "",
             "hs3_enabled": false,
@@ -487,6 +520,8 @@
       "block_order": [
         "image_D983qT",
         "image_QqLrbE",
+        "image_XzLrKP",
+        "image_D8Laf7",
         "image_mbUq9d",
         "image_JaDBji",
         "image_Y7XzrQ",
