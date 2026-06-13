@@ -37,18 +37,36 @@
     padding: 0 {{ section.settings.side_padding }}px;
   }
 
-  .ts-{{ section.id }} .ts-header { margin-bottom: {{ section.settings.header_gap }}px; }
+  /* Heading matches the "Our Collections" section: centered + orange underline */
+  .ts-{{ section.id }} .ts-header {
+    margin-bottom: {{ section.settings.header_gap }}px;
+    text-align: center;
+    padding: 0 24px;
+  }
   .ts-{{ section.id }} .ts-heading {
-    font-size: clamp(24px, 4vw, {{ section.settings.heading_size }}px);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
+    display: inline-block;
+    position: relative;
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    font-family: inherit;
     color: {{ section.settings.heading_color }};
-    line-height: 1.1;
+    line-height: 1.2;
     margin: 0;
+    padding-bottom: 10px;
+  }
+  .ts-{{ section.id }} .ts-heading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: {{ section.settings.underline_color }};
+    border-radius: 3px;
   }
   .ts-{{ section.id }} .ts-sub {
-    margin: 10px 0 0;
+    margin: 14px auto 0;
     font-size: 15px;
     line-height: 1.55;
     color: {{ section.settings.heading_color }};
@@ -225,6 +243,7 @@
     { "type": "textarea", "id": "subheading", "label": "Subheading (optional)" },
     { "type": "range", "id": "heading_size", "label": "Heading size", "min": 20, "max": 56, "step": 1, "unit": "px", "default": 32 },
     { "type": "color", "id": "heading_color", "label": "Heading / button colour", "default": "#111111" },
+    { "type": "color", "id": "underline_color", "label": "Heading underline colour", "default": "#c47a5a" },
     { "type": "text", "id": "button_label", "label": "Button label (optional)", "default": "Shop Now" },
     { "type": "url", "id": "button_link", "label": "Button link" },
     { "type": "range", "id": "header_gap", "label": "Gap below header", "min": 16, "max": 64, "step": 4, "unit": "px", "default": 28 },
