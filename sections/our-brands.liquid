@@ -22,6 +22,13 @@
     overflow: hidden;
   }
 
+  /* When the mobile menu drawer is open, hide this pinned (sticky) content so
+     it can't bleed through the menu on iOS Safari (sticky-over-overlay bug).
+     Dawn adds .overflow-hidden-mobile to <body> while the drawer is open. */
+  body.overflow-hidden-mobile .bs-pin-{{ section.id }} {
+    visibility: hidden;
+  }
+
   /* ── Full-bleed video / image background ────────────── */
   .bs-media-{{ section.id }} {
     position: absolute;
