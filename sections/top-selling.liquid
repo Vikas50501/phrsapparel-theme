@@ -1,408 +1,284 @@
-{%- style -%}
-  .tsp-section-{{ section.id }} {
-    background: {{ section.settings.bg_color }};
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-  }
+{%- comment -%}
+  Section: Top Selling / Best Sellers
+  Collection-based product grid. Cards match the collection page (kc-card):
+  3/4 image, uppercase title, price with compare-at strikethrough, colour
+  swatches (hover swaps the image). Responsive: 2-up mobile, 3-up tablet,
+  N-up desktop. Header = heading + "Shop now" button.
+  If no collection is selected, falls back to manual "card" blocks.
+{%- endcomment -%}
 
-  @media screen and (min-width: 750px) {
-    .tsp-section-{{ section.id }} {
+{%- liquid
+  assign coll = section.settings.collection
+  assign limit = section.settings.products_count
+  assign gap = section.settings.card_gap
+  assign cols_d = section.settings.columns_desktop
+  assign cols_t = section.settings.columns_tablet
+  assign cols_m = section.settings.columns_mobile
+  assign shop_url = section.settings.button_link | default: coll.url | default: '/collections/all'
+-%}
+
+{%- style -%}
+  .ts-{{ section.id }} {
+    --ts-fg: {{ section.settings.title_color }};
+    --ts-muted: {{ section.settings.price_color }};
+    --ts-line: {{ section.settings.line_color }};
+    --ts-card-bg: {{ section.settings.img_bg }};
+    --ts-sale: {{ section.settings.sale_color }};
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top | times: 0.7 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.7 | round: 0 }}px;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  @media (min-width: 750px) {
+    .ts-{{ section.id }} {
       padding-top: {{ section.settings.padding_top }}px;
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
 
-  .tsp-inner-{{ section.id }} {
+  .ts-{{ section.id }} .ts-inner {
     max-width: {{ section.settings.max_width }}px;
     margin: 0 auto;
     padding: 0 {{ section.settings.side_padding }}px;
   }
 
-  /* ── Header: left heading / right description ──────── */
-  .tsp-header-{{ section.id }} {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 40px;
-    margin-bottom: {{ section.settings.header_bottom }}px;
-    flex-wrap: wrap;
+  /* Header: heading + shop-now button */
+  .ts-{{ section.id }} .ts-header {
+    margin-bottom: {{ section.settings.header_gap }}px;
   }
-
-  .tsp-header-left-{{ section.id }} {
-    display: flex;
-    flex-direction: column;
-    gap: {{ section.settings.badge_gap }}px;
-    align-items: flex-start;
-  }
-
-  .tsp-badge-{{ section.id }} {
-    display: inline-flex;
-    align-items: center;
-    padding: {{ section.settings.badge_pad_y }}px {{ section.settings.badge_pad_x }}px;
-    background: {{ section.settings.badge_bg }};
-    color: {{ section.settings.badge_color }};
-    border: 1px solid {{ section.settings.badge_border }};
-    border-radius: {{ section.settings.badge_radius }}px;
-    font-size: {{ section.settings.badge_size }}px;
-    font-weight: 400;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.22s, color 0.22s;
-  }
-
-  .tsp-badge-{{ section.id }}:hover {
-    background: {{ section.settings.badge_color }};
-    color: {{ section.settings.badge_bg }};
-  }
-
-  .tsp-heading-{{ section.id }} {
-    font-size: var(--font-h2-size);
-    font-weight: var(--font-h2-weight);
-    color: {{ section.settings.heading_color }};
-    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+  .ts-{{ section.id }} .ts-heading {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
     text-transform: {{ section.settings.heading_transform }};
-    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
-    margin: 0;
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    color: {{ section.settings.heading_color }};
+    line-height: 1.1;
+    margin: 0 0 16px;
   }
-
-  .tsp-header-right-{{ section.id }} {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: {{ section.settings.desc_btn_gap }}px;
-    max-width: {{ section.settings.desc_max_width }}px;
-    padding-bottom: 4px;
-  }
-
-  @media (max-width: 749px) {
-    .tsp-header-right-{{ section.id }} { display: none; }
-  }
-
-  .tsp-desc-{{ section.id }} {
-    font-size: {{ section.settings.desc_size }}px;
-    color: {{ section.settings.desc_color }};
-    font-weight: 400;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .tsp-cta-{{ section.id }} {
+  .ts-{{ section.id }} .ts-shopnow {
     display: inline-flex;
     align-items: center;
-    padding: {{ section.settings.cta_pad_y }}px {{ section.settings.cta_pad_x }}px;
-    background: {{ section.settings.cta_bg }};
-    color: {{ section.settings.cta_color }};
-    border: 1px solid {{ section.settings.cta_border }};
-    border-radius: {{ section.settings.cta_radius }}px;
-    font-size: {{ section.settings.cta_size }}px;
-    font-weight: 400;
+    gap: 8px;
+    padding: 11px 22px;
+    border: 1px solid {{ section.settings.heading_color }};
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: {{ section.settings.heading_color }};
     text-decoration: none;
-    transition: background 0.22s, color 0.22s, transform 0.2s;
-    white-space: nowrap;
+    transition: background 0.22s ease, color 0.22s ease;
+  }
+  .ts-{{ section.id }} .ts-shopnow:hover {
+    background: {{ section.settings.heading_color }};
+    color: {{ section.settings.bg_color }};
+  }
+  .ts-{{ section.id }} .ts-shopnow svg { width: 14px; height: 14px; }
+
+  /* Grid */
+  .ts-{{ section.id }} .ts-grid {
+    display: grid;
+    grid-template-columns: repeat({{ cols_d }}, 1fr);
+    column-gap: {{ gap }}px;
+    row-gap: {{ gap | plus: 16 }}px;
+  }
+  @media (max-width: 989px) {
+    .ts-{{ section.id }} .ts-grid { grid-template-columns: repeat({{ cols_t }}, 1fr); }
+  }
+  @media (max-width: 749px) {
+    .ts-{{ section.id }} .ts-grid {
+      grid-template-columns: repeat({{ cols_m }}, 1fr);
+      column-gap: {{ gap | at_most: 14 }}px;
+    }
   }
 
-  .tsp-cta-{{ section.id }}:hover {
-    background: {{ section.settings.cta_color }};
-    color: {{ section.settings.cta_bg }};
-    transform: translateY(-1px);
-  }
-
-  /* ── Arrow row ────────────────────────────────────── */
-  .tsp-arrow-row-{{ section.id }} {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: {{ section.settings.arrow_bottom_gap }}px;
-  }
-
-  .tsp-arrow-{{ section.id }} {
-    width: {{ section.settings.arrow_size }}px;
-    height: {{ section.settings.arrow_size }}px;
-    border-radius: {{ section.settings.arrow_radius }}px;
-    background: {{ section.settings.arrow_bg }};
-    color: {{ section.settings.arrow_color }};
-    border: 1px solid {{ section.settings.arrow_border }};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.22s, color 0.22s;
-    flex-shrink: 0;
-  }
-
-  .tsp-arrow-{{ section.id }}:hover {
-    background: {{ section.settings.arrow_color }};
-    color: {{ section.settings.arrow_bg }};
-  }
-
-  .tsp-arrow-{{ section.id }}:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-
-  .tsp-arrow-{{ section.id }} svg {
-    width: 18px; height: 18px;
-    stroke: currentColor; fill: none;
-    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
-  }
-
-  /* ── Cards track ──────────────────────────────────── */
-  .tsp-viewport-{{ section.id }} {
-    overflow: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .tsp-track-{{ section.id }} {
-    display: flex;
-    align-items: flex-start; /* ← all cards top-align; equal height via section setting */
-    gap: {{ section.settings.card_gap }}px;
-    transition: transform 0.48s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-  }
-
-  /* ── Card ─────────────────────────────────────────── */
-  .tsp-card-{{ section.id }} {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: {{ section.settings.info_gap }}px;
+  /* Card — mirrors the collection page kc-card */
+  .ts-{{ section.id }} .ts-card {
+    display: block;
     text-decoration: none;
     color: inherit;
-    /* width is set per-card via inline style */
-  }
-
-  /* Image box — uniform height driven by section.settings.card_height */
-  .tsp-card-img-{{ section.id }} {
-    width: 100%;
-    height: {{ section.settings.card_height }}px; /* ← single section-level height = all cards equal */
+    position: relative;
+    border: 1px solid var(--ts-line);
     border-radius: {{ section.settings.card_radius }}px;
     overflow: hidden;
-    background: {{ section.settings.img_bg }};
-    position: relative;
-    flex-shrink: 0;
+    background: #fff;
   }
-
-  .tsp-card-img-{{ section.id }} img,
-  .tsp-card-img-{{ section.id }} .placeholder-svg {
+  .ts-{{ section.id }} .ts-card__media {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--ts-card-bg);
+    overflow: hidden;
+  }
+  .ts-{{ section.id }} .ts-card__media img,
+  .ts-{{ section.id }} .ts-card__media .placeholder-svg {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
     display: block;
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.5s ease;
   }
+  .ts-{{ section.id }} .ts-card:hover .ts-card__media img { transform: scale(1.04); }
 
-  .tsp-card-{{ section.id }}:hover .tsp-card-img-{{ section.id }} img {
-    transform: scale(1.04);
-  }
-
-  /* Diagonal arrow on hover */
-  .tsp-hover-arrow-{{ section.id }} {
+  .ts-{{ section.id }} .ts-badge {
     position: absolute;
-    bottom: {{ section.settings.hover_arrow_offset }}px;
-    right: {{ section.settings.hover_arrow_offset }}px;
-    width: {{ section.settings.hover_arrow_size }}px;
-    height: {{ section.settings.hover_arrow_size }}px;
-    border-radius: 50%;
-    background: {{ section.settings.hover_arrow_bg }};
-    color: {{ section.settings.hover_arrow_color }};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transform: scale(0.6);
-    transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
-    pointer-events: none;
+    top: 10px;
+    left: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 3px;
+    z-index: 2;
   }
+  .ts-{{ section.id }} .ts-badge--new { background: #111; }
+  .ts-{{ section.id }} .ts-badge--sold { background: #c0392b; top: 34px; }
 
-  .tsp-card-{{ section.id }}:hover .tsp-hover-arrow-{{ section.id }} {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .tsp-hover-arrow-{{ section.id }} svg {
-    width: 16px; height: 16px;
-    stroke: currentColor; fill: none;
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-  }
-
-  /* Card info */
-  .tsp-card-info-{{ section.id }} {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .tsp-card-row-{{ section.id }} {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .tsp-card-title-{{ section.id }} {
-    font-size: var(--font-h4-size);
-    font-weight: var(--font-h4-weight);
-    color: {{ section.settings.title_color }};
-    margin: 0;
+  .ts-{{ section.id }} .ts-card__info { padding: 14px 14px 18px; }
+  .ts-{{ section.id }} .ts-card__title {
+    display: block;
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ts-fg);
+    margin: 0 0 5px;
     line-height: 1.3;
-    flex: 1;
   }
-
-  .tsp-card-price-{{ section.id }} {
+  .ts-{{ section.id }} .ts-card:hover .ts-card__title { text-decoration: underline; text-underline-offset: 2px; }
+  .ts-{{ section.id }} .ts-card__price {
     font-size: {{ section.settings.price_size }}px;
-    font-weight: {{ section.settings.price_weight }};
-    color: {{ section.settings.price_color }};
-    margin: 0;
-    line-height: 1.3;
-    white-space: nowrap;
-    flex-shrink: 0;
+    color: var(--ts-muted);
+  }
+  .ts-{{ section.id }} .ts-card__price s { color: #aaa; margin-left: 6px; }
+  .ts-{{ section.id }} .ts-card__price .ts-on-sale { color: var(--ts-sale); }
+
+  /* Colour swatches */
+  .ts-{{ section.id }} .ts-card__swatches { display: flex; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
+  .ts-{{ section.id }} .ts-swatch {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.15s linear;
+  }
+  .ts-{{ section.id }} .ts-swatch:hover { transform: scale(1.18); }
+  .ts-{{ section.id }} .ts-swatch.is-active { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--ts-fg); }
+
+  .ts-{{ section.id }} .ts-empty {
+    grid-column: 1 / -1;
+    padding: 40px 0;
+    text-align: center;
+    color: var(--ts-muted);
+    font-size: 14px;
   }
 
-  .tsp-card-rating-{{ section.id }} {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: {{ section.settings.rating_size }}px;
-    color: {{ section.settings.rating_color }};
-    margin: 0;
-  }
-
-  .tsp-star-{{ section.id }} {
-    color: {{ section.settings.star_color }};
-    line-height: 1;
-  }
-
-  /* ── Mobile overrides — modern 2-up swipe carousel ─── */
   @media (max-width: 749px) {
-    .tsp-inner-{{ section.id }} { padding: 0 16px; }
-
-    /* Heading scales down so it sits well above 2-up cards */
-    .tsp-heading-{{ section.id }} { font-size: 25px; line-height: 1.2; }
-    .tsp-header-{{ section.id }} { gap: 16px; }
-
-    .tsp-track-{{ section.id }} { align-items: flex-start; }
-
-    /* Exactly two cards per screen (inner padding 16px each side + the card gap) */
-    .tsp-card-{{ section.id }} {
-      flex-shrink: 0;
-      width: calc((100vw - 32px - {{ section.settings.card_gap }}px) / 2) !important;
-      max-width: none;
-    }
-
-    .tsp-card-img-{{ section.id }} {
-      height: auto !important;
-      aspect-ratio: 3 / 4;
-    }
-
-    /* Tighter, theme-matched typography for the smaller cards */
-    .tsp-card-title-{{ section.id }} { font-size: 14px; line-height: 1.25; }
-    .tsp-card-price-{{ section.id }} { font-size: 14px; }
-    .tsp-card-rating-{{ section.id }} { font-size: 12px; }
-
-    /* Keep arrows comfortably tappable */
-    .tsp-arrow-{{ section.id }} { width: 40px; height: 40px; }
+    .ts-{{ section.id }} .ts-card__info { padding: 11px 11px 14px; }
+    .ts-{{ section.id }} .ts-card__title { font-size: {{ section.settings.title_size | minus: 1 }}px; }
   }
 {%- endstyle -%}
 
-<section class="tsp-section-{{ section.id }}" id="tsp-section-{{ section.id }}">
-  <div class="tsp-inner-{{ section.id }}">
+<section class="ts-{{ section.id }}">
+  <div class="ts-inner">
 
-    {%- comment -%} Header {%- endcomment -%}
-    <div class="tsp-header-{{ section.id }}">
-      <div class="tsp-header-left-{{ section.id }}">
-        {%- if section.settings.badge_text != blank -%}
-          <a class="tsp-badge-{{ section.id }}" href="{{ section.settings.badge_link | default: '#' }}">
-            {{ section.settings.badge_text }}
-          </a>
-        {%- endif -%}
-        {%- if section.settings.heading != blank -%}
-          <h2 class="tsp-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-      </div>
-
-      <div class="tsp-header-right-{{ section.id }}">
-        {%- if section.settings.description != blank -%}
-          <p class="tsp-desc-{{ section.id }}">{{ section.settings.description }}</p>
-        {%- endif -%}
-        {%- if section.settings.cta_label != blank -%}
-          <a class="tsp-cta-{{ section.id }}" href="{{ section.settings.cta_link | default: '#' }}">
-            {{ section.settings.cta_label }}
-          </a>
-        {%- endif -%}
-      </div>
+    <div class="ts-header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ts-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="ts-shopnow" href="{{ shop_url }}">
+          {{ section.settings.button_label }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      {%- endif -%}
     </div>
 
-    {%- comment -%} Count cards {%- endcomment -%}
-    {%- assign card_count = 0 -%}
-    {%- for block in section.blocks -%}
-      {%- if block.type == 'card' -%}{%- assign card_count = card_count | plus: 1 -%}{%- endif -%}
-    {%- endfor -%}
+    <div class="ts-grid" id="ts-grid-{{ section.id }}">
+      {%- if coll != blank and coll.products.size > 0 -%}
+        {%- for product in coll.products limit: limit -%}
+          {%- assign is_new = false -%}
+          {%- if product.tags contains 'New' or product.tags contains 'new' -%}{%- assign is_new = true -%}{%- endif -%}
+          {%- assign default_img = product.featured_image | image_url: width: 600 -%}
+          <a href="{{ product.url }}" class="ts-card">
+            <div class="ts-card__media">
+              {%- if product.featured_image != blank -%}
+                <img class="ts-card__img" data-default="{{ default_img }}" src="{{ default_img }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+              {%- if section.settings.show_badges -%}
+                {%- if is_new -%}<span class="ts-badge ts-badge--new">New</span>{%- endif -%}
+                {%- unless product.available -%}<span class="ts-badge ts-badge--sold">Sold Out</span>{%- endunless -%}
+              {%- endif -%}
+            </div>
+            <div class="ts-card__info">
+              <span class="ts-card__title">{{ product.title }}</span>
+              <div class="ts-card__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="ts-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
+                {%- else -%}
+                  {{ product.price | money }}
+                {%- endif -%}
+              </div>
+              {%- if section.settings.show_swatches -%}
+                {%- for option in product.options_with_values -%}
+                  {%- assign on = option.name | downcase -%}
+                  {%- if on contains 'color' or on contains 'colour' -%}
+                    <div class="ts-card__swatches">
+                      {%- for value in option.values limit: section.settings.max_swatches -%}
+                        {%- capture cdot %}{% render 'kcol-color-hex', color: value %}{% endcapture -%}
+                        {%- assign sw_img = '' -%}
+                        {%- for variant in product.variants -%}
+                          {%- case option.position -%}
+                            {%- when 1 -%}{%- assign vopt = variant.option1 -%}
+                            {%- when 2 -%}{%- assign vopt = variant.option2 -%}
+                            {%- when 3 -%}{%- assign vopt = variant.option3 -%}
+                          {%- endcase -%}
+                          {%- if vopt == value and variant.image != blank -%}{%- assign sw_img = variant.image | image_url: width: 600 -%}{%- break -%}{%- endif -%}
+                        {%- endfor -%}
+                        <span class="ts-swatch{% if forloop.first %} is-active{% endif %}" data-img="{{ sw_img }}"
+                          {%- if value.swatch.image -%}
+                            style="background-image:url('{{ value.swatch.image | image_url: width: 40 }}'); background-size:cover; background-position:center;"
+                          {%- elsif value.swatch.color -%}
+                            style="background-color: {{ value.swatch.color }};"
+                          {%- else -%}
+                            style="background-color: {{ cdot | strip }};"
+                          {%- endif -%}
+                          title="{{ value }}"></span>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endfor -%}
 
-    {%- comment -%} Arrows {%- endcomment -%}
-    {%- if card_count > section.settings.cards_visible -%}
-      <div class="tsp-arrow-row-{{ section.id }}">
-        <button class="tsp-arrow-{{ section.id }}" id="tsp-prev-{{ section.id }}" type="button" aria-label="Previous" disabled>
-          <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
-        </button>
-        <button class="tsp-arrow-{{ section.id }}" id="tsp-next-{{ section.id }}" type="button" aria-label="Next">
-          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-        </button>
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} Cards {%- endcomment -%}
-    <div class="tsp-viewport-{{ section.id }}">
-      <div class="tsp-track-{{ section.id }}" id="tsp-track-{{ section.id }}">
-
+      {%- comment -%} Fallback: manual cards when no collection is selected {%- endcomment -%}
+      {%- elsif section.blocks.size > 0 -%}
         {%- for block in section.blocks -%}
           {%- if block.type == 'card' -%}
-            <a
-              class="tsp-card-{{ section.id }}"
-              href="{{ block.settings.link | default: '#' }}"
-              style="width: calc({{ block.settings.card_width }}% - {{ section.settings.card_gap }}px);"
-              {{ block.shopify_attributes }}
-            >
-              {%- comment -%} Image height now comes from section setting — no inline style needed {%- endcomment -%}
-              <div class="tsp-card-img-{{ section.id }}">
+            <a href="{{ block.settings.link | default: '#' }}" class="ts-card" {{ block.shopify_attributes }}>
+              <div class="ts-card__media">
                 {%- if block.settings.image != blank -%}
-                  <img
-                    src="{{ block.settings.image | img_url: '800x' }}"
-                    alt="{{ block.settings.image.alt | default: block.settings.title | escape }}"
-                    loading="lazy"
-                    width="{{ block.settings.image.width }}"
-                    height="{{ block.settings.image.height }}"
-                  >
+                  <img class="ts-card__img" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
                 {%- else -%}
                   {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                 {%- endif -%}
-
-                <div class="tsp-hover-arrow-{{ section.id }}">
-                  <svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
-                </div>
               </div>
-
-              <div class="tsp-card-info-{{ section.id }}">
-                <div class="tsp-card-row-{{ section.id }}">
-                  {%- if block.settings.title != blank -%}
-                    <h4 class="tsp-card-title-{{ section.id }}">{{ block.settings.title }}</h4>
-                  {%- endif -%}
-                  {%- if block.settings.price != blank -%}
-                    <p class="tsp-card-price-{{ section.id }}">{{ block.settings.price }}</p>
-                  {%- endif -%}
-                </div>
-                {%- if section.settings.show_rating and block.settings.rating > 0 -%}
-                  <p class="tsp-card-rating-{{ section.id }}">
-                    <span class="tsp-star-{{ section.id }}">★</span>
-                    <span>({{ block.settings.rating | divided_by: 10.0 }})</span>
-                  </p>
-                {%- endif -%}
+              <div class="ts-card__info">
+                {%- if block.settings.title != blank -%}<span class="ts-card__title">{{ block.settings.title }}</span>{%- endif -%}
+                {%- if block.settings.price != blank -%}<div class="ts-card__price">{{ block.settings.price }}</div>{%- endif -%}
               </div>
             </a>
           {%- endif -%}
         {%- endfor -%}
-
-      </div>
+      {%- else -%}
+        <p class="ts-empty">Select a collection in the section settings to show products here.</p>
+      {%- endif -%}
     </div>
 
   </div>
@@ -410,201 +286,126 @@
 
 <script>
 (function () {
-  'use strict';
-  var SID     = '{{ section.id }}';
-  var VISIBLE = {{ section.settings.cards_visible }};
-  var GAP     = {{ section.settings.card_gap }};
+  var grid = document.getElementById('ts-grid-{{ section.id }}');
+  if (!grid) return;
 
-  var track = document.getElementById('tsp-track-' + SID);
-  var prev  = document.getElementById('tsp-prev-'  + SID);
-  var next  = document.getElementById('tsp-next-'  + SID);
-  if (!track) return;
-
-  var cards  = Array.from(track.querySelectorAll('.tsp-card-' + SID));
-  var total  = cards.length;
-  var cur    = 0;
-
-  function isMobile() { return window.innerWidth < 750; }
-
-  function visibleCount() { return isMobile() ? 2 : VISIBLE; }
-
-  function maxIdx() { return Math.max(0, total - visibleCount()); }
-
-  /* Use getBoundingClientRect for accurate post-CSS width on mobile */
-  function cardW() {
-    return cards[0] ? (cards[0].getBoundingClientRect().width + GAP) : 220;
+  function cardImg(el) {
+    var card = el.closest('.ts-card');
+    return card ? card.querySelector('.ts-card__img') : null;
   }
 
-  function go(idx) {
-    idx = Math.max(0, Math.min(maxIdx(), idx));
-    cur = idx;
-    track.style.transform = 'translateX(-' + (idx * cardW()) + 'px)';
-    if (prev) prev.disabled = idx === 0;
-    if (next) next.disabled = idx >= maxIdx();
-  }
-
-  if (prev) prev.addEventListener('click', function () { go(cur - 1); });
-  if (next) next.addEventListener('click', function () { go(cur + 1); });
-
-  /* Touch / swipe */
-  var tx = 0;
-  track.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, { passive: true });
-  track.addEventListener('touchend', function (e) {
-    var d = tx - e.changedTouches[0].clientX;
-    if (d > 40) go(cur + 1); else if (d < -40) go(cur - 1);
+  grid.addEventListener('mouseover', function (e) {
+    var sw = e.target.closest('.ts-swatch');
+    if (!sw || !sw.dataset.img) return;
+    var img = cardImg(sw);
+    if (img) img.src = sw.dataset.img;
   });
 
-  /* On resize: reset to 0 when crossing the mobile/desktop breakpoint,
-     otherwise recalculate position for the current index */
-  var _lastW = window.innerWidth;
-  window.addEventListener('resize', function () {
-    var w = window.innerWidth;
-    if ((_lastW >= 750) !== (w >= 750)) {
-      cur = 0;
-      track.style.transition = 'none';
-      go(0);
-      /* Re-enable transition after layout settles */
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          track.style.transition = '';
-        });
-      });
-    } else {
-      go(cur);
-    }
-    _lastW = w;
-  }, { passive: true });
+  grid.addEventListener('mouseout', function (e) {
+    var sw = e.target.closest('.ts-swatch');
+    if (!sw) return;
+    var img = cardImg(sw);
+    var card = sw.closest('.ts-card');
+    if (img && card) img.src = card.dataset.current || img.getAttribute('data-default');
+  });
 
-  document.addEventListener('shopify:section:load', function (e) {
-    if (e.detail && e.detail.sectionId === SID) go(0);
+  grid.addEventListener('click', function (e) {
+    var sw = e.target.closest('.ts-swatch');
+    if (!sw) return;
+    e.preventDefault(); /* swatch click changes image instead of navigating */
+    var group = sw.parentElement;
+    if (group) group.querySelectorAll('.ts-swatch').forEach(function (s) { s.classList.remove('is-active'); });
+    sw.classList.add('is-active');
+    if (sw.dataset.img) {
+      var img = cardImg(sw);
+      var card = sw.closest('.ts-card');
+      if (img && card) { img.src = sw.dataset.img; card.dataset.current = sw.dataset.img; }
+    }
   });
 })();
 </script>
 
 {% schema %}
 {
-  "name": "Top Selling — Image Cards",
+  "name": "Top Selling Products",
   "tag": "section",
-  "class": "section-top-selling-img",
+  "class": "section-top-selling",
   "max_blocks": 12,
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Best Sellers" },
+    {
+      "type": "select", "id": "heading_transform", "label": "Heading case",
+      "options": [
+        { "value": "none", "label": "As typed" },
+        { "value": "uppercase", "label": "UPPERCASE" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "uppercase"
+    },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 30 },
+    {
+      "type": "select", "id": "heading_weight", "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "700"
+    },
+    { "type": "range", "id": "heading_spacing", "label": "Heading letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
+    { "type": "color", "id": "heading_color", "label": "Heading / button colour", "default": "#111111" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Defaults to the selected collection" },
+    { "type": "range", "id": "header_gap", "label": "Gap below header", "min": 16, "max": 64, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Products" },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Products shown in the grid. Leave empty to use manual cards below." },
+    { "type": "range", "id": "products_count", "label": "Products to show", "min": 2, "max": 16, "step": 1, "default": 8 },
+
+    { "type": "header", "content": "Grid layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_tablet", "label": "Columns (tablet)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "min": 1, "max": 2, "step": 1, "default": 2 },
+    { "type": "range", "id": "card_gap", "label": "Gap between cards", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Card" },
+    { "type": "checkbox", "id": "show_badges", "label": "Show New / Sold Out badges", "default": true },
+    { "type": "checkbox", "id": "show_swatches", "label": "Show colour swatches", "default": true },
+    { "type": "range", "id": "max_swatches", "label": "Max swatches", "min": 2, "max": 8, "step": 1, "default": 6 },
+    { "type": "range", "id": "card_radius", "label": "Corner radius", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "title_size", "label": "Title size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "price_size", "label": "Price size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "title_color", "label": "Title colour", "default": "#111111" },
+    { "type": "color", "id": "price_color", "label": "Price colour", "default": "#444444" },
+    { "type": "color", "id": "sale_color", "label": "Sale price colour", "default": "#c0392b" },
+    { "type": "color", "id": "line_color", "label": "Card border colour", "default": "#e8e8e8" },
+    { "type": "color", "id": "img_bg", "label": "Image background", "default": "#f5f5f5" },
+
+    { "type": "header", "content": "Section layout & background" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#f0efed" },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+  ],
   "blocks": [
     {
       "type": "card",
-      "name": "Image card",
+      "name": "Manual card (fallback)",
       "settings": [
+        { "type": "paragraph", "content": "Used only when no collection is selected above." },
         { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "url",  "id": "link",  "label": "Link (optional)" },
+        { "type": "url",  "id": "link",  "label": "Link" },
         { "type": "text", "id": "title", "label": "Title", "default": "Product Name" },
-        { "type": "text", "id": "price", "label": "Price", "default": "$99" },
-        {
-          "type": "range", "id": "card_width", "label": "Card width",
-          "min": 10, "max": 100, "step": 5, "unit": "%", "default": 25,
-          "info": "Set different widths per card for the varied editorial look"
-        },
-        {
-          "type": "range", "id": "rating", "label": "Rating (x10)",
-          "min": 0, "max": 50, "step": 1, "default": 42,
-          "info": "Divided by 10 for display (42 = 4.2). Set to 0 to hide."
-        }
+        { "type": "text", "id": "price", "label": "Price", "default": "$99" }
       ]
     }
-  ],
-  "settings": [
-    { "type": "header", "content": "Badge" },
-    { "type": "text",  "id": "badge_text",   "label": "Badge text",   "default": "See More product" },
-    { "type": "url",   "id": "badge_link",   "label": "Badge link" },
-    { "type": "color", "id": "badge_bg",     "label": "Background",   "default": "#ffffff" },
-    { "type": "color", "id": "badge_color",  "label": "Text colour",  "default": "#111111" },
-    { "type": "color", "id": "badge_border", "label": "Border colour","default": "#dddddd" },
-    { "type": "range", "id": "badge_radius", "label": "Radius",       "min": 0, "max": 50, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range", "id": "badge_size",   "label": "Font size",    "min": 10, "max": 18, "step": 1, "unit": "px", "default": 13 },
-    { "type": "range", "id": "badge_pad_x",  "label": "Padding X",   "min": 8, "max": 40, "step": 2, "unit": "px", "default": 16 },
-    { "type": "range", "id": "badge_pad_y",  "label": "Padding Y",   "min": 4, "max": 20, "step": 1, "unit": "px", "default": 8 },
-    { "type": "range", "id": "badge_gap",    "label": "Gap to heading","min": 6, "max": 32, "step": 2, "unit": "px", "default": 12 },
-
-    { "type": "header", "content": "Heading" },
-    { "type": "inline_richtext", "id": "heading",            "label": "Heading",        "default": "Top-Selling Product of the year Collection" },
-    { "type": "range",           "id": "heading_size",       "label": "Size",           "min": 20, "max": 80, "step": 2, "unit": "px", "default": 38 },
-    { "type": "select",          "id": "heading_weight",     "label": "Weight",         "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"},{"value":"800","label":"Extra bold"}], "default": "700" },
-    { "type": "select",          "id": "heading_transform",  "label": "Case",           "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
-    { "type": "range",           "id": "heading_spacing",    "label": "Letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
-    { "type": "range",           "id": "heading_line_height","label": "Line height",    "min": 90, "max": 160, "step": 5, "unit": "%", "default": 120, "info": "Divided by 100" },
-    { "type": "color",           "id": "heading_color",      "label": "Colour",         "default": "#111111" },
-
-    { "type": "header", "content": "Description + CTA (right side)" },
-    { "type": "textarea","id": "description",  "label": "Description", "default": "We do not divide our collections to seasons we create new models every week." },
-    { "type": "range",   "id": "desc_size",    "label": "Text size",   "min": 12, "max": 20, "step": 1, "unit": "px", "default": 13 },
-    { "type": "color",   "id": "desc_color",   "label": "Colour",      "default": "#666666" },
-    { "type": "range",   "id": "desc_max_width","label": "Max width",  "min": 160, "max": 500, "step": 10, "unit": "px", "default": 240 },
-    { "type": "range",   "id": "desc_btn_gap", "label": "Gap to button","min": 8, "max": 40, "step": 4, "unit": "px", "default": 20 },
-    { "type": "text",    "id": "cta_label",    "label": "Button label", "default": "Shop Now" },
-    { "type": "url",     "id": "cta_link",     "label": "Button link" },
-    { "type": "color",   "id": "cta_bg",       "label": "Button background",   "default": "#ffffff" },
-    { "type": "color",   "id": "cta_color",    "label": "Button text / border","default": "#111111" },
-    { "type": "color",   "id": "cta_border",   "label": "Button border colour", "default": "#111111" },
-    { "type": "range",   "id": "cta_radius",   "label": "Button radius", "min": 0, "max": 50, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range",   "id": "cta_size",     "label": "Button font size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
-    { "type": "range",   "id": "cta_pad_x",   "label": "Button padding X", "min": 12, "max": 48, "step": 2, "unit": "px", "default": 22 },
-    { "type": "range",   "id": "cta_pad_y",   "label": "Button padding Y", "min": 6, "max": 24, "step": 1, "unit": "px", "default": 11 },
-
-    { "type": "header", "content": "Navigation arrows" },
-    { "type": "range",  "id": "arrow_size",       "label": "Size",          "min": 28, "max": 60, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range",  "id": "arrow_radius",     "label": "Radius",        "min": 0, "max": 50, "step": 2, "unit": "px", "default": 40 },
-    { "type": "color",  "id": "arrow_bg",         "label": "Background",    "default": "#ffffff" },
-    { "type": "color",  "id": "arrow_color",      "label": "Icon colour",   "default": "#111111" },
-    { "type": "color",  "id": "arrow_border",     "label": "Border colour", "default": "#dddddd" },
-    { "type": "range",  "id": "arrow_bottom_gap", "label": "Gap below",     "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
-
-    { "type": "header", "content": "Cards" },
-    { "type": "range",  "id": "cards_visible", "label": "Cards visible",      "min": 1, "max": 6, "step": 1, "default": 4 },
-    { "type": "range",  "id": "card_gap",      "label": "Gap between cards",  "min": 8, "max": 40, "step": 2, "unit": "px", "default": 16 },
-    {
-      "type": "range", "id": "card_height", "label": "Image height (all cards)",
-      "min": 160, "max": 600, "step": 8, "unit": "px", "default": 280,
-      "info": "One height applies to every card — keeping all images equal"
-    },
-    { "type": "range",  "id": "card_radius",   "label": "Corner radius",      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 20 },
-    { "type": "range",  "id": "info_gap",      "label": "Gap: image to info", "min": 4, "max": 24, "step": 2, "unit": "px", "default": 12 },
-    { "type": "color",  "id": "img_bg",        "label": "Image placeholder bg","default": "#f0efed" },
-
-    { "type": "header", "content": "Hover arrow" },
-    { "type": "range",  "id": "hover_arrow_size",   "label": "Size",           "min": 24, "max": 60, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range",  "id": "hover_arrow_offset", "label": "Offset",         "min": 4, "max": 32, "step": 2, "unit": "px", "default": 12 },
-    { "type": "color",  "id": "hover_arrow_bg",     "label": "Background",     "default": "#ffffff" },
-    { "type": "color",  "id": "hover_arrow_color",  "label": "Icon colour",    "default": "#111111" },
-
-    { "type": "header", "content": "Card title & price" },
-    { "type": "range",  "id": "title_size",   "label": "Title size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    { "type": "select", "id": "title_weight", "label": "Title weight", "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
-    { "type": "color",  "id": "title_color",  "label": "Title colour", "default": "#111111" },
-    { "type": "range",  "id": "price_size",   "label": "Price size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    { "type": "select", "id": "price_weight", "label": "Price weight", "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "500" },
-    { "type": "color",  "id": "price_color",  "label": "Price colour", "default": "#111111" },
-
-    { "type": "header", "content": "Rating" },
-    { "type": "checkbox","id": "show_rating", "label": "Show rating",  "default": true },
-    { "type": "range",   "id": "rating_size", "label": "Size",         "min": 10, "max": 16, "step": 1, "unit": "px", "default": 12 },
-    { "type": "color",   "id": "star_color",  "label": "Star colour",  "default": "#f59e0b" },
-    { "type": "color",   "id": "rating_color","label": "Text colour",  "default": "#888888" },
-
-    { "type": "header", "content": "Section layout & background" },
-    { "type": "range",  "id": "max_width",      "label": "Max width",     "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
-    { "type": "range",  "id": "side_padding",   "label": "Side padding",  "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range",  "id": "header_bottom",  "label": "Header to cards gap", "min": 16, "max": 80, "step": 4, "unit": "px", "default": 28 },
-    { "type": "color",  "id": "bg_color",       "label": "Background",    "default": "#ffffff" },
-    { "type": "range",  "id": "padding_top",    "label": "Top padding",   "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range",  "id": "padding_bottom", "label": "Bottom padding","min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
   ],
   "presets": [
-    {
-      "name": "Top Selling — Image Cards",
-      "blocks": [
-        { "type": "card", "settings": { "title": "Summer griles dress", "price": "$150", "card_width": 25, "rating": 34 } },
-        { "type": "card", "settings": { "title": "Summer Cloth",        "price": "$120", "card_width": 25, "rating": 32 } },
-        { "type": "card", "settings": { "title": "Water Bottle",        "price": "$67",  "card_width": 25, "rating": 42 } },
-        { "type": "card", "settings": { "title": "Cap",                 "price": "$67",  "card_width": 25, "rating": 42 } }
-      ]
-    }
+    { "name": "Top Selling Products" }
   ]
 }
 {% endschema %}
