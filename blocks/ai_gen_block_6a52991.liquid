@@ -107,14 +107,15 @@
     }
   }
 
-  /* When the mobile menu drawer is open, hide this background video + its
-     overlay text so it can't composite above / bleed through the menu on
-     iOS Safari (a known autoplay-video stacking bug). Dawn adds
-     .overflow-hidden-mobile to <body> while the drawer is open. */
-  body.overflow-hidden-mobile .ai-video-background-{{ ai_gen_id }} {
+  /* When the menu drawer is open, hide this background video + its overlay
+     text so it can't composite above / bleed through the menu on iOS Safari
+     (a known autoplay-video stacking bug). The drawer adds an
+     "overflow-hidden-<breakpoint>" class to <body> (tablet/desktop), so we
+     match any of them with a prefix selector. */
+  body[class*="overflow-hidden-"] .ai-video-background-{{ ai_gen_id }} {
     visibility: hidden;
   }
-  body.overflow-hidden-mobile .ai-video-background__video-{{ ai_gen_id }} {
+  body[class*="overflow-hidden-"] .ai-video-background__video-{{ ai_gen_id }} {
     display: none;
   }
 {% endstyle %}
