@@ -1,40 +1,25 @@
 {%- comment -%}
-  Section: Top Selling / Best Sellers
-  Collection-based product grid. Cards match the collection page (kc-card):
-  3/4 image, uppercase title, price with compare-at strikethrough, colour
-  swatches (hover swaps the image). Responsive: 2-up mobile, 3-up tablet,
-  N-up desktop. Header = heading + "Shop now" button.
-  If no collection is selected, falls back to manual "card" blocks.
+  Section: Top Selling Products
+  Product-reference blocks (pick a product per block). Each card is rendered with
+  the SHARED snippet 'kc-product-card' — the exact same component the collection
+  page uses — and styled by collection-page.css under the .template-collection
+  scope, so cards are 100% identical to the collection page.
+  Layout: 4 per row desktop, 3 tablet, 2 mobile.
 {%- endcomment -%}
 
-{%- liquid
-  assign coll = section.settings.collection
-  assign picked = section.settings.products
-  assign limit = section.settings.products_count
-  assign gap = section.settings.card_gap
-  assign cols_d = section.settings.columns_desktop
-  assign cols_t = section.settings.columns_tablet
-  assign cols_m = section.settings.columns_mobile
-  assign shop_url = section.settings.button_link | default: coll.url | default: '/collections/all'
+{{ 'collection-page.css' | asset_url | stylesheet_tag }}
 
-  # Hand-picked products take priority, otherwise fall back to the collection
-  if picked != blank and picked.size > 0
-    assign product_items = picked
-  elsif coll != blank
-    assign product_items = coll.products
-  endif
+{%- liquid
+  assign limit = section.settings.products_count
+  assign cols_d = section.settings.columns_desktop
+  assign shop_url = section.settings.button_link
 -%}
 
 {%- style -%}
   .ts-{{ section.id }} {
-    --ts-fg: {{ section.settings.title_color }};
-    --ts-muted: {{ section.settings.price_color }};
-    --ts-line: {{ section.settings.line_color }};
-    --ts-card-bg: {{ section.settings.img_bg }};
-    --ts-sale: {{ section.settings.sale_color }};
     background: {{ section.settings.bg_color }};
-    padding-top: {{ section.settings.padding_top | times: 0.7 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.7 | round: 0 }}px;
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     font-family: Helvetica, Arial, sans-serif;
   }
   @media (min-width: 750px) {
@@ -43,6 +28,8 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+  /* Let the section background show through the .template-collection wrapper */
+  .ts-{{ section.id }} .template-collection { background: transparent; color: inherit; }
 
   .ts-{{ section.id }} .ts-inner {
     max-width: {{ section.settings.max_width }}px;
@@ -50,23 +37,29 @@
     padding: 0 {{ section.settings.side_padding }}px;
   }
 
-  /* Header: heading + shop-now button */
-  .ts-{{ section.id }} .ts-header {
-    margin-bottom: {{ section.settings.header_gap }}px;
-  }
+  .ts-{{ section.id }} .ts-header { margin-bottom: {{ section.settings.header_gap }}px; }
   .ts-{{ section.id }} .ts-heading {
-    font-size: {{ section.settings.heading_size }}px;
-    font-weight: {{ section.settings.heading_weight }};
-    text-transform: {{ section.settings.heading_transform }};
-    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    font-size: clamp(24px, 4vw, {{ section.settings.heading_size }}px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
     color: {{ section.settings.heading_color }};
     line-height: 1.1;
-    margin: 0 0 16px;
+    margin: 0;
+  }
+  .ts-{{ section.id }} .ts-sub {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: {{ section.settings.heading_color }};
+    opacity: 0.7;
+    max-width: 640px;
   }
   .ts-{{ section.id }} .ts-shopnow {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-top: 16px;
     padding: 11px 22px;
     border: 1px solid {{ section.settings.heading_color }};
     border-radius: 40px;
@@ -78,279 +71,68 @@
     text-decoration: none;
     transition: background 0.22s ease, color 0.22s ease;
   }
-  .ts-{{ section.id }} .ts-shopnow:hover {
-    background: {{ section.settings.heading_color }};
-    color: {{ section.settings.bg_color }};
-  }
+  .ts-{{ section.id }} .ts-shopnow:hover { background: {{ section.settings.heading_color }}; color: {{ section.settings.bg_color }}; }
   .ts-{{ section.id }} .ts-shopnow svg { width: 14px; height: 14px; }
 
-  /* Grid */
+  /* Grid: 4 desktop / 3 tablet / 2 mobile. Cards themselves come from collection-page.css */
   .ts-{{ section.id }} .ts-grid {
     display: grid;
     grid-template-columns: repeat({{ cols_d }}, 1fr);
-    column-gap: {{ gap }}px;
-    row-gap: {{ gap | plus: 16 }}px;
+    column-gap: 28px;
+    row-gap: 48px;
   }
   @media (max-width: 989px) {
-    .ts-{{ section.id }} .ts-grid { grid-template-columns: repeat({{ cols_t }}, 1fr); }
+    .ts-{{ section.id }} .ts-grid { grid-template-columns: repeat(3, 1fr); column-gap: 20px; row-gap: 32px; }
   }
   @media (max-width: 749px) {
-    .ts-{{ section.id }} .ts-grid {
-      grid-template-columns: repeat({{ cols_m }}, 1fr);
-      column-gap: {{ gap | at_most: 14 }}px;
-    }
+    .ts-{{ section.id }} .ts-grid { grid-template-columns: repeat(2, 1fr); column-gap: 14px; row-gap: 28px; }
   }
-
-  /* Card — mirrors the collection page kc-card */
-  .ts-{{ section.id }} .ts-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    border: 1px solid var(--ts-line);
-    border-radius: {{ section.settings.card_radius }}px;
-    overflow: hidden;
-    background: #fff;
-  }
-  .ts-{{ section.id }} .ts-card__media {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    background: var(--ts-card-bg);
-    overflow: hidden;
-  }
-  .ts-{{ section.id }} .ts-card__media img,
-  .ts-{{ section.id }} .ts-card__media .placeholder-svg {
-    width: 100%;
-    height: 100%;
-    object-fit: {{ section.settings.image_fit }};
-    object-position: center;
-    display: block;
-    {% if section.settings.image_fit == 'contain' %}padding: 10px; box-sizing: border-box;{% endif %}
-  }
-  /* Subtle lift on hover instead of zooming the image (which cropped it) */
-  .ts-{{ section.id }} .ts-card { transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease; }
-  .ts-{{ section.id }} .ts-card:hover {
-    box-shadow: 0 10px 28px -14px rgba(0,0,0,0.28);
-    border-color: #d4d4d4;
-    transform: translateY(-2px);
-  }
-
-  .ts-{{ section.id }} .ts-card__media-link { display: block; width: 100%; height: 100%; }
-
-  /* Hover quick-action icons (view + add to cart) — same as collection page */
-  .ts-{{ section.id }} .ts-card__actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    transform: translateX(8px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 3;
-  }
-  .ts-{{ section.id }} .ts-card:hover .ts-card__actions { opacity: 1; transform: translateX(0); }
-  .ts-{{ section.id }} .ts-card__action {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1px solid var(--ts-line);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ts-fg);
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.15s linear, color 0.15s linear, border-color 0.15s linear;
-  }
-  .ts-{{ section.id }} .ts-card__action svg { width: 16px; height: 16px; }
-  .ts-{{ section.id }} .ts-card__action:hover { background: #111; color: #fff; border-color: #111; }
-  /* On mobile/touch, actions are always visible (no hover) */
-  @media (max-width: 749px) {
-    .ts-{{ section.id }} .ts-card__actions { opacity: 1; transform: none; }
-  }
-
-  .ts-{{ section.id }} .ts-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 3px;
-    z-index: 2;
-  }
-  .ts-{{ section.id }} .ts-badge--new { background: #111; }
-  .ts-{{ section.id }} .ts-badge--sold { background: #c0392b; top: 34px; }
-
-  .ts-{{ section.id }} .ts-card__info { padding: 14px 14px 18px; }
-  .ts-{{ section.id }} .ts-card__title {
-    display: block;
-    font-size: {{ section.settings.title_size }}px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--ts-fg);
-    margin: 0 0 5px;
-    line-height: 1.3;
-  }
-  .ts-{{ section.id }} .ts-card:hover .ts-card__title { text-decoration: underline; text-underline-offset: 2px; }
-  .ts-{{ section.id }} .ts-card__price {
-    font-size: {{ section.settings.price_size }}px;
-    color: var(--ts-muted);
-  }
-  .ts-{{ section.id }} .ts-card__price s { color: #aaa; margin-left: 6px; }
-  .ts-{{ section.id }} .ts-card__price .ts-on-sale { color: var(--ts-sale); }
-
-  /* Colour swatches */
-  .ts-{{ section.id }} .ts-card__swatches { display: flex; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
-  .ts-{{ section.id }} .ts-swatch {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.15);
-    cursor: pointer;
-    transition: transform 0.15s linear;
-  }
-  .ts-{{ section.id }} .ts-swatch:hover { transform: scale(1.18); }
-  .ts-{{ section.id }} .ts-swatch.is-active { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--ts-fg); }
 
   .ts-{{ section.id }} .ts-empty {
-    grid-column: 1 / -1;
     padding: 40px 0;
     text-align: center;
-    color: var(--ts-muted);
+    color: {{ section.settings.heading_color }};
+    opacity: 0.6;
     font-size: 14px;
-  }
-
-  @media (max-width: 749px) {
-    .ts-{{ section.id }} .ts-card__info { padding: 11px 11px 14px; }
-    .ts-{{ section.id }} .ts-card__title { font-size: {{ section.settings.title_size | minus: 1 }}px; }
   }
 {%- endstyle -%}
 
 <section class="ts-{{ section.id }}">
   <div class="ts-inner">
 
-    <div class="ts-header">
-      {%- if section.settings.heading != blank -%}
-        <h2 class="ts-heading">{{ section.settings.heading }}</h2>
-      {%- endif -%}
-      {%- if section.settings.button_label != blank -%}
-        <a class="ts-shopnow" href="{{ shop_url }}">
-          {{ section.settings.button_label }}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-      {%- endif -%}
-    </div>
+    {%- if section.settings.heading != blank or section.settings.subheading != blank or section.settings.button_label != blank -%}
+      <div class="ts-header">
+        {%- if section.settings.heading != blank -%}<h2 class="ts-heading">{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.subheading != blank -%}<p class="ts-sub">{{ section.settings.subheading }}</p>{%- endif -%}
+        {%- if section.settings.button_label != blank and shop_url != blank -%}
+          <a class="ts-shopnow" href="{{ shop_url }}">
+            {{ section.settings.button_label }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
 
-    <div class="ts-grid" id="ts-grid-{{ section.id }}">
-      {%- if product_items != blank and product_items.size > 0 -%}
-        {%- for product in product_items limit: limit -%}
-          {%- assign is_new = false -%}
-          {%- if product.tags contains 'New' or product.tags contains 'new' -%}{%- assign is_new = true -%}{%- endif -%}
-          {%- assign default_img = product.featured_image | image_url: width: 600 -%}
-          <div class="ts-card">
-            <div class="ts-card__media">
-              <a href="{{ product.url }}" class="ts-card__media-link" aria-label="{{ product.title | escape }}">
-                {%- if product.featured_image != blank -%}
-                  <img class="ts-card__img" data-default="{{ default_img }}" src="{{ default_img }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
-                {%- else -%}
-                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-                {%- endif -%}
-              </a>
-              {%- if section.settings.show_badges -%}
-                {%- if is_new -%}<span class="ts-badge ts-badge--new">New</span>{%- endif -%}
-                {%- unless product.available -%}<span class="ts-badge ts-badge--sold">Sold Out</span>{%- endunless -%}
-              {%- endif -%}
+    {%- comment -%} Count selected products {%- endcomment -%}
+    {%- assign product_blocks = section.blocks | where: 'type', 'product' -%}
+    {%- assign has_products = false -%}
+    {%- for block in product_blocks -%}
+      {%- if block.settings.product != blank -%}{%- assign has_products = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
 
-              {%- if section.settings.show_actions -%}
-                <div class="ts-card__actions">
-                  <a class="ts-card__action" href="{{ product.url }}" title="View product" aria-label="View {{ product.title | escape }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </a>
-                  {%- if product.available -%}
-                    {%- if product.has_only_default_variant -%}
-                      <button type="button" class="ts-card__action ts-card__atc" data-variant="{{ product.selected_or_first_available_variant.id }}" title="Add to cart" aria-label="Add {{ product.title | escape }} to cart">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                      </button>
-                    {%- else -%}
-                      <a class="ts-card__action" href="{{ product.url }}" title="Choose options" aria-label="Choose options for {{ product.title | escape }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                      </a>
-                    {%- endif -%}
-                  {%- endif -%}
-                </div>
-              {%- endif -%}
-            </div>
-            <div class="ts-card__info">
-              <a href="{{ product.url }}" class="ts-card__title">{{ product.title }}</a>
-              <div class="ts-card__price">
-                {%- if product.compare_at_price > product.price -%}
-                  <span class="ts-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
-                {%- else -%}
-                  {{ product.price | money }}
-                {%- endif -%}
-              </div>
-              {%- if section.settings.show_swatches -%}
-                {%- for option in product.options_with_values -%}
-                  {%- assign on = option.name | downcase -%}
-                  {%- if on contains 'color' or on contains 'colour' -%}
-                    <div class="ts-card__swatches">
-                      {%- for value in option.values limit: section.settings.max_swatches -%}
-                        {%- capture cdot %}{% render 'kcol-color-hex', color: value %}{% endcapture -%}
-                        {%- assign sw_img = '' -%}
-                        {%- for variant in product.variants -%}
-                          {%- case option.position -%}
-                            {%- when 1 -%}{%- assign vopt = variant.option1 -%}
-                            {%- when 2 -%}{%- assign vopt = variant.option2 -%}
-                            {%- when 3 -%}{%- assign vopt = variant.option3 -%}
-                          {%- endcase -%}
-                          {%- if vopt == value and variant.image != blank -%}{%- assign sw_img = variant.image | image_url: width: 600 -%}{%- break -%}{%- endif -%}
-                        {%- endfor -%}
-                        <span class="ts-swatch{% if forloop.first %} is-active{% endif %}" data-img="{{ sw_img }}"
-                          {%- if value.swatch.image -%}
-                            style="background-image:url('{{ value.swatch.image | image_url: width: 40 }}'); background-size:cover; background-position:center;"
-                          {%- elsif value.swatch.color -%}
-                            style="background-color: {{ value.swatch.color }};"
-                          {%- else -%}
-                            style="background-color: {{ cdot | strip }};"
-                          {%- endif -%}
-                          title="{{ value }}"></span>
-                      {%- endfor -%}
-                    </div>
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
-            </div>
-          </div>
-        {%- endfor -%}
-
-      {%- comment -%} Fallback: manual cards when no collection is selected {%- endcomment -%}
-      {%- elsif section.blocks.size > 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'card' -%}
-            <a href="{{ block.settings.link | default: '#' }}" class="ts-card" {{ block.shopify_attributes }}>
-              <div class="ts-card__media">
-                {%- if block.settings.image != blank -%}
-                  <img class="ts-card__img" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | escape }}" loading="lazy">
-                {%- else -%}
-                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-                {%- endif -%}
-              </div>
-              <div class="ts-card__info">
-                {%- if block.settings.title != blank -%}<span class="ts-card__title">{{ block.settings.title }}</span>{%- endif -%}
-                {%- if block.settings.price != blank -%}<div class="ts-card__price">{{ block.settings.price }}</div>{%- endif -%}
-              </div>
-            </a>
-          {%- endif -%}
-        {%- endfor -%}
-      {%- else -%}
-        <p class="ts-empty">Select a collection in the section settings to show products here.</p>
+    <div class="template-collection">
+      {%- if has_products -%}
+        <div class="ts-grid" id="ts-grid-{{ section.id }}">
+          {%- assign shown = 0 -%}
+          {%- for block in product_blocks -%}
+            {%- if block.settings.product != blank and shown < limit -%}
+              {%- assign shown = shown | plus: 1 -%}
+              {%- render 'kc-product-card', product: block.settings.product, max_swatches: section.settings.max_swatches, block: block -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- elsif request.design_mode -%}
+        <p class="ts-empty">Add product blocks in the section settings to show your best sellers.</p>
       {%- endif -%}
     </div>
 
@@ -363,38 +145,36 @@
   if (!grid) return;
 
   function cardImg(el) {
-    var card = el.closest('.ts-card');
-    return card ? card.querySelector('.ts-card__img') : null;
+    var card = el.closest('.kc-card');
+    return card ? card.querySelector('.kc-card__img') : null;
   }
 
+  /* Swatch hover/click → swap card image (same behaviour as the collection page) */
   grid.addEventListener('mouseover', function (e) {
-    var sw = e.target.closest('.ts-swatch');
+    var sw = e.target.closest('.kc-card__swatch');
     if (!sw || !sw.dataset.img) return;
     var img = cardImg(sw);
     if (img) img.src = sw.dataset.img;
   });
-
   grid.addEventListener('mouseout', function (e) {
-    var sw = e.target.closest('.ts-swatch');
+    var sw = e.target.closest('.kc-card__swatch');
     if (!sw) return;
     var img = cardImg(sw);
-    var card = sw.closest('.ts-card');
+    var card = sw.closest('.kc-card');
     if (img && card) img.src = card.dataset.current || img.getAttribute('data-default');
   });
-
   grid.addEventListener('click', function (e) {
-    var atc = e.target.closest('.ts-card__atc');
+    var atc = e.target.closest('.kc-card__atc');
     if (atc) { e.preventDefault(); tsAddToCart(atc); return; }
 
-    var sw = e.target.closest('.ts-swatch');
+    var sw = e.target.closest('.kc-card__swatch');
     if (!sw) return;
-    e.preventDefault(); /* swatch click changes image instead of navigating */
     var group = sw.parentElement;
-    if (group) group.querySelectorAll('.ts-swatch').forEach(function (s) { s.classList.remove('is-active'); });
+    if (group) group.querySelectorAll('.kc-card__swatch').forEach(function (s) { s.classList.remove('is-active'); });
     sw.classList.add('is-active');
     if (sw.dataset.img) {
       var img = cardImg(sw);
-      var card = sw.closest('.ts-card');
+      var card = sw.closest('.kc-card');
       if (img && card) { img.src = sw.dataset.img; card.dataset.current = sw.dataset.img; }
     }
   });
@@ -419,10 +199,10 @@
     })
       .then(function (r) { return r.json(); })
       .then(function (res) {
-        if (res.status) return; /* error (e.g. sold out) */
+        if (res.status) return;
         if (drawer && res.sections && typeof drawer.renderContents === 'function') {
           drawer.classList.remove('is-empty');
-          drawer.renderContents(res); /* opens drawer + updates bubble */
+          drawer.renderContents(res);
         } else {
           window.location.href = (window.routes && window.routes.cart_url) ? window.routes.cart_url : '/cart';
         }
@@ -438,92 +218,48 @@
   "name": "Top Selling Products",
   "tag": "section",
   "class": "section-top-selling",
-  "max_blocks": 12,
+  "max_blocks": 16,
   "settings": [
     { "type": "header", "content": "Content" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "Best Sellers" },
-    {
-      "type": "select", "id": "heading_transform", "label": "Heading case",
-      "options": [
-        { "value": "none", "label": "As typed" },
-        { "value": "uppercase", "label": "UPPERCASE" },
-        { "value": "capitalize", "label": "Capitalize" }
-      ],
-      "default": "uppercase"
-    },
-    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 30 },
-    {
-      "type": "select", "id": "heading_weight", "label": "Heading weight",
-      "options": [
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" },
-        { "value": "800", "label": "Extra bold" }
-      ],
-      "default": "700"
-    },
-    { "type": "range", "id": "heading_spacing", "label": "Heading letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading (optional)" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 20, "max": 56, "step": 1, "unit": "px", "default": 32 },
     { "type": "color", "id": "heading_color", "label": "Heading / button colour", "default": "#111111" },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop Now" },
-    { "type": "url", "id": "button_link", "label": "Button link", "info": "Defaults to the selected collection" },
+    { "type": "text", "id": "button_label", "label": "Button label (optional)", "default": "Shop Now" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
     { "type": "range", "id": "header_gap", "label": "Gap below header", "min": 16, "max": 64, "step": 4, "unit": "px", "default": 28 },
 
-    { "type": "header", "content": "Products" },
-    { "type": "product_list", "id": "products", "label": "Pick products", "limit": 16, "info": "Hand-pick the exact products to feature. Takes priority over the collection below." },
-    { "type": "collection", "id": "collection", "label": "Or use a collection", "info": "Used only when no products are picked above." },
+    { "type": "header", "content": "Layout" },
     { "type": "range", "id": "products_count", "label": "Max products to show", "min": 2, "max": 16, "step": 1, "default": 8 },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 4, "info": "Tablet shows 3, mobile shows 2 automatically." },
+    { "type": "range", "id": "max_swatches", "label": "Max colour swatches per card", "min": 2, "max": 8, "step": 1, "default": 6 },
 
-    { "type": "header", "content": "Grid layout" },
-    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
-    { "type": "range", "id": "columns_tablet", "label": "Columns (tablet)", "min": 2, "max": 4, "step": 1, "default": 3 },
-    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "min": 1, "max": 2, "step": 1, "default": 2 },
-    { "type": "range", "id": "card_gap", "label": "Gap between cards", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
-
-    { "type": "header", "content": "Card" },
-    {
-      "type": "select", "id": "image_fit", "label": "Image fit",
-      "options": [
-        { "value": "cover", "label": "Cover (fill card — same as collection page)" },
-        { "value": "contain", "label": "Contain (show whole product — no cropping)" }
-      ],
-      "default": "cover"
-    },
-    { "type": "checkbox", "id": "show_actions", "label": "Show view + add-to-cart icons on hover", "default": true },
-    { "type": "checkbox", "id": "show_badges", "label": "Show New / Sold Out badges", "default": true },
-    { "type": "checkbox", "id": "show_swatches", "label": "Show colour swatches", "default": true },
-    { "type": "range", "id": "max_swatches", "label": "Max swatches", "min": 2, "max": 8, "step": 1, "default": 6 },
-    { "type": "range", "id": "card_radius", "label": "Corner radius", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 4 },
-    { "type": "range", "id": "title_size", "label": "Title size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    { "type": "range", "id": "price_size", "label": "Price size", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    { "type": "color", "id": "title_color", "label": "Title colour", "default": "#111111" },
-    { "type": "color", "id": "price_color", "label": "Price colour", "default": "#444444" },
-    { "type": "color", "id": "sale_color", "label": "Sale price colour", "default": "#c0392b" },
-    { "type": "color", "id": "line_color", "label": "Card border colour", "default": "#e8e8e8" },
-    { "type": "color", "id": "img_bg", "label": "Image background", "default": "#f5f5f5" },
-
-    { "type": "header", "content": "Section layout & background" },
+    { "type": "header", "content": "Section background & spacing" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#f0efed" },
     { "type": "range", "id": "max_width", "label": "Max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
     { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
-    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
+    { "type": "range", "id": "padding_top", "label": "Top spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 }
   ],
   "blocks": [
     {
-      "type": "card",
-      "name": "Manual card (fallback)",
+      "type": "product",
+      "name": "Product",
       "settings": [
-        { "type": "paragraph", "content": "Used only when no collection is selected above." },
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "url",  "id": "link",  "label": "Link" },
-        { "type": "text", "id": "title", "label": "Title", "default": "Product Name" },
-        { "type": "text", "id": "price", "label": "Price", "default": "$99" }
+        { "type": "product", "id": "product", "label": "Select Product" }
       ]
     }
   ],
   "presets": [
-    { "name": "Top Selling Products" }
+    {
+      "name": "Top Selling Products",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
   ]
 }
 {% endschema %}
