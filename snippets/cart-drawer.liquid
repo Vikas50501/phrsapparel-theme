@@ -495,6 +495,140 @@
           </details>
         {%- endif -%}
 
+        {%- comment -%} Frequently Bought Together — cart upsell (recommendations API) {%- endcomment -%}
+        <div
+          id="CartDrawer-Recommendations"
+          class="cart-fbt"
+          data-heading="Frequently Bought Together"
+          data-intent="related"
+          data-limit="6"
+          data-currency="{{ cart.currency.symbol }}"
+          hidden
+        ></div>
+
+        <style>
+          .cart-fbt { margin: 0 0 8px; padding-top: 16px; border-top: 0.1rem solid rgba(var(--color-foreground), 0.12); }
+          .cart-fbt[hidden] { display: none; }
+          .cart-fbt__head { margin: 0 0 12px; padding: 0 1.5rem; font-size: 1.3rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(var(--color-foreground)); }
+          .cart-fbt__track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 0 1.5rem 4px; scrollbar-width: none; }
+          .cart-fbt__track::-webkit-scrollbar { display: none; }
+          .cart-fbt__card { flex: 0 0 86%; max-width: 340px; display: flex; gap: 12px; align-items: center; padding: 10px; border: 0.1rem solid rgba(var(--color-foreground), 0.12); border-radius: 8px; background: rgb(var(--color-background)); scroll-snap-align: start; }
+          .cart-fbt__media { flex: 0 0 6rem; width: 6rem; height: 7.5rem; border-radius: 6px; overflow: hidden; background: rgba(var(--color-foreground), 0.05); display: block; }
+          .cart-fbt__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .cart-fbt__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+          .cart-fbt__title { font-size: 1.3rem; line-height: 1.25; color: rgb(var(--color-foreground)); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+          .cart-fbt__price { font-size: 1.3rem; color: rgba(var(--color-foreground), 0.7); }
+          .cart-fbt__add { align-self: flex-start; min-height: 3.6rem; padding: 0 1.6rem; border: none; border-radius: 4px; background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); font-size: 1.1rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s ease; }
+          .cart-fbt__add:hover { opacity: 0.85; }
+          .cart-fbt__add:disabled { opacity: 0.5; cursor: default; }
+        </style>
+
+        <script>
+          (function () {
+            if (window.__cartFbtInit) return;
+            window.__cartFbtInit = true;
+
+            var root = document.getElementById('CartDrawer-Recommendations');
+            if (!root) return;
+            var LIMIT = parseInt(root.dataset.limit, 10) || 6;
+            var INTENT = root.dataset.intent || 'related';
+            var HEADING = root.dataset.heading || 'You may also like';
+            var SYM = root.dataset.currency || '';
+
+            function money(cents) {
+              var v = (cents || 0) / 100;
+              return SYM + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2));
+            }
+            function escapeHtml(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+            function render(products, cart) {
+              var inCart = {};
+              cart.items.forEach(function (i) { inCart[i.product_id] = true; });
+              var list = products.filter(function (p) { return p.available && !inCart[p.id]; }).slice(0, LIMIT);
+              if (!list.length) { root.hidden = true; root.innerHTML = ''; return; }
+
+              var html = '<p class="cart-fbt__head">' + escapeHtml(HEADING) + '</p><div class="cart-fbt__track">';
+              list.forEach(function (p) {
+                var v = (p.variants || []).filter(function (x) { return x.available; })[0] || (p.variants || [])[0];
+                if (!v) return;
+                var img = p.featured_image || (p.images && p.images[0]) || '';
+                html += '<div class="cart-fbt__card">'
+                  + '<a class="cart-fbt__media" href="' + p.url + '">' + (img ? '<img src="' + img + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' : '') + '</a>'
+                  + '<div class="cart-fbt__info">'
+                  + '<a class="cart-fbt__title" href="' + p.url + '">' + escapeHtml(p.title) + '</a>'
+                  + '<div class="cart-fbt__price">' + money(p.price) + '</div>'
+                  + '<button type="button" class="cart-fbt__add" data-vid="' + v.id + '">' + 'Add +' + '</button>'
+                  + '</div></div>';
+              });
+              html += '</div>';
+              root.innerHTML = html;
+              root.hidden = false;
+            }
+
+            var loading = false;
+            function load() {
+              if (loading) return;
+              loading = true;
+              fetch('/cart.js', { headers: { 'Accept': 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (cart) {
+                  if (!cart.items || !cart.items.length) { root.hidden = true; root.innerHTML = ''; loading = false; return; }
+                  var pid = cart.items[0].product_id;
+                  return fetch('/recommendations/products.json?product_id=' + pid + '&intent=' + INTENT + '&limit=' + (LIMIT + 4))
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) { render(res.products || [], cart); });
+                })
+                .catch(function () { root.hidden = true; })
+                .finally(function () { loading = false; });
+            }
+
+            root.addEventListener('click', function (e) {
+              var btn = e.target.closest('.cart-fbt__add');
+              if (!btn || btn.disabled) return;
+              var id = btn.getAttribute('data-vid');
+              if (!id) return;
+              btn.disabled = true;
+              var original = btn.textContent;
+              btn.textContent = 'Adding…';
+
+              var drawer = document.querySelector('cart-drawer');
+              var body = { items: [{ id: parseInt(id, 10), quantity: 1 }] };
+              var sids = [];
+              if (drawer && typeof drawer.getSectionsToRender === 'function') {
+                try { drawer.getSectionsToRender().forEach(function (s) { sids.push(s.id); }); } catch (e) {}
+              }
+              if (sids.length) { body.sections = sids.join(','); body.sections_url = window.location.pathname; }
+
+              fetch('/cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/javascript' },
+                body: JSON.stringify(body)
+              })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                  if (res.status) return;
+                  if (drawer && res.sections && typeof drawer.renderContents === 'function') {
+                    drawer.classList.remove('is-empty');
+                    drawer.renderContents(res);
+                  }
+                  load();
+                })
+                .catch(function () {})
+                .finally(function () { btn.disabled = false; btn.textContent = original; });
+            });
+
+            /* Refresh whenever the cart changes (Dawn pub/sub), plus on load */
+            if (typeof subscribe === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
+              subscribe(window.PUB_SUB_EVENTS.cartUpdate, function () { setTimeout(load, 60); });
+            }
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', load);
+            } else {
+              load();
+            }
+          })();
+        </script>
+
         <!-- Start blocks -->
         <!-- Subtotals -->
 
