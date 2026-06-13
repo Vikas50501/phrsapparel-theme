@@ -230,6 +230,73 @@
             "hs5_product": ""
           }
         },
+        "image_hzybKm": {
+          "type": "image",
+          "settings": {
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_4PxJjC": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/3db84f96-f46b-4144-9122-5a23c05d9eac.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "gamer-hoodie-black",
+            "hs2_enabled": true,
+            "hs2_product": "white-chocolate-headwarmer",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_Kcz6qJ": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/5R0A8269.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "gamer-hoodie-purple",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
+        "image_tqMHtf": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/image00577.webp",
+            "alt": "",
+            "hs1_enabled": true,
+            "hs1_product": "futura-bikini-black",
+            "hs2_enabled": false,
+            "hs2_product": "",
+            "hs3_enabled": false,
+            "hs3_product": "",
+            "hs4_enabled": false,
+            "hs4_product": "",
+            "hs5_enabled": false,
+            "hs5_product": ""
+          }
+        },
         "image_rQm4AF": {
           "type": "image",
           "settings": {
@@ -539,6 +606,10 @@
       },
       "block_order": [
         "image_D983qT",
+        "image_hzybKm",
+        "image_4PxJjC",
+        "image_Kcz6qJ",
+        "image_tqMHtf",
         "image_rQm4AF",
         "image_QqLrbE",
         "image_XzLrKP",
