@@ -485,8 +485,8 @@
           "settings": {
             "image": "shopify://shop_images/Billionaire-Religion-Tracksuit.jpg",
             "link": "shopify://products/billionaire-religion-tracksuit",
-            "title": "BILLIONAIRE RELIGION TRACKSUIT",
-            "price": "120",
+            "title": "",
+            "price": "",
             "card_width": 25,
             "rating": 0
           }
