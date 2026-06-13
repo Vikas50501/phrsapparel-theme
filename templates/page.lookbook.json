@@ -233,9 +233,10 @@
         "image_rQm4AF": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/image00576.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
+            "hs1_product": "futura-bikini-brazil",
             "hs2_enabled": false,
             "hs2_product": "",
             "hs3_enabled": false,
