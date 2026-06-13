@@ -449,8 +449,8 @@
                     {%- if block.settings.button_label != blank -%}
                       {%- capture hero_btn1_style -%}
                         {%- if use_theme_btn -%}
-                          {%- if block.settings.button_bg != blank -%}--color-button: {{ block.settings.button_bg | color_extract: 'red' }} {{ block.settings.button_bg | color_extract: 'green' }} {{ block.settings.button_bg | color_extract: 'blue' }};--alpha-button-background: 1;--alpha-button-border: 1;{%- endif -%}
-                          {%- if block.settings.button_text_color != blank -%}--color-button-text: {{ block.settings.button_text_color | color_extract: 'red' }} {{ block.settings.button_text_color | color_extract: 'green' }} {{ block.settings.button_text_color | color_extract: 'blue' }};{%- endif -%}
+                          {%- if block.settings.button_bg != blank -%}--color-button: {{ block.settings.button_bg | color_extract: 'red' }},{{ block.settings.button_bg | color_extract: 'green' }},{{ block.settings.button_bg | color_extract: 'blue' }};--alpha-button-background: 1;--alpha-button-border: 1;{%- endif -%}
+                          {%- if block.settings.button_text_color != blank -%}--color-button-text: {{ block.settings.button_text_color | color_extract: 'red' }},{{ block.settings.button_text_color | color_extract: 'green' }},{{ block.settings.button_text_color | color_extract: 'blue' }};{%- endif -%}
                         {%- endif -%}
                       {%- endcapture -%}
                       <a href="{{ block.settings.button_link | default: '#' }}" class="{% if use_theme_btn %}button {% endif %}hero-{{ section.id }}-btn"{% if hero_btn1_style != blank %} style="{{ hero_btn1_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.button_label }}</a>
@@ -458,8 +458,8 @@
                     {%- if block.settings.button2_label != blank -%}
                       {%- capture hero_btn2_style -%}
                         {%- if use_theme_btn -%}
-                          {%- if block.settings.button2_bg != blank -%}--color-secondary-button: {{ block.settings.button2_bg | color_extract: 'red' }} {{ block.settings.button2_bg | color_extract: 'green' }} {{ block.settings.button2_bg | color_extract: 'blue' }};--alpha-button-background: 1;{%- endif -%}
-                          {%- if block.settings.button2_text_color != blank -%}--color-secondary-button-text: {{ block.settings.button2_text_color | color_extract: 'red' }} {{ block.settings.button2_text_color | color_extract: 'green' }} {{ block.settings.button2_text_color | color_extract: 'blue' }};{%- endif -%}
+                          {%- if block.settings.button2_bg != blank -%}--color-secondary-button: {{ block.settings.button2_bg | color_extract: 'red' }},{{ block.settings.button2_bg | color_extract: 'green' }},{{ block.settings.button2_bg | color_extract: 'blue' }};--alpha-button-background: 1;{%- endif -%}
+                          {%- if block.settings.button2_text_color != blank -%}--color-secondary-button-text: {{ block.settings.button2_text_color | color_extract: 'red' }},{{ block.settings.button2_text_color | color_extract: 'green' }},{{ block.settings.button2_text_color | color_extract: 'blue' }};{%- endif -%}
                         {%- else -%}
                           {%- if block.settings.button2_bg != blank -%}--hero-btn2-bg:{{ block.settings.button2_bg }};{%- endif -%}
                           {%- if block.settings.button2_text_color != blank -%}--hero-btn2-text:{{ block.settings.button2_text_color }};{%- endif -%}

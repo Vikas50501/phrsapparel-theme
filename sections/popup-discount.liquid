@@ -41,8 +41,8 @@
     --pd-bg: {{ s.popup_bg }};
     --pd-text: {{ s.text_color }};
     --pd-heading: {{ s.heading_color | default: s.text_color }};
-    --color-button: {{ s.button_color | color_extract: 'red' }} {{ s.button_color | color_extract: 'green' }} {{ s.button_color | color_extract: 'blue' }};
-    --color-button-text: {{ s.button_text_color | color_extract: 'red' }} {{ s.button_text_color | color_extract: 'green' }} {{ s.button_text_color | color_extract: 'blue' }};
+    --color-button: {{ s.button_color | color_extract: 'red' }},{{ s.button_color | color_extract: 'green' }},{{ s.button_color | color_extract: 'blue' }};
+    --color-button-text: {{ s.button_text_color | color_extract: 'red' }},{{ s.button_text_color | color_extract: 'green' }},{{ s.button_text_color | color_extract: 'blue' }};
     --alpha-button-background: 1;
     --alpha-button-border: 1;
   {%- endif -%}
