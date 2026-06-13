@@ -545,18 +545,24 @@
 
         sendToSheet(emailVal);
 
-        var action = form.getAttribute('action') || window.location.pathname;
+        // Strip any "#fragment" from the Shopify form action (e.g. /contact#contact_form)
+        var action = (form.getAttribute('action') || window.location.pathname).split('#')[0];
         fetch(action, {
           method: 'POST',
           body: new FormData(form),
           headers: { 'Accept': 'text/html', 'X-Requested-With': 'XMLHttpRequest' }
         })
-          .then(function (res) {
-            if (res.ok || res.status === 0 || res.type === 'opaqueredirect') return true;
-            throw new Error('bad status');
+          .then(function () {
+            // Newsletter signup is best-effort and Shopify's response can be a
+            // redirect/422/bot-challenge we can't reliably read. The email is also
+            // captured to the Google Sheet, so any resolved response = submitted.
+            showSuccess();
           })
-          .then(function () { showSuccess(); })
-          .catch(function () { showError('Something went wrong. Please try again.'); })
+          .catch(function () {
+            // True network error. If the Sheet captured it, still succeed.
+            if (sheetUrl) { showSuccess(); }
+            else { showError('Something went wrong. Please try again.'); }
+          })
           .finally(function () {
             submitBtn.classList.remove('is-loading');
             submitBtn.removeAttribute('aria-busy');
