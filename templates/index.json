@@ -665,6 +665,9 @@
         "image_JaPGBB",
         "image_YXqGcP"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading, h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {font-size: 25px !important; } h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {padding-bottom: 10px !important; }}"
+      ],
       "name": "Trending Products",
       "settings": {
         "product_source": "gallery",
@@ -677,10 +680,10 @@
         "heading_align": "center",
         "heading_gap": 40,
         "show_underline": true,
-        "underline_width": 260,
+        "underline_width": 100,
         "underline_thickness": 4,
         "underline_gap": 8,
-        "underline_color": "#e8b8b0",
+        "underline_color": "#C47A5A",
         "grid_gap": 24,
         "image_radius": 4,
         "image_bg": "#f5f5f5",
