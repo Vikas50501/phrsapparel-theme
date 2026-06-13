@@ -341,6 +341,111 @@
     }
     .mr-corner-text-{{ section.id }} { padding-left: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
   }
+
+  {%- comment -%} ===== Mobile custom layout (portrait media + bottom content + single CTA) ===== {%- endcomment -%}
+  {%- if section.settings.mobile_custom_layout -%}
+    {%- assign mov_r = section.settings.mobile_overlay_color | color_extract: 'red' -%}
+    {%- assign mov_g = section.settings.mobile_overlay_color | color_extract: 'green' -%}
+    {%- assign mov_b = section.settings.mobile_overlay_color | color_extract: 'blue' -%}
+    {%- assign mov_grad = section.settings.mobile_gradient_strength | divided_by: 100.0 -%}
+    {%- assign mov_op = section.settings.mobile_overlay_opacity | divided_by: 100.0 -%}
+
+    /* Mobile-only elements are hidden on desktop */
+    .mr-media-mobile-{{ section.id }},
+    .mr-m-gradient-{{ section.id }},
+    .mr-m-content-{{ section.id }} { display: none; }
+
+    @media (max-width: 749px) {
+      .mr-row-{{ section.id }} { border-radius: 0; }
+
+      /* Portrait card — media fills it, no awkward cropping */
+      .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
+        height: {{ section.settings.mobile_card_height }}vh !important;
+        aspect-ratio: auto !important;
+      }
+      .mr-media-{{ section.id }} > img,
+      .mr-media-{{ section.id }} .mr-video-wrap > video { object-fit: cover; }
+
+      /* Swap to mobile media when provided; otherwise desktop media stays (fallback) */
+      .mr-row-{{ section.id }}[data-mobile-media="true"] .mr-media-desktop-{{ section.id }} { display: none; }
+      .mr-media-mobile-{{ section.id }} { display: block; }
+
+      /* Hide desktop overlay/content layers on mobile */
+      .mr-content-{{ section.id }},
+      .mr-corner-{{ section.id }},
+      .mr-arrow-btn-{{ section.id }},
+      .mr-overlay-{{ section.id }} { display: none !important; }
+
+      /* Subtle bottom gradient for legibility (no big translucent box) */
+      .mr-m-gradient-{{ section.id }} {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background-image: linear-gradient(to top, rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},{{ mov_grad }}) 0%, rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},0) 58%);
+        {%- if mov_op > 0 %}background-color: rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},{{ mov_op }});{%- endif %}
+      }
+
+      /* Bottom-aligned editorial content */
+      .mr-m-content-{{ section.id }} {
+        display: flex;
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 14px;
+        padding: 24px 22px calc(24px + env(safe-area-inset-bottom, 0px));
+        pointer-events: none;
+      }
+      .mr-m-content-{{ section.id }} > * { pointer-events: auto; }
+      .mr-m-content-{{ section.id }}[data-mpos="bottom-left"]   { align-items: flex-start; text-align: left; }
+      .mr-m-content-{{ section.id }}[data-mpos="bottom-center"] { align-items: center;     text-align: center; }
+      .mr-m-content-{{ section.id }}[data-mpos="bottom-right"]  { align-items: flex-end;    text-align: right; }
+
+      .mr-m-eyebrow-{{ section.id }} {
+        margin: 0;
+        color: #fff;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        opacity: 0.9;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+      }
+      .mr-m-heading-{{ section.id }} {
+        margin: 0;
+        color: #fff;
+        font-size: {{ section.settings.mobile_heading_size }}px;
+        font-weight: {{ section.settings.mobile_heading_weight }};
+        line-height: 1.08;
+        letter-spacing: -0.01em;
+        text-shadow: 0 2px 14px rgba(0,0,0,0.55);
+      }
+      .mr-m-btn-{{ section.id }} {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 26px;
+        margin-top: 4px;
+        font-size: {{ section.settings.mobile_button_size }}px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #111111;
+        background: #ffffff;
+        border-radius: 2px;
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      .mr-m-btn-{{ section.id }}:active { transform: scale(0.98); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mr-m-btn-{{ section.id }} { transition: none; }
+    }
+  {%- endif -%}
 {%- endstyle -%}
 
 <section class="mr-section-{{ section.id }}">
@@ -393,41 +498,62 @@
           {%- assign row_vars = row_vars | append: "--mr-content-box-radius:" | append: block.settings.content_box_radius | append: "px;" -%}
         {%- endif -%}
 
+        {%- comment -%} Resolve mobile media presence for layout + fallback {%- endcomment -%}
+        {%- assign mr_mobile_on = section.settings.mobile_custom_layout -%}
+        {%- assign mr_has_mobile = false -%}
+        {%- if block.settings.mobile_image != blank or block.settings.mobile_video != blank -%}
+          {%- assign mr_has_mobile = true -%}
+        {%- endif -%}
+
         <div
           class="mr-row-{{ section.id }}"
           data-align-h="{{ block.settings.align_h }}"
           data-align-v="{{ block.settings.align_v }}"
           data-height-mode="{{ section.settings.height_mode }}"
+          data-mobile-media="{{ mr_has_mobile }}"
           style="{{ row_vars }}"
           {{ block.shopify_attributes }}
         >
 
-          {%- comment -%} Media {%- endcomment -%}
+          {%- comment -%} Media — separate desktop & mobile sources. Videos are
+            JS-loaded by viewport (data-mq) so desktop video never loads on mobile
+            and vice-versa. Desktop video only loads on mobile as a fallback when
+            no dedicated mobile media is set. {%- endcomment -%}
+          {%- liquid
+            assign d_image = block.settings.image
+            assign d_video = block.settings.video
+            assign m_image = block.settings.mobile_image
+            assign m_video = block.settings.mobile_video
+            assign d_video_mq = ''
+            if mr_mobile_on and mr_has_mobile
+              assign d_video_mq = '(min-width: 750px)'
+            endif
+          -%}
           <div class="mr-media-{{ section.id }}">
-            {%- if block.settings.video != blank -%}
-              <div class="mr-video-wrap">
-                <video
-                  autoplay
-                  muted
-                  loop
-                  playsinline
-                  {% if block.settings.image != blank %}poster="{{ block.settings.image | img_url: '2400x' }}"{% endif %}
-                >
-                  {%- for source in block.settings.video.sources -%}
-                    <source src="{{ source.url }}" type="{{ source.mime_type }}">
-                  {%- endfor -%}
+            {%- comment -%} Desktop / default media {%- endcomment -%}
+            {%- if d_video != blank -%}
+              <div class="mr-video-wrap mr-media-desktop-{{ section.id }}">
+                <video data-mr-video {% if d_video_mq != blank %}data-mq="{{ d_video_mq }}"{% endif %} muted loop playsinline preload="none"{% if d_image != blank %} poster="{{ d_image | image_url: width: 2000 }}"{% endif %}>
+                  {%- for source in d_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
                 </video>
               </div>
-            {%- elsif block.settings.image != blank -%}
-              <img
-                src="{{ block.settings.image | img_url: '2400x' }}"
-                alt="{{ block.settings.image.alt | default: block.settings.heading | escape }}"
-                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                width="{{ block.settings.image.width }}"
-                height="{{ block.settings.image.height }}"
-              >
+            {%- elsif d_image != blank -%}
+              <img class="mr-media-desktop-{{ section.id }}" src="{{ d_image | image_url: width: 2400 }}" alt="{{ d_image.alt | default: block.settings.heading | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="{{ d_image.width }}" height="{{ d_image.height }}">
             {%- else -%}
               {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+
+            {%- comment -%} Dedicated mobile media (only rendered when custom mobile layout + mobile media set) {%- endcomment -%}
+            {%- if mr_mobile_on and mr_has_mobile -%}
+              {%- if m_video != blank -%}
+                <div class="mr-video-wrap mr-media-mobile-{{ section.id }}">
+                  <video data-mr-video data-mq="(max-width: 749px)" muted loop playsinline preload="none"{% if m_image != blank %} poster="{{ m_image | image_url: width: 1200 }}"{% endif %}>
+                    {%- for source in m_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
+                  </video>
+                </div>
+              {%- elsif m_image != blank -%}
+                <img class="mr-media-mobile-{{ section.id }}" src="{{ m_image | image_url: width: 1200 }}" alt="{{ m_image.alt | default: block.settings.heading | escape }}" loading="lazy" width="{{ m_image.width }}" height="{{ m_image.height }}">
+              {%- endif -%}
             {%- endif -%}
           </div>
 
@@ -510,6 +636,27 @@
             </div>
           {%- endif -%}
 
+          {%- comment -%} ───── Mobile redesigned overlay (bottom content + gradient + single CTA) ───── {%- endcomment -%}
+          {%- if mr_mobile_on -%}
+            <div class="mr-m-gradient-{{ section.id }}" aria-hidden="true"></div>
+            {%- assign m_heading = block.settings.mobile_heading | default: block.settings.heading -%}
+            {%- assign m_btn_label = block.settings.mobile_button_label | default: block.settings.btn1_label -%}
+            {%- assign m_btn_link = block.settings.mobile_button_link | default: block.settings.btn1_link -%}
+            {%- if m_heading != blank or m_btn_label != blank -%}
+              <div class="mr-m-content-{{ section.id }}" data-mpos="{{ section.settings.mobile_content_position }}">
+                {%- if block.settings.eyebrow != blank -%}
+                  <p class="mr-m-eyebrow-{{ section.id }}">{{ block.settings.eyebrow | escape }}</p>
+                {%- endif -%}
+                {%- if m_heading != blank -%}
+                  <h3 class="mr-m-heading-{{ section.id }}">{{ m_heading }}</h3>
+                {%- endif -%}
+                {%- if m_btn_label != blank -%}
+                  <a class="mr-m-btn-{{ section.id }}" href="{{ m_btn_link | default: '#' }}">{{ m_btn_label }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+
         </div>
       {%- endif -%}
     {%- endfor -%}
@@ -521,14 +668,36 @@
   (function () {
     var section = document.querySelector('.mr-section-{{ section.id }}');
     if (!section) return;
-    section.querySelectorAll('video').forEach(function (v) {
+
+    /* Load a video's sources only when its viewport (data-mq) matches, so the
+       desktop video never downloads on mobile and vice-versa. */
+    function loadVideo(v) {
+      var mq = v.getAttribute('data-mq');
+      if (mq && window.matchMedia && !window.matchMedia(mq).matches) return;
+      if (v.dataset.mrLoaded === '1') { play(v); return; }
+      v.querySelectorAll('source[data-src]').forEach(function (s) {
+        if (!s.getAttribute('src')) s.setAttribute('src', s.getAttribute('data-src'));
+      });
+      v.dataset.mrLoaded = '1';
       v.muted = true;
       v.loop = true;
-      var play = function () { v.play().catch(function(){}); };
-      v.addEventListener('ended', play);
-      v.addEventListener('loadedmetadata', play);
-      play();
-    });
+      v.load();
+      v.addEventListener('loadeddata', function () { play(v); });
+      play(v);
+    }
+    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+    function run() {
+      section.querySelectorAll('video[data-mr-video]').forEach(loadVideo);
+    }
+    run();
+
+    /* On breakpoint change, load the now-matching video */
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(run, 250);
+    }, { passive: true });
   })();
 </script>
 
@@ -543,9 +712,19 @@
       "type": "row",
       "name": "Media row",
       "settings": [
-        { "type": "header",       "content": "Media" },
-        { "type": "image_picker", "id": "image",   "label": "Image",       "info": "Used as background or poster for video" },
-        { "type": "video",         "id": "video",   "label": "Video",       "info": "Select a video from your theme files or upload one" },
+        { "type": "header",       "content": "Media — Desktop" },
+        { "type": "image_picker", "id": "image",   "label": "Desktop image",       "info": "Also used as the video poster" },
+        { "type": "video",         "id": "video",   "label": "Desktop video" },
+
+        { "type": "header",       "content": "Media — Mobile" },
+        { "type": "paragraph",     "content": "Optional. If empty, the desktop media is used on mobile too." },
+        { "type": "image_picker", "id": "mobile_image",   "label": "Mobile image (portrait 9:16)" },
+        { "type": "video",         "id": "mobile_video",   "label": "Mobile video (portrait 9:16)" },
+
+        { "type": "header",       "content": "Mobile content (optional overrides)" },
+        { "type": "text",          "id": "mobile_heading",       "label": "Mobile heading",       "info": "Falls back to the heading below." },
+        { "type": "text",          "id": "mobile_button_label",  "label": "Mobile button label",  "info": "Falls back to Button 1 label." },
+        { "type": "url",           "id": "mobile_button_link",   "label": "Mobile button link",   "info": "Falls back to Button 1 link." },
 
         { "type": "header",   "content": "Row size (overrides section default)" },
         {
@@ -632,6 +811,35 @@
     }
   ],
   "settings": [
+    { "type": "header", "content": "Mobile layout" },
+    { "type": "checkbox", "id": "mobile_custom_layout", "label": "Enable mobile custom layout", "default": true, "info": "Portrait media + bottom content + single button on phones. Desktop is unchanged." },
+    {
+      "type": "select", "id": "mobile_content_position", "label": "Mobile content position",
+      "options": [
+        { "value": "bottom-left",   "label": "Bottom left" },
+        { "value": "bottom-center", "label": "Bottom center" },
+        { "value": "bottom-right",  "label": "Bottom right" }
+      ],
+      "default": "bottom-left"
+    },
+    { "type": "range", "id": "mobile_card_height", "label": "Mobile card height", "min": 60, "max": 95, "step": 1, "unit": "vh", "default": 82 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 30 },
+    {
+      "type": "select", "id": "mobile_heading_weight", "label": "Mobile heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "700"
+    },
+    { "type": "range", "id": "mobile_button_size", "label": "Mobile button size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "mobile_overlay_color", "label": "Mobile overlay / gradient colour", "default": "#000000" },
+    { "type": "range", "id": "mobile_overlay_opacity", "label": "Mobile overlay opacity (flat)", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 10 },
+    { "type": "range", "id": "mobile_gradient_strength", "label": "Mobile bottom gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 65 },
+
     { "type": "header", "content": "Section heading (optional)" },
     { "type": "text",   "id": "section_heading",          "label": "Heading" },
     { "type": "range",  "id": "section_heading_size",     "label": "Size",           "min": 16, "max": 80, "step": 2, "unit": "px", "default": 36 },
