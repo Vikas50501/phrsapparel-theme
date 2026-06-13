@@ -312,6 +312,7 @@
   data-frequency-days="{{ s.frequency_days }}"
   data-auto-open="{{ s.auto_open }}"
   data-storage-key="pd-popup-{{ uid }}"
+  data-sheet-url="{{ s.sheet_webhook_url }}"
 >
   <div class="pd-modal{% if has_image %} pd-has-image{% endif %}">
     <button type="button" class="pd-close" data-pd-close aria-label="Close popup">
@@ -355,20 +356,6 @@
           <div class="pd-field field">
             <input
               class="field__input"
-              id="pd-first-{{ uid }}"
-              type="text"
-              name="contact[first_name]"
-              autocomplete="given-name"
-              placeholder="First name"
-              aria-required="true"
-              required
-            >
-            <label class="field__label" for="pd-first-{{ uid }}">First name</label>
-          </div>
-
-          <div class="pd-field field">
-            <input
-              class="field__input"
               id="pd-email-{{ uid }}"
               type="email"
               name="contact[email]"
@@ -380,18 +367,6 @@
               required
             >
             <label class="field__label" for="pd-email-{{ uid }}">Email address</label>
-          </div>
-
-          <div class="pd-field field">
-            <input
-              class="field__input"
-              id="pd-phone-{{ uid }}"
-              type="tel"
-              name="contact[phone]"
-              autocomplete="tel"
-              placeholder="Phone number (optional)"
-            >
-            <label class="field__label" for="pd-phone-{{ uid }}">Phone number (optional)</label>
           </div>
 
           <p class="pd-error" data-pd-error role="alert" aria-live="assertive"></p>
@@ -444,12 +419,12 @@
     var formState = root.querySelector('[data-pd-form-state]');
     var successState = root.querySelector('[data-pd-success-state]');
     var emailInput = root.querySelector('input[type="email"]');
-    var firstInput = root.querySelector('input[name="contact[first_name]"]');
 
     var delay = parseInt(root.getAttribute('data-delay'), 10) || 0;
     var days = parseInt(root.getAttribute('data-frequency-days'), 10);
     var autoOpen = root.getAttribute('data-auto-open') === 'true';
     var storageKey = root.getAttribute('data-storage-key');
+    var sheetUrl = root.getAttribute('data-sheet-url') || '';
     var designMode = !!(window.Shopify && window.Shopify.designMode);
 
     var lastFocused = null;
@@ -499,7 +474,7 @@
       document.documentElement.style.overflow = 'hidden';
       document.addEventListener('keydown', onKeydown);
       if (!designMode) setSeen();
-      var target = (successState.hidden ? firstInput : null) || root.querySelector('[data-pd-close]');
+      var target = (successState.hidden ? emailInput : null) || root.querySelector('[data-pd-close]');
       if (target) setTimeout(function () { target.focus({ preventScroll: true }); }, 380);
     }
     function close() {
@@ -529,7 +504,7 @@
     }
     function clearError() {
       errorEl.textContent = ''; errorEl.classList.remove('is-visible');
-      [firstInput, emailInput].forEach(function (el) { if (el) el.removeAttribute('aria-invalid'); });
+      if (emailInput) emailInput.removeAttribute('aria-invalid');
     }
     function showSuccess() {
       formState.hidden = true; successState.hidden = false;
@@ -537,20 +512,38 @@
       if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
     }
 
-    /* ---- submit (AJAX → Shopify customer form) ---- */
+    /* ---- optional: also send the email to a Google Sheet (Apps Script) ---- */
+    function sendToSheet(email) {
+      if (!sheetUrl) return;
+      try {
+        var body = new URLSearchParams();
+        body.set('email', email);
+        body.set('source', 'popup-discount');
+        body.set('page', window.location.pathname);
+        // no-cors: fire-and-forget; Apps Script can't send CORS headers
+        fetch(sheetUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: body.toString()
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
+    /* ---- submit (AJAX → Shopify customer form + optional Google Sheet) ---- */
     if (form) {
       form.setAttribute('novalidate', 'novalidate');
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         clearError();
-        var firstVal = (firstInput && firstInput.value || '').trim();
         var emailVal = (emailInput && emailInput.value || '').trim();
-        if (!firstVal) { showError('Please enter your first name.', firstInput); return; }
         if (!emailVal) { showError('Please enter your email address.', emailInput); return; }
         if (!isEmail(emailVal)) { showError('Please enter a valid email address.', emailInput); return; }
 
         submitBtn.classList.add('is-loading');
         submitBtn.setAttribute('aria-busy', 'true');
+
+        sendToSheet(emailVal);
 
         var action = form.getAttribute('action') || window.location.pathname;
         fetch(action, {
@@ -569,7 +562,7 @@
             submitBtn.removeAttribute('aria-busy');
           });
       });
-      [firstInput, emailInput].forEach(function (el) { if (el) el.addEventListener('input', clearError); });
+      if (emailInput) emailInput.addEventListener('input', clearError);
     }
 
     /* ---- copy code ---- */
@@ -695,6 +688,16 @@
       "label": "Discount code",
       "default": "WELCOME10",
       "info": "Create a matching code in Discounts. This text is what shoppers copy."
+    },
+    {
+      "type": "header",
+      "content": "Google Sheet (optional)"
+    },
+    {
+      "type": "text",
+      "id": "sheet_webhook_url",
+      "label": "Apps Script Web App URL",
+      "info": "Deploy the provided Apps Script as a Web App (Anyone access) and paste its /exec URL here. Each signup's email is appended to your Google Sheet."
     },
     {
       "type": "text",
