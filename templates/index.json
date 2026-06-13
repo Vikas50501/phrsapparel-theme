@@ -1014,6 +1014,9 @@
         "row_HzYWwz",
         "row_ALA8iy"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {h2.mr-section-title-template--27682793849196__media_row_zRnCzC {font-size: 25px !important; }}"
+      ],
       "name": "Media Rows",
       "settings": {
         "section_heading": "JOIN OUR COMMUNITY",
