@@ -106,6 +106,17 @@
       font-size: calc({{ block.settings.subheading_size }}px * 0.8);
     }
   }
+
+  /* When the mobile menu drawer is open, hide this background video + its
+     overlay text so it can't composite above / bleed through the menu on
+     iOS Safari (a known autoplay-video stacking bug). Dawn adds
+     .overflow-hidden-mobile to <body> while the drawer is open. */
+  body.overflow-hidden-mobile .ai-video-background-{{ ai_gen_id }} {
+    visibility: hidden;
+  }
+  body.overflow-hidden-mobile .ai-video-background__video-{{ ai_gen_id }} {
+    display: none;
+  }
 {% endstyle %}
 
 <video-background-{{ ai_gen_id }} class="ai-video-background-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
