@@ -428,6 +428,9 @@
         "category_GMCbtY",
         "category_YzXyRd"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw {font-size: 25px !important; }}"
+      ],
       "name": "Category Circles Slider",
       "settings": {
         "heading": "Our Collections",
@@ -514,8 +517,16 @@
       "name": "Top Selling Products",
       "settings": {
         "heading": "OUR TOP SELLERS",
+        "subheading": "",
         "heading_size": 32,
         "heading_color": "#111111",
+        "underline_color": "#c47a5a",
+        "button_label": "Shop Now",
+        "button_link": "",
+        "header_gap": 28,
+        "products_count": 8,
+        "columns_desktop": 4,
+        "max_swatches": 6,
         "bg_color": "#f0efed",
         "max_width": 1400,
         "side_padding": 24,
@@ -839,6 +850,7 @@
         "heading_transform": "none",
         "heading_spacing": 0,
         "heading_color": "#111111",
+        "underline_color": "#c47a5a",
         "heading_align": "center",
         "heading_pad_x": 24,
         "heading_pad_bottom": 24,
