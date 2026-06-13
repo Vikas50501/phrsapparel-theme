@@ -848,6 +848,9 @@
         "image_VdgeWE",
         "image_zNQUqn"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {h2.lb-heading-template--27682793849196__lookbook_WqjCKQ {font-size: 25px !important; }}"
+      ],
       "name": "Lookbook",
       "settings": {
         "heading": "OUR LOOKBOOK",
