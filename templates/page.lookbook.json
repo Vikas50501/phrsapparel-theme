@@ -297,11 +297,12 @@
         "image_cY9DRi": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/DSC9747.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
-            "hs2_enabled": false,
-            "hs2_product": "",
+            "hs1_product": "ph-silicon-hoodie-set",
+            "hs2_enabled": true,
+            "hs2_product": "gamer-hoodie",
             "hs3_enabled": false,
             "hs3_product": "",
             "hs4_enabled": false,
