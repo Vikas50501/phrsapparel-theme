@@ -514,7 +514,7 @@
       "name": "Top Selling Products",
       "settings": {
         "heading": "OUR TOP SELLERS",
-        "heading_size": 40,
+        "heading_size": 32,
         "heading_color": "#111111",
         "bg_color": "#f0efed",
         "max_width": 1400,
