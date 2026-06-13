@@ -196,8 +196,37 @@
     opacity: 0.92;
   }
 
-  /* ── Buttons use the theme .button component (styled by base.css). The
-     .hero-…-btn class is kept only for the slide-in entry animation. ── */
+  /* ── Custom button style (used when "Button style" = Custom). When the theme
+     button is selected the .button class is added and these :not(.button)
+     rules no longer apply, so the theme .button styling takes over. ── */
+  .hero-{{ section.id }}-btn:not(.button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.button_pad_y }}px {{ section.settings.button_pad_x }}px;
+    font-size: {{ section.settings.button_size }}px;
+    font-weight: {{ section.settings.button_weight }};
+    text-transform: {{ section.settings.button_transform }};
+    letter-spacing: {{ section.settings.button_spacing | divided_by: 100.0 }}em;
+    border-radius: {{ section.settings.button_radius }}px;
+    border: {{ section.settings.button_border_width }}px solid var(--hero-btn-border, currentColor);
+    background: var(--hero-btn-bg, transparent);
+    color: var(--hero-btn-text, inherit);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .hero-{{ section.id }}-btn:not(.button):hover {
+    background: var(--hero-btn-bg-hover, currentColor);
+    color: var(--hero-btn-text-hover, #fff);
+    transform: translateY(-1px);
+  }
+  .hero-{{ section.id }}-btn2:not(.button) {
+    background: var(--hero-btn2-bg, transparent) !important;
+    color: var(--hero-btn2-text, inherit) !important;
+    border-color: var(--hero-btn2-border, currentColor) !important;
+  }
 
   /* Button row */
   .hero-{{ section.id }}-btn-row {
@@ -414,20 +443,30 @@
                 {%- endif -%}
 
                 {%- if block.settings.button_label != blank or block.settings.button2_label != blank -%}
-                  <div class="hero-{{ section.id }}-btn-row color-{{ section.settings.button_color_scheme }}">
+                  {%- assign use_theme_btn = false -%}
+                  {%- if section.settings.button_style == 'theme' -%}{%- assign use_theme_btn = true -%}{%- endif -%}
+                  <div class="hero-{{ section.id }}-btn-row{% if use_theme_btn %} color-{{ section.settings.button_color_scheme }}{% endif %}">
                     {%- if block.settings.button_label != blank -%}
                       {%- capture hero_btn1_style -%}
-                        {%- if block.settings.button_bg != blank -%}--color-button: {{ block.settings.button_bg | color_extract: 'red' }} {{ block.settings.button_bg | color_extract: 'green' }} {{ block.settings.button_bg | color_extract: 'blue' }};--alpha-button-background: 1;--alpha-button-border: 1;{%- endif -%}
-                        {%- if block.settings.button_text_color != blank -%}--color-button-text: {{ block.settings.button_text_color | color_extract: 'red' }} {{ block.settings.button_text_color | color_extract: 'green' }} {{ block.settings.button_text_color | color_extract: 'blue' }};{%- endif -%}
+                        {%- if use_theme_btn -%}
+                          {%- if block.settings.button_bg != blank -%}--color-button: {{ block.settings.button_bg | color_extract: 'red' }} {{ block.settings.button_bg | color_extract: 'green' }} {{ block.settings.button_bg | color_extract: 'blue' }};--alpha-button-background: 1;--alpha-button-border: 1;{%- endif -%}
+                          {%- if block.settings.button_text_color != blank -%}--color-button-text: {{ block.settings.button_text_color | color_extract: 'red' }} {{ block.settings.button_text_color | color_extract: 'green' }} {{ block.settings.button_text_color | color_extract: 'blue' }};{%- endif -%}
+                        {%- endif -%}
                       {%- endcapture -%}
-                      <a href="{{ block.settings.button_link | default: '#' }}" class="button hero-{{ section.id }}-btn"{% if hero_btn1_style != blank %} style="{{ hero_btn1_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.button_label }}</a>
+                      <a href="{{ block.settings.button_link | default: '#' }}" class="{% if use_theme_btn %}button {% endif %}hero-{{ section.id }}-btn"{% if hero_btn1_style != blank %} style="{{ hero_btn1_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.button_label }}</a>
                     {%- endif -%}
                     {%- if block.settings.button2_label != blank -%}
                       {%- capture hero_btn2_style -%}
-                        {%- if block.settings.button2_bg != blank -%}--color-secondary-button: {{ block.settings.button2_bg | color_extract: 'red' }} {{ block.settings.button2_bg | color_extract: 'green' }} {{ block.settings.button2_bg | color_extract: 'blue' }};--alpha-button-background: 1;{%- endif -%}
-                        {%- if block.settings.button2_text_color != blank -%}--color-secondary-button-text: {{ block.settings.button2_text_color | color_extract: 'red' }} {{ block.settings.button2_text_color | color_extract: 'green' }} {{ block.settings.button2_text_color | color_extract: 'blue' }};{%- endif -%}
+                        {%- if use_theme_btn -%}
+                          {%- if block.settings.button2_bg != blank -%}--color-secondary-button: {{ block.settings.button2_bg | color_extract: 'red' }} {{ block.settings.button2_bg | color_extract: 'green' }} {{ block.settings.button2_bg | color_extract: 'blue' }};--alpha-button-background: 1;{%- endif -%}
+                          {%- if block.settings.button2_text_color != blank -%}--color-secondary-button-text: {{ block.settings.button2_text_color | color_extract: 'red' }} {{ block.settings.button2_text_color | color_extract: 'green' }} {{ block.settings.button2_text_color | color_extract: 'blue' }};{%- endif -%}
+                        {%- else -%}
+                          {%- if block.settings.button2_bg != blank -%}--hero-btn2-bg:{{ block.settings.button2_bg }};{%- endif -%}
+                          {%- if block.settings.button2_text_color != blank -%}--hero-btn2-text:{{ block.settings.button2_text_color }};{%- endif -%}
+                          {%- if block.settings.button2_border_color != blank -%}--hero-btn2-border:{{ block.settings.button2_border_color }};{%- endif -%}
+                        {%- endif -%}
                       {%- endcapture -%}
-                      <a href="{{ block.settings.button2_link | default: '#' }}" class="button button--secondary hero-{{ section.id }}-btn"{% if hero_btn2_style != blank %} style="{{ hero_btn2_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.button2_label }}</a>
+                      <a href="{{ block.settings.button2_link | default: '#' }}" class="{% if use_theme_btn %}button button--secondary {% endif %}hero-{{ section.id }}-btn hero-{{ section.id }}-btn2"{% if hero_btn2_style != blank %} style="{{ hero_btn2_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.button2_label }}</a>
                     {%- endif -%}
                   </div>
                 {%- endif -%}
@@ -851,7 +890,15 @@
     },
 
     { "type": "header", "content": "Button" },
-    { "type": "color_scheme", "id": "button_color_scheme", "label": "Button colour scheme", "default": "scheme-1", "info": "Buttons use the theme's standard button styling from this colour scheme. Each slide can still override its button colours below." },
+    {
+      "type": "select", "id": "button_style", "label": "Button style",
+      "options": [
+        { "value": "theme",  "label": "Theme button (matches the rest of the theme)" },
+        { "value": "custom", "label": "Custom (use the size/colour settings below)" }
+      ],
+      "default": "theme"
+    },
+    { "type": "color_scheme", "id": "button_color_scheme", "label": "Theme button colour scheme", "default": "scheme-1", "info": "Used when Button style = Theme button. Each slide can still override its button colours below." },
     {
       "type": "range", "id": "button_size", "label": "Button font size",
       "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14
