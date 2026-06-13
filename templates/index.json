@@ -480,120 +480,45 @@
     "top_selling_XgWzRw": {
       "type": "top-selling",
       "blocks": {
-        "card_WDXw38": {
-          "type": "card",
+        "product_mCiRzz": {
+          "type": "product",
           "settings": {
-            "image": "shopify://shop_images/Billionaire-Religion-Tracksuit.jpg",
-            "link": "shopify://products/billionaire-religion-tracksuit",
-            "title": "",
-            "price": "",
-            "card_width": 25,
-            "rating": 0
+            "product": "billionaire-religion-tracksuit"
           }
         },
-        "card_WFjxE8": {
-          "type": "card",
+        "product_TTnXU8": {
+          "type": "product",
           "settings": {
-            "image": "shopify://shop_images/Silicon-Hoodie-Set.jpg",
-            "link": "shopify://products/ph-silicon-hoodie-set",
-            "title": "",
-            "price": "",
-            "card_width": 25,
-            "rating": 0
+            "product": "ph-silicon-hoodie-set"
           }
         },
-        "card_w4qdCH": {
-          "type": "card",
+        "product_Tbniw7": {
+          "type": "product",
           "settings": {
-            "image": "shopify://shop_images/1_ph_1.jpg",
-            "link": "shopify://products/ph-panel-t-shirt-white",
-            "title": "",
-            "price": "",
-            "card_width": 25,
-            "rating": 0
+            "product": "ph-panel-t-shirt-white"
           }
         },
-        "card_dMHDU8": {
-          "type": "card",
+        "product_aPC6Tm": {
+          "type": "product",
           "settings": {
-            "image": "shopify://shop_images/4_ph_1.jpg",
-            "link": "shopify://products/angel-wings-t-shirt-green",
-            "title": "",
-            "price": "",
-            "card_width": 25,
-            "rating": 0
+            "product": "angel-wings-t-shirt-green"
           }
         }
       },
       "block_order": [
-        "card_WDXw38",
-        "card_WFjxE8",
-        "card_w4qdCH",
-        "card_dMHDU8"
+        "product_mCiRzz",
+        "product_TTnXU8",
+        "product_Tbniw7",
+        "product_aPC6Tm"
       ],
       "name": "Top Selling Products",
       "settings": {
-        "badge_text": "SEE MORE PRODUCTS",
-        "badge_link": "",
-        "badge_bg": "#ffffff",
-        "badge_color": "#111111",
-        "badge_border": "#dddddd",
-        "badge_radius": 40,
-        "badge_size": 13,
-        "badge_pad_x": 18,
-        "badge_pad_y": 9,
-        "badge_gap": 12,
         "heading": "OUR TOP SELLERS",
         "heading_size": 40,
-        "heading_weight": "700",
-        "heading_transform": "none",
-        "heading_spacing": 0,
-        "heading_line_height": 120,
         "heading_color": "#111111",
-        "description": "Worn by trendsetters around the world, \nour collection represents the perfect balance of quality, authenticity, \nand streetwear excellence.",
-        "desc_size": 14,
-        "desc_color": "#666666",
-        "desc_max_width": 280,
-        "desc_btn_gap": 20,
-        "cta_label": "SHOP NOW",
-        "cta_link": "",
-        "cta_bg": "#ffffff",
-        "cta_color": "#111111",
-        "cta_border": "#111111",
-        "cta_radius": 40,
-        "cta_size": 14,
-        "cta_pad_x": 24,
-        "cta_pad_y": 12,
-        "arrow_size": 40,
-        "arrow_radius": 40,
-        "arrow_bg": "#ffffff",
-        "arrow_color": "#111111",
-        "arrow_border": "#dddddd",
-        "arrow_bottom_gap": 16,
-        "cards_visible": 4,
-        "card_gap": 20,
-        "card_height": 360,
-        "card_radius": 2,
-        "info_gap": 6,
-        "img_bg": "#f0efed",
-        "hover_arrow_size": 40,
-        "hover_arrow_offset": 12,
-        "hover_arrow_bg": "#ffffff",
-        "hover_arrow_color": "#111111",
-        "title_size": 14,
-        "title_weight": "500",
-        "title_color": "#111111",
-        "price_size": 14,
-        "price_weight": "600",
-        "price_color": "#111111",
-        "show_rating": true,
-        "rating_size": 12,
-        "star_color": "#f59e0b",
-        "rating_color": "#888888",
+        "bg_color": "#f0efed",
         "max_width": 1400,
         "side_padding": 24,
-        "header_bottom": 28,
-        "bg_color": "#f0efed",
         "padding_top": 64,
         "padding_bottom": 64
       }
