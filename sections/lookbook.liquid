@@ -9,13 +9,15 @@
     padding-bottom: {{ section.settings.padding_bottom }}px;
   }
 
-  /* ── Section heading ─────────────────────────────────── */
+  /* ── Section heading (centered + orange underline, matches Our Collections) ── */
   .lb-heading-wrap-{{ section.id }} {
-    text-align: {{ section.settings.heading_align }};
+    text-align: center;
     padding: 0 {{ section.settings.heading_pad_x }}px {{ section.settings.heading_pad_bottom }}px;
   }
 
   .lb-heading-{{ section.id }} {
+    display: inline-block;
+    position: relative;
     font-size: var(--font-h2-size);
     font-weight: var(--font-h2-weight);
     color: {{ section.settings.heading_color }};
@@ -23,6 +25,18 @@
     text-transform: {{ section.settings.heading_transform }};
     line-height: 1.2;
     margin: 0;
+    padding-bottom: 10px;
+  }
+  .lb-heading-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: {{ section.settings.underline_color | default: '#c47a5a' }};
+    border-radius: 3px;
   }
 
   /* ── Image grid ──────────────────────────────────────── */
@@ -373,6 +387,7 @@
     { "type": "select", "id": "heading_transform", "label": "Case",           "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
     { "type": "range",  "id": "heading_spacing",   "label": "Letter spacing", "min": 0, "max": 30, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
     { "type": "color",  "id": "heading_color",     "label": "Colour",         "default": "#111111" },
+    { "type": "color",  "id": "underline_color",   "label": "Underline colour", "default": "#c47a5a" },
     { "type": "select", "id": "heading_align",     "label": "Alignment",      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
     { "type": "range",  "id": "heading_pad_x",     "label": "Side padding",   "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
     { "type": "range",  "id": "heading_pad_bottom","label": "Gap below",      "min": 0, "max": 60, "step": 4, "unit": "px", "default": 24 },
