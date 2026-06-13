@@ -313,6 +313,7 @@
   data-auto-open="{{ s.auto_open }}"
   data-storage-key="pd-popup-{{ uid }}"
   data-sheet-url="{{ s.sheet_webhook_url }}"
+  data-discount-code="{{ code | escape }}"
 >
   <div class="pd-modal{% if has_image %} pd-has-image{% endif %}">
     <button type="button" class="pd-close" data-pd-close aria-label="Close popup">
@@ -425,6 +426,7 @@
     var autoOpen = root.getAttribute('data-auto-open') === 'true';
     var storageKey = root.getAttribute('data-storage-key');
     var sheetUrl = root.getAttribute('data-sheet-url') || '';
+    var promoCode = root.getAttribute('data-discount-code') || '';
     var designMode = !!(window.Shopify && window.Shopify.designMode);
 
     var lastFocused = null;
@@ -519,7 +521,8 @@
         var body = new URLSearchParams();
         body.set('email', email);
         body.set('source', 'popup-discount');
-        body.set('page', window.location.pathname);
+        body.set('page', window.location.href);
+        body.set('code', promoCode);
         // no-cors: fire-and-forget; Apps Script can't send CORS headers
         fetch(sheetUrl, {
           method: 'POST',
