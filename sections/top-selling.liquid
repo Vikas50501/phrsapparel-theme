@@ -127,6 +127,43 @@
     transform: translateY(-2px);
   }
 
+  .ts-{{ section.id }} .ts-card__media-link { display: block; width: 100%; height: 100%; }
+
+  /* Hover quick-action icons (view + add to cart) — same as collection page */
+  .ts-{{ section.id }} .ts-card__actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 3;
+  }
+  .ts-{{ section.id }} .ts-card:hover .ts-card__actions { opacity: 1; transform: translateX(0); }
+  .ts-{{ section.id }} .ts-card__action {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--ts-line);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-fg);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s linear, color 0.15s linear, border-color 0.15s linear;
+  }
+  .ts-{{ section.id }} .ts-card__action svg { width: 16px; height: 16px; }
+  .ts-{{ section.id }} .ts-card__action:hover { background: #111; color: #fff; border-color: #111; }
+  /* On mobile/touch, actions are always visible (no hover) */
+  @media (max-width: 749px) {
+    .ts-{{ section.id }} .ts-card__actions { opacity: 1; transform: none; }
+  }
+
   .ts-{{ section.id }} .ts-badge {
     position: absolute;
     top: 10px;
@@ -209,20 +246,41 @@
           {%- assign is_new = false -%}
           {%- if product.tags contains 'New' or product.tags contains 'new' -%}{%- assign is_new = true -%}{%- endif -%}
           {%- assign default_img = product.featured_image | image_url: width: 600 -%}
-          <a href="{{ product.url }}" class="ts-card">
+          <div class="ts-card">
             <div class="ts-card__media">
-              {%- if product.featured_image != blank -%}
-                <img class="ts-card__img" data-default="{{ default_img }}" src="{{ default_img }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-              {%- endif -%}
+              <a href="{{ product.url }}" class="ts-card__media-link" aria-label="{{ product.title | escape }}">
+                {%- if product.featured_image != blank -%}
+                  <img class="ts-card__img" data-default="{{ default_img }}" src="{{ default_img }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </a>
               {%- if section.settings.show_badges -%}
                 {%- if is_new -%}<span class="ts-badge ts-badge--new">New</span>{%- endif -%}
                 {%- unless product.available -%}<span class="ts-badge ts-badge--sold">Sold Out</span>{%- endunless -%}
               {%- endif -%}
+
+              {%- if section.settings.show_actions -%}
+                <div class="ts-card__actions">
+                  <a class="ts-card__action" href="{{ product.url }}" title="View product" aria-label="View {{ product.title | escape }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                  {%- if product.available -%}
+                    {%- if product.has_only_default_variant -%}
+                      <button type="button" class="ts-card__action ts-card__atc" data-variant="{{ product.selected_or_first_available_variant.id }}" title="Add to cart" aria-label="Add {{ product.title | escape }} to cart">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                      </button>
+                    {%- else -%}
+                      <a class="ts-card__action" href="{{ product.url }}" title="Choose options" aria-label="Choose options for {{ product.title | escape }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                      </a>
+                    {%- endif -%}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
             </div>
             <div class="ts-card__info">
-              <span class="ts-card__title">{{ product.title }}</span>
+              <a href="{{ product.url }}" class="ts-card__title">{{ product.title }}</a>
               <div class="ts-card__price">
                 {%- if product.compare_at_price > product.price -%}
                   <span class="ts-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
@@ -261,7 +319,7 @@
                 {%- endfor -%}
               {%- endif -%}
             </div>
-          </a>
+          </div>
         {%- endfor -%}
 
       {%- comment -%} Fallback: manual cards when no collection is selected {%- endcomment -%}
@@ -317,6 +375,9 @@
   });
 
   grid.addEventListener('click', function (e) {
+    var atc = e.target.closest('.ts-card__atc');
+    if (atc) { e.preventDefault(); tsAddToCart(atc); return; }
+
     var sw = e.target.closest('.ts-swatch');
     if (!sw) return;
     e.preventDefault(); /* swatch click changes image instead of navigating */
@@ -329,6 +390,38 @@
       if (img && card) { img.src = sw.dataset.img; card.dataset.current = sw.dataset.img; }
     }
   });
+
+  function tsAddToCart(btn) {
+    var id = btn.getAttribute('data-variant');
+    if (!id || btn.dataset.loading) return;
+    btn.dataset.loading = '1';
+
+    var drawer = document.querySelector('cart-drawer');
+    var body = { items: [{ id: parseInt(id, 10), quantity: 1 }] };
+    var sectionIds = [];
+    if (drawer && typeof drawer.getSectionsToRender === 'function') {
+      try { drawer.getSectionsToRender().forEach(function (s) { sectionIds.push(s.id); }); } catch (e) {}
+    }
+    if (sectionIds.length) { body.sections = sectionIds.join(','); body.sections_url = window.location.pathname; }
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/javascript', 'X-Requested-With': 'XMLHttpRequest' },
+      body: JSON.stringify(body)
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.status) return; /* error (e.g. sold out) */
+        if (drawer && res.sections && typeof drawer.renderContents === 'function') {
+          drawer.classList.remove('is-empty');
+          drawer.renderContents(res); /* opens drawer + updates bubble */
+        } else {
+          window.location.href = (window.routes && window.routes.cart_url) ? window.routes.cart_url : '/cart';
+        }
+      })
+      .catch(function () {})
+      .finally(function () { delete btn.dataset.loading; });
+  }
 })();
 </script>
 
@@ -382,11 +475,12 @@
     {
       "type": "select", "id": "image_fit", "label": "Image fit",
       "options": [
-        { "value": "contain", "label": "Contain (show whole product — no cropping)" },
-        { "value": "cover", "label": "Cover (fill card — may crop)" }
+        { "value": "cover", "label": "Cover (fill card — same as collection page)" },
+        { "value": "contain", "label": "Contain (show whole product — no cropping)" }
       ],
-      "default": "contain"
+      "default": "cover"
     },
+    { "type": "checkbox", "id": "show_actions", "label": "Show view + add-to-cart icons on hover", "default": true },
     { "type": "checkbox", "id": "show_badges", "label": "Show New / Sold Out badges", "default": true },
     { "type": "checkbox", "id": "show_swatches", "label": "Show colour swatches", "default": true },
     { "type": "range", "id": "max_swatches", "label": "Max swatches", "min": 2, "max": 8, "step": 1, "default": 6 },
