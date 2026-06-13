@@ -1229,7 +1229,7 @@
         "image": "shopify://shop_images/3.webp",
         "mobile_image": "shopify://shop_images/image00585.webp",
         "discount_code": "WELCOME10",
-        "sheet_webhook_url": "https://script.google.com/macros/s/AKfycbwxZMDvMkprBai2qLzfZf3ECfIQseZlP3Iy8mI0IdPAYVqjxsxsIy7eLAeDr45HkkpiDA/exec",
+        "sheet_webhook_url": "https://script.google.com/macros/s/AKfycbyP9ke_5hvGJE2YJr6f1V9xupZYOldNxXM_-iW1nF-hYmV6uQUl5u9ABkTjdAOSg7OD4w/exec",
         "success_heading": "Your Discount is Ready!",
         "success_message": "Use the code below at checkout to get 10% off your first order.",
         "success_button_label": "Continue Shopping",
