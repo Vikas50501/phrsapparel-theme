@@ -114,11 +114,18 @@
   .ts-{{ section.id }} .ts-card__media .placeholder-svg {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: {{ section.settings.image_fit }};
+    object-position: center;
     display: block;
-    transition: transform 0.5s ease;
+    {% if section.settings.image_fit == 'contain' %}padding: 10px; box-sizing: border-box;{% endif %}
   }
-  .ts-{{ section.id }} .ts-card:hover .ts-card__media img { transform: scale(1.04); }
+  /* Subtle lift on hover instead of zooming the image (which cropped it) */
+  .ts-{{ section.id }} .ts-card { transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease; }
+  .ts-{{ section.id }} .ts-card:hover {
+    box-shadow: 0 10px 28px -14px rgba(0,0,0,0.28);
+    border-color: #d4d4d4;
+    transform: translateY(-2px);
+  }
 
   .ts-{{ section.id }} .ts-badge {
     position: absolute;
@@ -372,6 +379,14 @@
     { "type": "range", "id": "card_gap", "label": "Gap between cards", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
 
     { "type": "header", "content": "Card" },
+    {
+      "type": "select", "id": "image_fit", "label": "Image fit",
+      "options": [
+        { "value": "contain", "label": "Contain (show whole product — no cropping)" },
+        { "value": "cover", "label": "Cover (fill card — may crop)" }
+      ],
+      "default": "contain"
+    },
     { "type": "checkbox", "id": "show_badges", "label": "Show New / Sold Out badges", "default": true },
     { "type": "checkbox", "id": "show_swatches", "label": "Show colour swatches", "default": true },
     { "type": "range", "id": "max_swatches", "label": "Max swatches", "min": 2, "max": 8, "step": 1, "default": 6 },
