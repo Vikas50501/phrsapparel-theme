@@ -371,7 +371,7 @@
 
           <p class="pd-error" data-pd-error role="alert" aria-live="assertive"></p>
 
-          <button type="submit" class="button button--full-width pd-submit" data-pd-submit>
+          <button type="button" class="button button--full-width pd-submit" data-pd-submit>
             <span class="pd-submit__label">{{ s.button_label | default: 'Get My Discount' }}</span>
             <span class="pd-spinner" aria-hidden="true"></span>
           </button>
@@ -530,45 +530,58 @@
       } catch (e) {}
     }
 
-    /* ---- submit (AJAX → Shopify customer form + optional Google Sheet) ---- */
+    /* ---- submit (AJAX → Shopify customer form + optional Google Sheet) ----
+       The submit button is type="button" so the form can never navigate the
+       page natively (which previously flashed the success state then reloaded
+       to /contact). Everything is driven from JS. */
+    var submitting = false;
+    function handleSubmit(e) {
+      if (e) e.preventDefault();
+      if (submitting) return;
+      clearError();
+      var emailVal = (emailInput && emailInput.value || '').trim();
+      if (!emailVal) { showError('Please enter your email address.', emailInput); return; }
+      if (!isEmail(emailVal)) { showError('Please enter a valid email address.', emailInput); return; }
+
+      submitting = true;
+      submitBtn.classList.add('is-loading');
+      submitBtn.setAttribute('aria-busy', 'true');
+
+      sendToSheet(emailVal);
+
+      // Strip any "#fragment" from the Shopify form action (e.g. /contact#contact_form)
+      var action = form ? (form.getAttribute('action') || window.location.pathname).split('#')[0] : window.location.pathname;
+      fetch(action, {
+        method: 'POST',
+        body: form ? new FormData(form) : null,
+        headers: { 'Accept': 'text/html', 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function () {
+          // Newsletter signup is best-effort and Shopify's response can be a
+          // redirect/422/bot-challenge we can't reliably read. The email is also
+          // captured to the Google Sheet, so any resolved response = submitted.
+          showSuccess();
+        })
+        .catch(function () {
+          // True network error. If the Sheet captured it, still succeed.
+          if (sheetUrl) { showSuccess(); }
+          else { showError('Something went wrong. Please try again.'); }
+        })
+        .finally(function () {
+          submitting = false;
+          submitBtn.classList.remove('is-loading');
+          submitBtn.removeAttribute('aria-busy');
+        });
+    }
+
     if (form) {
       form.setAttribute('novalidate', 'novalidate');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        clearError();
-        var emailVal = (emailInput && emailInput.value || '').trim();
-        if (!emailVal) { showError('Please enter your email address.', emailInput); return; }
-        if (!isEmail(emailVal)) { showError('Please enter a valid email address.', emailInput); return; }
-
-        submitBtn.classList.add('is-loading');
-        submitBtn.setAttribute('aria-busy', 'true');
-
-        sendToSheet(emailVal);
-
-        // Strip any "#fragment" from the Shopify form action (e.g. /contact#contact_form)
-        var action = (form.getAttribute('action') || window.location.pathname).split('#')[0];
-        fetch(action, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { 'Accept': 'text/html', 'X-Requested-With': 'XMLHttpRequest' }
-        })
-          .then(function () {
-            // Newsletter signup is best-effort and Shopify's response can be a
-            // redirect/422/bot-challenge we can't reliably read. The email is also
-            // captured to the Google Sheet, so any resolved response = submitted.
-            showSuccess();
-          })
-          .catch(function () {
-            // True network error. If the Sheet captured it, still succeed.
-            if (sheetUrl) { showSuccess(); }
-            else { showError('Something went wrong. Please try again.'); }
-          })
-          .finally(function () {
-            submitBtn.classList.remove('is-loading');
-            submitBtn.removeAttribute('aria-busy');
-          });
-      });
-      if (emailInput) emailInput.addEventListener('input', clearError);
+      form.addEventListener('submit', handleSubmit); // safety: prevent any native submit
+    }
+    if (submitBtn) submitBtn.addEventListener('click', handleSubmit);
+    if (emailInput) {
+      emailInput.addEventListener('input', clearError);
+      emailInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') handleSubmit(e); });
     }
 
     /* ---- copy code ---- */
