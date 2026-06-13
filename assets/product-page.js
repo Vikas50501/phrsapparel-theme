@@ -235,43 +235,66 @@
     var btn = document.getElementById('kushi-btn-atc');
     if (!variantInput || !btn || btn.disabled) return;
 
+    var variantId = parseInt(variantInput.value, 10);
+    if (!variantId) {
+      btn.textContent = 'Select options';
+      setTimeout(function () { btn.textContent = btn.dataset.kushiLabel || 'Add to Cart'; }, 2000);
+      return;
+    }
+
     var originalText = btn.textContent;
+    btn.dataset.kushiLabel = originalText;
     btn.textContent = 'Adding...';
     btn.disabled = true;
+
+    var drawer = document.querySelector('cart-drawer');
+    var body = {
+      id: variantId,
+      quantity: parseInt(qtyInput ? qtyInput.value : 1, 10) || 1
+    };
+
+    /* Ask Shopify to also render the cart drawer + cart bubble so they update */
+    var sectionIds = [];
+    if (drawer && typeof drawer.getSectionsToRender === 'function') {
+      try { drawer.getSectionsToRender().forEach(function (s) { sectionIds.push(s.id); }); } catch (e) {}
+    }
+    if (sectionIds.length) {
+      body.sections = sectionIds.join(',');
+      body.sections_url = window.location.pathname;
+    }
 
     fetch('/cart/add.js', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/javascript'
       },
-      body: JSON.stringify({
-        id: parseInt(variantInput.value),
-        quantity: parseInt(qtyInput ? qtyInput.value : 1)
-      })
-    })
-    .then(function(res) {
-      if (!res.ok) throw new Error('Cart error');
-      return res.json();
-    })
-    .then(function() {
-      btn.textContent = 'Added!';
-      setTimeout(function() {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }, 2000);
-      return fetch('/cart.js');
+      body: JSON.stringify(body)
     })
     .then(function(res) { return res.json(); })
-    .then(function(cart) {
-      document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+    .then(function(res) {
+      if (res.status) { /* error response (e.g. sold out / 422) */
+        btn.textContent = res.description ? 'Unavailable' : 'Error - Try Again';
+        setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 2000);
+        return;
+      }
+
+      btn.textContent = 'Added!';
+      setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 2000);
+
+      if (drawer && res.sections && typeof drawer.renderContents === 'function') {
+        drawer.classList.remove('is-empty');
+        drawer.renderContents(res); /* updates drawer + bubble and opens the drawer */
+      } else {
+        /* No drawer on the page → go to the cart so the user sees the item */
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: res }));
+        window.location.href = (window.routes && window.routes.cart_url) ? window.routes.cart_url : '/cart';
+      }
     })
     .catch(function() {
       btn.textContent = 'Error - Try Again';
-      setTimeout(function() {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }, 2000);
+      setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 2000);
     });
   };
 
