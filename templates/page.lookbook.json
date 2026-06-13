@@ -313,11 +313,12 @@
         "image_AGpqFG": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/1da34bab-6fea-4453-b48f-50c0c4eb27ba.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
-            "hs2_enabled": false,
-            "hs2_product": "",
+            "hs1_product": "gamer-hoodie-black",
+            "hs2_enabled": true,
+            "hs2_product": "white-chocolate-headwarmer",
             "hs3_enabled": false,
             "hs3_product": "",
             "hs4_enabled": false,
@@ -329,11 +330,12 @@
         "image_PwVcNT": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/DSC9751.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
-            "hs2_enabled": false,
-            "hs2_product": "",
+            "hs1_product": "ph-silicon-hoodie-set",
+            "hs2_enabled": true,
+            "hs2_product": "tron-black-headwarmer",
             "hs3_enabled": false,
             "hs3_product": "",
             "hs4_enabled": false,
