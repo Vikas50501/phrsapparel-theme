@@ -249,9 +249,10 @@
         "image_XzLrKP": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/c23516ff-97cd-4dbd-9716-14d5ead95c99.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
+            "hs1_product": "ph-silicon-hoodie-set",
             "hs2_enabled": false,
             "hs2_product": "",
             "hs3_enabled": false,
