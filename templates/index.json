@@ -506,7 +506,7 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/1_ph_1.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/ph-panel-tshirt?variant=52759299850604",
+            "link": "shopify://products/ph-panel-t-shirt-white",
             "title": "",
             "price": "",
             "card_width": 25,
@@ -517,7 +517,7 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/4_ph_1.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/angel-wings-tshirt?_pos=1&_fid=a4ad3cea4&_ss=c&variant=52787357548908",
+            "link": "shopify://products/angel-wings-t-shirt-green",
             "title": "",
             "price": "",
             "card_width": 25,
