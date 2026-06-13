@@ -323,7 +323,7 @@
 
   {%- comment -%} View More button {%- endcomment -%}
   {%- if section.settings.viewmore_enabled and section.settings.viewmore_url != blank -%}
-    <div class="lb-viewmore-wrap-{{ section.id }}">
+    <div class="lb-viewmore-wrap-{{ section.id }} color-{{ section.settings.viewmore_color_scheme }}">
       <a
         class="button lb-viewmore-btn-{{ section.id }}"
         href="{{ section.settings.viewmore_url }}"
@@ -454,6 +454,7 @@
     { "type": "url",      "id": "viewmore_url",        "label": "Link URL" },
     { "type": "checkbox", "id": "viewmore_new_tab",    "label": "Open in new tab",       "default": false },
     { "type": "checkbox", "id": "viewmore_show_arrow", "label": "Show arrow icon",       "default": true },
+    { "type": "color_scheme", "id": "viewmore_color_scheme", "label": "Button colour scheme", "default": "scheme-1", "info": "The button uses the theme's standard button styling from this colour scheme." },
     { "type": "select",   "id": "viewmore_align",      "label": "Alignment",             "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
     { "type": "range",    "id": "viewmore_pad_top",    "label": "Gap above button",      "min": 8, "max": 80, "step": 4, "unit": "px", "default": 32 },
 
