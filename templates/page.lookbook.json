@@ -281,9 +281,10 @@
         "image_Y7XzrQ": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/pW7PBgdA.jpg",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
+            "hs1_product": "angel-wings-t-shirt-white",
             "hs2_enabled": false,
             "hs2_product": "",
             "hs3_enabled": false,
