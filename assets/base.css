@@ -3754,3 +3754,26 @@ display:none;
 .sf-title-template--27701372780908__service_features_7mK4RG{
   font-size:15px !important;
 }
+
+/* Media Rows section heading — centered + orange underline (matches Our Collections).
+   Placed in the global stylesheet so it applies even when the section's own
+   render is cached. Targets any media-row title regardless of section id. */
+[class*="mr-section-heading-"] {
+  text-align: center !important;
+}
+[class*="mr-section-title-"] {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 10px;
+}
+[class*="mr-section-title-"]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: #c47a5a;
+  border-radius: 3px;
+}
