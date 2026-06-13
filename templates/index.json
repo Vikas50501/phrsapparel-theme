@@ -695,28 +695,28 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/IMG_6486.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=53079061463404"
+            "link": "shopify://products/ipac-singlet-black"
           }
         },
         "image_zMpi3P": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/IMG_6498.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52759310991724"
+            "link": "shopify://products/ipac-singlet-pink"
           }
         },
         "image_JaPGBB": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/IMG_6485.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52787347095916&pb=0"
+            "link": "shopify://products/ipac-singlet-white"
           }
         },
         "image_YXqGcP": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/IMG_6499.jpg",
-            "link": "https://phrsapparel.myshopify.com/products/white-ipac-singlet-1?variant=52787347030380&pb=0"
+            "link": "shopify://products/ipac-singlet-yellow"
           }
         }
       },
