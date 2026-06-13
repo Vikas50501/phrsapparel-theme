@@ -265,11 +265,12 @@
         "image_JaDBji": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/2.webp",
             "alt": "",
             "hs1_enabled": true,
-            "hs1_product": "",
+            "hs1_product": "ph-silicon-hoodie-set",
             "hs2_enabled": false,
-            "hs2_product": "",
+            "hs2_product": "gamer-hoodie",
             "hs3_enabled": false,
             "hs3_product": "",
             "hs4_enabled": false,
