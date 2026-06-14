@@ -7,9 +7,14 @@
 
 {%- liquid
   assign s = section.settings
-  assign g_r = s.gradient_color | default: '#000000' | color_extract: 'red'
-  assign g_g = s.gradient_color | default: '#000000' | color_extract: 'green'
-  assign g_b = s.gradient_color | default: '#000000' | color_extract: 'blue'
+
+  assign grad_color = s.gradient_color
+  if grad_color == blank
+    assign grad_color = '#000000'
+  endif
+  assign grad_alpha = s.gradient_strength | default: 65 | divided_by: 100.0
+  assign grad_solid = grad_color | color_modify: 'alpha', grad_alpha
+  assign grad_clear = grad_color | color_modify: 'alpha', 0
 -%}
 
 {% style %}
@@ -72,7 +77,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(to top, rgba({{ g_r }},{{ g_g }},{{ g_b }},{{ s.gradient_strength | divided_by: 100.0 }}) 0%, rgba({{ g_r }},{{ g_g }},{{ g_b }},0) 55%);
+    background: linear-gradient(to top, {{ grad_solid }} 0%, {{ grad_solid }} 8%, {{ grad_clear }} 60%);
   }
   {%- if s.top_gradient_strength > 0 %}
   /* Top gradient scrim — keeps the site header readable over the video */
