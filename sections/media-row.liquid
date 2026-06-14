@@ -14,6 +14,12 @@
   endif
   assign grad_alpha = s.gradient_strength | default: 75 | divided_by: 100.0
   assign grad_height = s.gradient_height | default: 60
+  comment
+    Keep the lower ~half of the overlay fully solid so the heading sits on a
+    genuinely dark band; remaining portion fades out. Scales with height so the
+    colour stops never go out of order.
+  endcomment
+  assign grad_solid_stop = grad_height | times: 0.5 | round
 
   assign pos_x = '0%'
   if s.content_position == 'center'
@@ -86,9 +92,9 @@
     pointer-events: none;
     opacity: {{ grad_alpha }};
     {%- if s.overlay_style == 'corner' %}
-    background: radial-gradient(135% 100% at {{ pos_x }} 100%, {{ grad_color }} 0%, {{ grad_color }} 12%, transparent {{ grad_height }}%);
+    background: radial-gradient(140% 110% at {{ pos_x }} 100%, {{ grad_color }} 0%, {{ grad_color }} {{ grad_solid_stop }}%, transparent {{ grad_height }}%);
     {%- else %}
-    background: linear-gradient(to top, {{ grad_color }} 0%, {{ grad_color }} 12%, transparent {{ grad_height }}%);
+    background: linear-gradient(to top, {{ grad_color }} 0%, {{ grad_color }} {{ grad_solid_stop }}%, transparent {{ grad_height }}%);
     {%- endif %}
   }
   {%- if s.top_gradient_strength > 0 %}
@@ -419,8 +425,8 @@
       "default": "even"
     },
     { "type": "color", "id": "gradient_color", "label": "Bottom overlay colour", "default": "#000000" },
-    { "type": "range", "id": "gradient_strength", "label": "Bottom overlay strength", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 80 },
-    { "type": "range", "id": "gradient_height", "label": "Bottom overlay height (how far up)", "min": 20, "max": 100, "step": 5, "unit": "%", "default": 65 },
+    { "type": "range", "id": "gradient_strength", "label": "Bottom overlay strength", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 95 },
+    { "type": "range", "id": "gradient_height", "label": "Bottom overlay height (how far up)", "min": 20, "max": 100, "step": 5, "unit": "%", "default": 75 },
     { "type": "header", "content": "Top overlay (header readability)" },
     { "type": "range", "id": "top_gradient_strength", "label": "Top gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 45 },
     { "type": "range", "id": "top_gradient_height", "label": "Top gradient height", "min": 10, "max": 60, "step": 5, "unit": "%", "default": 35 },
