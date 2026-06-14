@@ -89,6 +89,20 @@
     aspect-ratio: var(--mr-ratio, {{ section.settings.row_aspect }});
   }
 
+  /* Per-viewport aspect ratio (separate desktop / mobile control) */
+  {%- if section.settings.use_aspect_ratio -%}
+    .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
+      aspect-ratio: {{ section.settings.desktop_aspect }} !important;
+      height: auto !important;
+    }
+    @media (max-width: 749px) {
+      .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
+        aspect-ratio: {{ section.settings.mobile_aspect }} !important;
+        height: auto !important;
+      }
+    }
+  {%- endif -%}
+
   .mr-media-{{ section.id }} img,
   .mr-media-{{ section.id }} video,
   .mr-media-{{ section.id }} .mr-video-wrap,
@@ -183,13 +197,16 @@
 
   /* Heading */
   .mr-heading-{{ section.id }} {
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
     font-size: var(--font-h2-size);
-    font-weight: var(--font-h2-weight);
+    font-weight: var(--font-heading-weight);
     letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
     text-transform: {{ section.settings.heading_transform }};
     line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
     margin: 0;
     word-break: break-word;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.45);
   }
 
   /* Subheading */
@@ -256,7 +273,7 @@
     border-color: var(--mr-btn2-border-h, {{ section.settings.btn2_border_hover }});
   }
 
-  /* ── Corner layout: text bottom-left + arrow button bottom-right ── */
+  /* ── Corner layout: heading bottom-left + arrow button bottom-right ── */
   .mr-corner-{{ section.id }} {
     position: absolute;
     inset: 0;
@@ -264,8 +281,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: flex-end;
-    text-align: right;
+    align-items: flex-start;
+    text-align: left;
     padding: {{ section.settings.content_pad_y }}px {{ section.settings.content_pad_x }}px;
     pointer-events: none;
   }
@@ -287,13 +304,14 @@
     gap: {{ section.settings.content_gap }}px;
     pointer-events: none;
   }
-  /* Reserve room so long headings never sit under the arrow button (bottom-left) */
-  .mr-corner-text-{{ section.id }} { padding-left: {{ section.settings.corner_btn_size | plus: 24 }}px; }
+  /* Reserve room so long headings never sit under the arrow button (bottom-right) */
+  .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size | plus: 24 }}px; }
 
+  /* Outlined circular arrow (white) — editorial / luxury style */
   .mr-arrow-btn-{{ section.id }} {
     position: absolute;
     z-index: 3;
-    left: {{ section.settings.corner_btn_offset }}px;
+    right: {{ section.settings.corner_btn_offset }}px;
     bottom: {{ section.settings.corner_btn_offset }}px;
     width: {{ section.settings.corner_btn_size }}px;
     height: {{ section.settings.corner_btn_size }}px;
@@ -301,15 +319,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--mr-btn1-bg, {{ section.settings.btn1_bg }});
-    color: var(--mr-btn1-color, {{ section.settings.btn1_color }});
-    border: {{ section.settings.btn_border_width }}px solid var(--mr-btn1-border, {{ section.settings.btn1_border }});
+    background: var(--mr-btn1-bg, transparent);
+    color: var(--mr-btn1-color, #ffffff);
+    border: 1.5px solid var(--mr-btn1-border, rgba(255,255,255,0.85));
     transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
   }
   .mr-arrow-btn-{{ section.id }}:hover {
-    background: var(--mr-btn1-bg-h, {{ section.settings.btn1_bg_hover }});
-    color: var(--mr-btn1-color-h, {{ section.settings.btn1_color_hover }});
-    border-color: var(--mr-btn1-border-h, {{ section.settings.btn1_border_hover }});
+    background: var(--mr-btn1-bg-h, #ffffff);
+    color: var(--mr-btn1-color-h, #111111);
+    border-color: var(--mr-btn1-border-h, #ffffff);
     transform: scale(1.06) translateY(-1px);
   }
   .mr-arrow-btn-{{ section.id }} svg {
@@ -336,10 +354,10 @@
     .mr-arrow-btn-{{ section.id }} {
       width: {{ section.settings.corner_btn_size_mobile }}px;
       height: {{ section.settings.corner_btn_size_mobile }}px;
-      left: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
+      right: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
       bottom: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
     }
-    .mr-corner-text-{{ section.id }} { padding-left: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
+    .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
   }
 
   {%- comment -%} ===== Mobile custom layout (portrait media + bottom content + single CTA) ===== {%- endcomment -%}
@@ -358,11 +376,7 @@
     @media (max-width: 749px) {
       .mr-row-{{ section.id }} { border-radius: 0; }
 
-      /* Portrait card — media fills it, no awkward cropping */
-      .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
-        height: {{ section.settings.mobile_card_height }}vh !important;
-        aspect-ratio: auto !important;
-      }
+      /* Media fills the card; the mobile aspect-ratio setting handles portrait sizing */
       .mr-media-{{ section.id }} > img,
       .mr-media-{{ section.id }} .mr-video-wrap > video { object-fit: cover; }
 
@@ -370,10 +384,10 @@
       .mr-row-{{ section.id }}[data-mobile-media="true"] .mr-media-desktop-{{ section.id }} { display: none; }
       .mr-media-mobile-{{ section.id }} { display: block; }
 
-      /* Hide desktop overlay/content layers on mobile */
+      {%- comment -%} Overlay layout swaps to the single-CTA design; Corner layout keeps its heading + arrow on mobile {%- endcomment -%}
+      {%- if section.settings.content_layout == 'overlay' -%}
+      .mr-row-{{ section.id }} .mr-media-{{ section.id }} { height: {{ section.settings.mobile_card_height }}vh !important; aspect-ratio: auto !important; }
       .mr-content-{{ section.id }},
-      .mr-corner-{{ section.id }},
-      .mr-arrow-btn-{{ section.id }},
       .mr-overlay-{{ section.id }} { display: none !important; }
 
       /* Subtle bottom gradient for legibility (no big translucent box) */
@@ -441,6 +455,7 @@
         transition: transform 0.2s ease, opacity 0.2s ease;
       }
       .mr-m-btn-{{ section.id }}:active { transform: scale(0.98); }
+      {%- endif -%}
     }
     @media (prefers-reduced-motion: reduce) {
       .mr-m-btn-{{ section.id }} { transition: none; }
@@ -636,8 +651,8 @@
             </div>
           {%- endif -%}
 
-          {%- comment -%} ───── Mobile redesigned overlay (bottom content + gradient + single CTA) ───── {%- endcomment -%}
-          {%- if mr_mobile_on -%}
+          {%- comment -%} Mobile single-CTA overlay — Overlay layout only (Corner keeps its heading + arrow) ───── {%- endcomment -%}
+          {%- if mr_mobile_on and section.settings.content_layout == 'overlay' -%}
             <div class="mr-m-gradient-{{ section.id }}" aria-hidden="true"></div>
             {%- assign m_heading = block.settings.mobile_heading | default: block.settings.heading -%}
             {%- assign m_btn_label = block.settings.mobile_button_label | default: block.settings.btn1_label -%}
@@ -850,6 +865,34 @@
     { "type": "color",  "id": "underline_color",          "label": "Underline colour", "default": "#c47a5a" },
     { "type": "select", "id": "section_heading_align",    "label": "Alignment",      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
     { "type": "range",  "id": "section_heading_gap",      "label": "Gap below",      "min": 8, "max": 80, "step": 4, "unit": "px", "default": 32 },
+
+    { "type": "header", "content": "Media aspect ratio" },
+    { "type": "checkbox", "id": "use_aspect_ratio", "label": "Use aspect ratio (separate desktop / mobile)", "default": true, "info": "Overrides the height settings below. Recommended for the editorial layout." },
+    {
+      "type": "select", "id": "desktop_aspect", "label": "Desktop aspect ratio",
+      "options": [
+        { "value": "16/9", "label": "16:9 (wide)" },
+        { "value": "3/2",  "label": "3:2" },
+        { "value": "4/3",  "label": "4:3" },
+        { "value": "1/1",  "label": "1:1 (square)" },
+        { "value": "21/9", "label": "21:9 (ultra-wide)" },
+        { "value": "4/5",  "label": "4:5 (portrait)" },
+        { "value": "3/4",  "label": "3:4 (portrait)" }
+      ],
+      "default": "16/9"
+    },
+    {
+      "type": "select", "id": "mobile_aspect", "label": "Mobile aspect ratio",
+      "options": [
+        { "value": "9/16", "label": "9:16 (tall portrait)" },
+        { "value": "3/4",  "label": "3:4 (portrait)" },
+        { "value": "4/5",  "label": "4:5 (portrait)" },
+        { "value": "1/1",  "label": "1:1 (square)" },
+        { "value": "4/3",  "label": "4:3 (landscape)" },
+        { "value": "16/9", "label": "16:9 (wide)" }
+      ],
+      "default": "9/16"
+    },
 
     { "type": "header", "content": "Row heights" },
     {
