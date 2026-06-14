@@ -180,15 +180,33 @@
     .mr-{{ section.id }}__row[data-has-mobile="true"] .mr-{{ section.id }}__m { display: block; }
   }
 
-  /* Section heading */
-  .mr-{{ section.id }}__title {
+  /* Section heading (centered + orange underline, matches the Lookbook section) */
+  .mr-{{ section.id }}__title-wrap {
     text-align: center;
-    margin: 0 0 {{ s.row_gap }}px;
+    margin-bottom: {{ s.row_gap | plus: 16 }}px;
+  }
+  .mr-{{ section.id }}__title {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    padding-bottom: 10px;
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
     font-size: var(--font-h2-size);
     color: {{ s.heading_color }};
     text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .mr-{{ section.id }}__title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: {{ s.underline_color | default: '#c47a5a' }};
+    border-radius: 3px;
   }
   @media (prefers-reduced-motion: reduce) {
     .mr-{{ section.id }}__media img,
@@ -201,7 +219,9 @@
   <div class="mr-{{ section.id }}__inner">
 
     {%- if s.section_heading != blank -%}
-      <h2 class="mr-{{ section.id }}__title">{{ s.section_heading }}</h2>
+      <div class="mr-{{ section.id }}__title-wrap">
+        <h2 class="mr-{{ section.id }}__title">{{ s.section_heading }}</h2>
+      </div>
     {%- endif -%}
 
     {%- for block in section.blocks -%}
@@ -322,6 +342,7 @@
     { "type": "header", "content": "Section heading (optional)" },
     { "type": "text", "id": "section_heading", "label": "Heading" },
     { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#111111" },
+    { "type": "color", "id": "underline_color", "label": "Heading underline colour", "default": "#c47a5a" },
 
     { "type": "header", "content": "Aspect ratio" },
     {
