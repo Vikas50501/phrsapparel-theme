@@ -93,24 +93,24 @@
             "link": "shopify://collections/bikini"
           }
         },
-        "row_ebqTL6": {
+        "row_NyCayV": {
           "type": "row",
           "settings": {
             "desktop_media_type": "image",
-            "video": "shopify://files/videos/0001.mp4",
+            "image": "shopify://shop_images/cropped_summer.jpg",
             "mobile_media_type": "image",
-            "mobile_video": "shopify://files/videos/0001.mp4",
+            "mobile_image": "shopify://shop_images/cropped_summer.jpg",
             "eyebrow": "",
-            "heading": "EXCLUSIVES",
+            "heading": "SUMMER ESSENTIALS",
             "subheading": "",
-            "link": "shopify://collections/new-in"
+            "link": "shopify://collections/bikini"
           }
         }
       },
       "block_order": [
         "row_yJYmV7",
         "row_3FkLXx",
-        "row_ebqTL6"
+        "row_NyCayV"
       ],
       "name": "Media Rows",
       "settings": {
