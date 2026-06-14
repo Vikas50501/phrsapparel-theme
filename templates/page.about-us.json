@@ -112,7 +112,7 @@
       "name": "Advanced News Slider",
       "settings": {
         "display_weight": "400",
-        "display_size": 52,
+        "display_size": 32,
         "display_spacing": 0,
         "heading_color": "#111111",
         "body_size": 15,
