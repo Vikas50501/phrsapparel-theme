@@ -7,6 +7,9 @@
 
 {%- liquid
   assign s = section.settings
+  assign g_r = s.gradient_color | default: '#000000' | color_extract: 'red'
+  assign g_g = s.gradient_color | default: '#000000' | color_extract: 'green'
+  assign g_b = s.gradient_color | default: '#000000' | color_extract: 'blue'
 -%}
 
 {% style %}
@@ -69,7 +72,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(0,0,0,{{ s.gradient_strength | divided_by: 100.0 }}) 0%, rgba(0,0,0,0) 55%);
+    background: linear-gradient(to top, rgba({{ g_r }},{{ g_g }},{{ g_b }},{{ s.gradient_strength | divided_by: 100.0 }}) 0%, rgba({{ g_r }},{{ g_g }},{{ g_b }},0) 55%);
   }
   {%- if s.top_gradient_strength > 0 %}
   /* Top gradient scrim — keeps the site header readable over the video */
@@ -119,16 +122,16 @@
   }
   .mr-{{ section.id }}__heading {
     margin: 0;
-    color: {{ s.text_color }};
+    color: var(--mr-hcolor, {{ s.text_color }});
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-size: var(--font-h2-size);
+    font-size: var(--mr-hd, var(--font-h2-size));
     line-height: 1.1;
     text-transform: uppercase;
     text-shadow: 0 2px 16px rgba(0,0,0,0.5);
   }
   @media screen and (max-width: 749px) {
-    .mr-{{ section.id }}__heading { font-size: {{ s.heading_size_mobile }}px; }
+    .mr-{{ section.id }}__heading { font-size: var(--mr-hm, {{ s.heading_size_mobile }}px); }
   }
   .mr-{{ section.id }}__sub {
     margin: 10px 0 0;
@@ -293,7 +296,14 @@
           <div class="mr-{{ section.id }}__content" data-pos="{{ s.content_position }}">
             <div class="mr-{{ section.id }}__text">
               {%- if block.settings.eyebrow != blank -%}<p class="mr-{{ section.id }}__eyebrow">{{ block.settings.eyebrow | escape }}</p>{%- endif -%}
-              {%- if block.settings.heading != blank -%}<h3 class="mr-{{ section.id }}__heading">{{ block.settings.heading }}</h3>{%- endif -%}
+              {%- if block.settings.heading != blank -%}
+                {%- capture h_style -%}
+                  {%- if block.settings.heading_color != blank %}--mr-hcolor:{{ block.settings.heading_color }};{% endif -%}
+                  {%- if block.settings.heading_size_desktop > 0 %}--mr-hd:{{ block.settings.heading_size_desktop }}px;{% endif -%}
+                  {%- if block.settings.heading_size_mobile > 0 %}--mr-hm:{{ block.settings.heading_size_mobile }}px;{% endif -%}
+                {%- endcapture -%}
+                <h3 class="mr-{{ section.id }}__heading"{% if h_style != blank %} style="{{ h_style | strip_newlines | strip }}"{% endif %}>{{ block.settings.heading }}</h3>
+              {%- endif -%}
               {%- if block.settings.subheading != blank -%}<p class="mr-{{ section.id }}__sub">{{ block.settings.subheading }}</p>{%- endif -%}
             </div>
           </div>
@@ -383,7 +393,8 @@
     { "type": "color", "id": "text_color", "label": "Heading / text colour", "default": "#ffffff" },
     { "type": "range", "id": "content_padding", "label": "Content padding", "min": 12, "max": 64, "step": 2, "unit": "px", "default": 28 },
     { "type": "range", "id": "heading_size_mobile", "label": "Mobile heading size", "min": 18, "max": 48, "step": 1, "unit": "px", "default": 30 },
-    { "type": "range", "id": "gradient_strength", "label": "Bottom gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 65 },
+    { "type": "color", "id": "gradient_color", "label": "Bottom overlay colour", "default": "#000000" },
+    { "type": "range", "id": "gradient_strength", "label": "Bottom overlay strength", "min": 0, "max": 95, "step": 5, "unit": "%", "default": 65 },
     { "type": "header", "content": "Top overlay (header readability)" },
     { "type": "range", "id": "top_gradient_strength", "label": "Top gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 45 },
     { "type": "range", "id": "top_gradient_height", "label": "Top gradient height", "min": 10, "max": 60, "step": 5, "unit": "%", "default": 35 },
@@ -435,6 +446,9 @@
         { "type": "header", "content": "Content" },
         { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
         { "type": "inline_richtext", "id": "heading", "label": "Heading" },
+        { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#ffffff" },
+        { "type": "range", "id": "heading_size_desktop", "label": "Heading size (desktop)", "min": 0, "max": 96, "step": 2, "unit": "px", "default": 0, "info": "0 = use theme default" },
+        { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 0, "max": 56, "step": 1, "unit": "px", "default": 0, "info": "0 = use section default" },
         { "type": "text", "id": "subheading", "label": "Subheading" },
         { "type": "url", "id": "link", "label": "Link (whole row + arrow)" }
       ]
