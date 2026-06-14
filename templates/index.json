@@ -517,7 +517,8 @@
         "product_aPC6Tm"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading {font-size: 22px !important; }}"
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading {font-size: 22px !important; }}",
+        ".ts-template--27799287628140__top_selling_XgWzRw .ts-inner{padding: 0;}"
       ],
       "name": "Top Selling Products",
       "settings": {
@@ -844,7 +845,7 @@
       ],
       "custom_css": [
         "@media screen and (max-width: 767px) {.lb-heading-template--27799287628140__lookbook_WqjCKQ {font-size: 22px !important; }}",
-        "body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5{background: transparent;}"
+        "body,.color-scheme-1,.color-scheme-2,.color-scheme-3,.color-scheme-4,.color-scheme-5 {background: transparent;}"
       ],
       "name": "Lookbook",
       "settings": {
