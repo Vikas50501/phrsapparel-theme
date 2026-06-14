@@ -669,7 +669,7 @@
       ],
       "custom_css": [
         "@media screen and (max-width: 767px) {h2.tp-heading-template--27799287628140__trending_products_kdCqCQ {font-size: 22px !important; padding-bottom: 10px !important; }}",
-        "body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5{background: transparent !important;}"
+        "body,.color-scheme-1,.color-scheme-2,.color-scheme-3,.color-scheme-4,.color-scheme-5 {background: transparent !important;}"
       ],
       "name": "Trending Products",
       "settings": {
@@ -746,6 +746,9 @@
         "feature_QXATqb",
         "feature_3FNNHp",
         "feature_ftN9Ft"
+      ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 22px !important; } }"
       ],
       "name": "Service Features",
       "settings": {
