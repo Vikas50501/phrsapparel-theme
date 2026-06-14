@@ -405,6 +405,7 @@
 
 .template-collection .kc-card {
   position: relative;
+  isolation: isolate; /* contain hover icons (z-index) so they never paint over the sticky header */
   border: 1px solid var(--kc-line);
   border-radius: 4px;
   overflow: hidden;
