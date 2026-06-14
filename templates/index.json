@@ -431,7 +431,7 @@
         "category_YzXyRd"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw {font-size: 25px !important; }}"
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27799287628140__circle_category_Dzgfaw{font-size: 22px !important; }}"
       ],
       "name": "Category Circles Slider",
       "settings": {
@@ -961,15 +961,21 @@
         "desktop_aspect": "16/9",
         "mobile_aspect": "4/3",
         "content_position": "left",
+        "text_color": "#ffffff",
         "content_padding": 12,
         "heading_size_mobile": 20,
         "gradient_strength": 65,
+        "top_gradient_strength": 45,
+        "top_gradient_height": 35,
         "overlay_color": "#000000",
         "overlay_opacity": 80,
         "hover_zoom": true,
+        "arrow_color": "#ffffff",
+        "arrow_hover_text": "#111111",
         "arrow_size": 56,
         "arrow_size_mobile": 44,
         "arrow_offset": 24,
+        "full_width": true,
         "bg_color": "#ffffff",
         "max_width": 1400,
         "side_padding": 0,
