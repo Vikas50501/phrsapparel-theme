@@ -843,7 +843,8 @@
         "image_zNQUqn"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {.lb-heading-template--27799287628140__lookbook_WqjCKQ {font-size: 22px !important; }}"
+        "@media screen and (max-width: 767px) {.lb-heading-template--27799287628140__lookbook_WqjCKQ {font-size: 22px !important; }}",
+        "body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5{background: transparent;}"
       ],
       "name": "Lookbook",
       "settings": {
