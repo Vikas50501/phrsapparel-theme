@@ -1,731 +1,301 @@
-{%- style -%}
-  /* ══════════════════════════════════════════════════════
-     MEDIA ROWS — full-width image/video rows.
-     Layout: "corner" (heading bottom-left + arrow bottom-right, default)
-     or "overlay". Per-viewport aspect ratio + separate mobile media.
-  ══════════════════════════════════════════════════════ */
+{%- comment -%}
+  Media Rows — editorial corner layout.
+  Per row: separate desktop & mobile media (image OR video), independent aspect
+  ratios, heading + circular arrow button in opposite corners, bottom gradient.
+  Theme typography. Videos load only for the matching viewport (data-mq).
+{%- endcomment -%}
 
-  .mr-section-{{ section.id }} {
-    background: {{ section.settings.bg_color }};
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+{%- liquid
+  assign s = section.settings
+-%}
+
+{% style %}
+  .mr-{{ section.id }} {
+    background: {{ s.bg_color }};
+    padding-top: {{ s.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ s.padding_bottom | times: 0.75 | round: 0 }}px;
   }
-
   @media screen and (min-width: 750px) {
-    .mr-section-{{ section.id }} {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+    .mr-{{ section.id }} {
+      padding-top: {{ s.padding_top }}px;
+      padding-bottom: {{ s.padding_bottom }}px;
     }
   }
-
-  /* ── Section heading — centered with orange underline accent ── */
-  .mr-section-heading-{{ section.id }} {
-    max-width: {{ section.settings.max_width }}px;
-    margin: 0 auto {{ section.settings.section_heading_gap }}px;
-    padding: 0 {{ section.settings.side_padding }}px;
-    text-align: center;
-  }
-
-  .mr-section-title-{{ section.id }} {
-    display: inline-block;
-    position: relative;
-    font-size: var(--font-h2-size);
-    font-weight: var(--font-h2-weight);
-    color: {{ section.settings.section_heading_color }};
-    letter-spacing: {{ section.settings.section_heading_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.section_heading_transform }};
-    line-height: 1.15;
-    margin: 0;
-    padding-bottom: 10px;
-  }
-  .mr-section-title-{{ section.id }}::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 3px;
-    background: {{ section.settings.underline_color | default: '#c47a5a' }};
-    border-radius: 3px;
-  }
-
-  /* ── Rows wrapper — full screen, no max-width ────────── */
-  .mr-rows-{{ section.id }} {
-    width: 100%;
+  .mr-{{ section.id }}__inner {
+    max-width: {{ s.max_width }}px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: {{ section.settings.row_gap }}px;
+    gap: {{ s.row_gap }}px;
+    padding: 0 {{ s.side_padding }}px;
   }
-
-  /* ── Single row ──────────────────────────────────────── */
-  .mr-row-{{ section.id }} {
+  .mr-{{ section.id }}__row {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ s.row_radius }}px;
+    text-decoration: none;
+    display: block;
+  }
+  .mr-{{ section.id }}__media {
     position: relative;
     width: 100%;
+    aspect-ratio: {{ s.desktop_aspect }};
     overflow: hidden;
-    border-radius: {{ section.settings.row_radius }}px;
+    background: #111;
   }
-
-  /* ── Media container ─────────────────────────────────── */
-  .mr-media-{{ section.id }} {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+  @media screen and (max-width: 749px) {
+    .mr-{{ section.id }}__media { aspect-ratio: {{ s.mobile_aspect }}; }
   }
-
-  /* Fixed height rows */
-  .mr-row-{{ section.id }}[data-height-mode="fixed"] .mr-media-{{ section.id }} {
-    height: var(--mr-row-h, {{ section.settings.row_height_desktop }}px);
-  }
-
-  @media (max-width: 749px) {
-    .mr-row-{{ section.id }}[data-height-mode="fixed"] .mr-media-{{ section.id }} {
-      height: var(--mr-row-h-mobile, {{ section.settings.row_height_mobile }}px);
-    }
-  }
-
-  /* Aspect ratio rows */
-  .mr-row-{{ section.id }}[data-height-mode="ratio"] .mr-media-{{ section.id }} {
-    aspect-ratio: var(--mr-ratio, {{ section.settings.row_aspect }});
-  }
-
-  /* Per-viewport aspect ratio (separate desktop / mobile control) */
-  {%- if section.settings.use_aspect_ratio -%}
-    .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
-      aspect-ratio: {{ section.settings.desktop_aspect }} !important;
-      height: auto !important;
-    }
-    @media (max-width: 749px) {
-      .mr-row-{{ section.id }} .mr-media-{{ section.id }} {
-        aspect-ratio: {{ section.settings.mobile_aspect }} !important;
-        height: auto !important;
-      }
-    }
-  {%- endif -%}
-
-  .mr-media-{{ section.id }} img,
-  .mr-media-{{ section.id }} video,
-  .mr-media-{{ section.id }} .mr-video-wrap,
-  .mr-media-{{ section.id }} .mr-video-wrap > video,
-  .mr-media-{{ section.id }} .mr-video-wrap iframe {
+  .mr-{{ section.id }}__media img,
+  .mr-{{ section.id }}__media video {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: {{ section.settings.media_fit }};
+    object-fit: cover;
     object-position: center;
     display: block;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
+  {%- if s.hover_zoom %}
+  .mr-{{ section.id }}__row:hover img,
+  .mr-{{ section.id }}__row:hover video { transform: scale(1.04); }
+  {%- endif %}
 
-  /* Hover zoom on the media */
-  {%- if section.settings.media_hover_zoom -%}
-    .mr-media-{{ section.id }} img,
-    .mr-media-{{ section.id }} video,
-    .mr-media-{{ section.id }} .mr-video-wrap > video {
-      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} img,
-    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} video,
-    .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} .mr-video-wrap > video {
-      transform: scale(1.03);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} img,
-      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} video,
-      .mr-row-{{ section.id }}:hover .mr-media-{{ section.id }} .mr-video-wrap > video { transform: none; }
-    }
-  {%- endif -%}
-
-  /* Whole-row clickable overlay (corner layout) */
-  .mr-row-link-{{ section.id }} {
+  /* Bottom gradient scrim */
+  .mr-{{ section.id }}__scrim {
     position: absolute;
     inset: 0;
-    z-index: 2;
-    display: block;
-  }
-
-  /* ── Overlay tint ────────────────────────────────────── */
-  .mr-overlay-{{ section.id }} {
-    position: absolute;
-    inset: 0;
-    background: var(--mr-overlay-color, rgba(0,0,0,0));
-    pointer-events: none;
     z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,{{ s.gradient_strength | divided_by: 100.0 }}) 0%, rgba(0,0,0,0) 55%);
   }
-
-  /* ── Content (heading + buttons) ────────────────────── */
-  .mr-content-{{ section.id }} {
+  {%- if s.overlay_opacity > 0 %}
+  .mr-{{ section.id }}__overlay {
     position: absolute;
     inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: var(--mr-align-h, center);
-    justify-content: var(--mr-align-v, center);
-    padding: {{ section.settings.content_pad_y }}px {{ section.settings.content_pad_x }}px;
-    text-align: var(--mr-text-align, center);
+    z-index: 1;
+    pointer-events: none;
+    background: {{ s.overlay_color }};
+    opacity: {{ s.overlay_opacity | divided_by: 100.0 }};
   }
+  {%- endif %}
 
-  .mr-row-{{ section.id }}[data-align-h="left"]   { --mr-align-h: flex-start; --mr-text-align: left; }
-  .mr-row-{{ section.id }}[data-align-h="center"] { --mr-align-h: center;     --mr-text-align: center; }
-  .mr-row-{{ section.id }}[data-align-h="right"]  { --mr-align-h: flex-end;   --mr-text-align: right; }
-  .mr-row-{{ section.id }}[data-align-v="top"]    { --mr-align-v: flex-start; }
-  .mr-row-{{ section.id }}[data-align-v="middle"] { --mr-align-v: center; }
-  .mr-row-{{ section.id }}[data-align-v="bottom"] { --mr-align-v: flex-end; }
-
-  .mr-content-inner-{{ section.id }} {
-    display: flex;
-    flex-direction: column;
-    align-items: inherit;
-    gap: {{ section.settings.content_gap }}px;
-    max-width: {{ section.settings.content_max_width }}px;
-    width: 100%;
-    background: var(--mr-content-box-bg, transparent);
-    padding: var(--mr-content-box-pad, 0px);
-    border-radius: var(--mr-content-box-radius, 0px);
-  }
-
-  /* Eyebrow */
-  .mr-eyebrow-{{ section.id }} {
-    font-size: {{ section.settings.eyebrow_size }}px;
-    font-weight: {{ section.settings.eyebrow_weight }};
-    letter-spacing: {{ section.settings.eyebrow_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.eyebrow_transform }};
-    line-height: 1.2;
-    margin: 0;
-  }
-
-  /* Heading */
-  .mr-heading-{{ section.id }} {
-    font-family: var(--font-heading-family);
-    font-style: var(--font-heading-style);
-    font-size: var(--font-h2-size);
-    font-weight: var(--font-heading-weight);
-    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.heading_transform }};
-    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
-    margin: 0;
-    word-break: break-word;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.45);
-  }
-
-  /* Subheading */
-  .mr-subheading-{{ section.id }} {
-    font-size: {{ section.settings.subheading_size }}px;
-    font-weight: {{ section.settings.subheading_weight }};
-    letter-spacing: {{ section.settings.subheading_spacing | divided_by: 100.0 }}em;
-    line-height: 1.6;
-    margin: 0;
-    max-width: {{ section.settings.subheading_max_width }}px;
-  }
-
-  /* Button row */
-  .mr-btn-row-{{ section.id }} {
-    display: flex;
-    flex-wrap: wrap;
-    gap: {{ section.settings.btn_gap }}px;
-    align-items: center;
-    justify-content: inherit;
-  }
-
-  /* Buttons */
-  .mr-btn-{{ section.id }} {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: {{ section.settings.btn_pad_y }}px {{ section.settings.btn_pad_x }}px;
-    font-size: {{ section.settings.btn_size }}px;
-    font-weight: {{ section.settings.btn_weight }};
-    letter-spacing: {{ section.settings.btn_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.btn_transform }};
-    border-radius: {{ section.settings.btn_radius }}px;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
-    border-width: {{ section.settings.btn_border_width }}px;
-    border-style: solid;
-  }
-
-  .mr-btn-{{ section.id }}:hover { transform: translateY(-1px); }
-
-  /* Primary button — colours set per row via CSS vars */
-  .mr-btn-primary-{{ section.id }} {
-    background: var(--mr-btn1-bg, {{ section.settings.btn1_bg }});
-    color: var(--mr-btn1-color, {{ section.settings.btn1_color }});
-    border-color: var(--mr-btn1-border, {{ section.settings.btn1_border }});
-  }
-  .mr-btn-primary-{{ section.id }}:hover {
-    background: var(--mr-btn1-bg-h, {{ section.settings.btn1_bg_hover }});
-    color: var(--mr-btn1-color-h, {{ section.settings.btn1_color_hover }});
-    border-color: var(--mr-btn1-border-h, {{ section.settings.btn1_border_hover }});
-  }
-
-  /* Secondary button */
-  .mr-btn-secondary-{{ section.id }} {
-    background: var(--mr-btn2-bg, {{ section.settings.btn2_bg }});
-    color: var(--mr-btn2-color, {{ section.settings.btn2_color }});
-    border-color: var(--mr-btn2-border, {{ section.settings.btn2_border }});
-  }
-  .mr-btn-secondary-{{ section.id }}:hover {
-    background: var(--mr-btn2-bg-h, {{ section.settings.btn2_bg_hover }});
-    color: var(--mr-btn2-color-h, {{ section.settings.btn2_color_hover }});
-    border-color: var(--mr-btn2-border-h, {{ section.settings.btn2_border_hover }});
-  }
-
-  /* ── Corner layout: heading bottom-left + arrow button bottom-right ── */
-  .mr-corner-{{ section.id }} {
+  /* Heading content */
+  .mr-{{ section.id }}__content {
     position: absolute;
     inset: 0;
     z-index: 2;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: flex-start;
-    text-align: left;
-    padding: {{ section.settings.content_pad_y }}px {{ section.settings.content_pad_x }}px;
+    padding: {{ s.content_padding }}px;
     pointer-events: none;
   }
-  /* Subtle bottom scrim so text stays legible over any media */
-  .mr-corner-{{ section.id }}::before {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 55%;
-    background: linear-gradient(to top, rgba(0,0,0,{{ section.settings.corner_scrim | divided_by: 100.0 }}), rgba(0,0,0,0));
-    pointer-events: none;
-    z-index: -1;
+  .mr-{{ section.id }}__content[data-pos="left"]   { align-items: flex-start; text-align: left; }
+  .mr-{{ section.id }}__content[data-pos="center"] { align-items: center;     text-align: center; }
+  .mr-{{ section.id }}__content[data-pos="right"]  { align-items: flex-end;   text-align: right; }
+  .mr-{{ section.id }}__text { max-width: 80%; padding-right: {{ s.arrow_size | plus: 24 }}px; }
+  .mr-{{ section.id }}__eyebrow {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: 1.2rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
   }
-  .mr-corner-text-{{ section.id }} {
-    position: relative;
-    max-width: {{ section.settings.content_max_width }}px;
-    display: flex;
-    flex-direction: column;
-    gap: {{ section.settings.content_gap }}px;
-    pointer-events: none;
+  .mr-{{ section.id }}__heading {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-h2-size);
+    line-height: 1.1;
+    text-transform: uppercase;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.5);
   }
-  /* Reserve room so long headings never sit under the arrow button (bottom-right) */
-  .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size | plus: 24 }}px; }
+  @media screen and (max-width: 749px) {
+    .mr-{{ section.id }}__heading { font-size: {{ s.heading_size_mobile }}px; }
+  }
+  .mr-{{ section.id }}__sub {
+    margin: 10px 0 0;
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    opacity: 0.92;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  }
 
-  /* Outlined circular arrow (white) — editorial / luxury style */
-  .mr-arrow-btn-{{ section.id }} {
+  /* Circular arrow button (opposite corner) */
+  .mr-{{ section.id }}__arrow {
     position: absolute;
     z-index: 3;
-    right: {{ section.settings.corner_btn_offset }}px;
-    bottom: {{ section.settings.corner_btn_offset }}px;
-    width: {{ section.settings.corner_btn_size }}px;
-    height: {{ section.settings.corner_btn_size }}px;
+    right: {{ s.arrow_offset }}px;
+    bottom: {{ s.arrow_offset }}px;
+    width: {{ s.arrow_size }}px;
+    height: {{ s.arrow_size }}px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--mr-btn1-bg, transparent);
-    color: var(--mr-btn1-color, #ffffff);
-    border: 1.5px solid var(--mr-btn1-border, rgba(255,255,255,0.85));
-    transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.85);
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
   }
-  .mr-arrow-btn-{{ section.id }}:hover {
-    background: var(--mr-btn1-bg-h, #ffffff);
-    color: var(--mr-btn1-color-h, #111111);
-    border-color: var(--mr-btn1-border-h, #ffffff);
-    transform: scale(1.06) translateY(-1px);
+  .mr-{{ section.id }}__row:hover .mr-{{ section.id }}__arrow {
+    background: #fff;
+    color: #111;
+    transform: scale(1.06);
   }
-  .mr-arrow-btn-{{ section.id }} svg {
-    width: 42%;
-    height: 42%;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  @media screen and (max-width: 749px) {
+    .mr-{{ section.id }}__arrow {
+      width: {{ s.arrow_size_mobile }}px;
+      height: {{ s.arrow_size_mobile }}px;
+      right: {{ s.arrow_offset | times: 0.7 | round: 0 }}px;
+      bottom: {{ s.arrow_offset | times: 0.7 | round: 0 }}px;
+    }
   }
+  .mr-{{ section.id }}__arrow svg { width: 42%; height: 42%; }
 
-  /* Mobile adjustments */
-  @media (max-width: 749px) {
-    .mr-content-{{ section.id }} {
-      padding: {{ section.settings.content_pad_y | times: 0.7 | round: 0 }}px {{ section.settings.content_pad_x | times: 0.7 | round: 0 }}px;
-    }
-    .mr-heading-{{ section.id }} { font-size: var(--font-h2-size); }
-    .mr-btn-row-{{ section.id }} { justify-content: center; }
-
-    .mr-corner-{{ section.id }} {
-      padding: {{ section.settings.content_pad_y | times: 0.55 | round: 0 }}px {{ section.settings.content_pad_x | times: 0.55 | round: 0 }}px;
-    }
-    .mr-arrow-btn-{{ section.id }} {
-      width: {{ section.settings.corner_btn_size_mobile }}px;
-      height: {{ section.settings.corner_btn_size_mobile }}px;
-      right: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
-      bottom: {{ section.settings.corner_btn_offset | times: 0.6 | round: 0 }}px;
-    }
-    .mr-corner-text-{{ section.id }} { padding-right: {{ section.settings.corner_btn_size_mobile | plus: 16 }}px; }
+  /* Per-viewport media visibility */
+  .mr-{{ section.id }}__d { display: block; }
+  .mr-{{ section.id }}__m { display: none; }
+  @media screen and (max-width: 749px) {
+    .mr-{{ section.id }}__row[data-has-mobile="true"] .mr-{{ section.id }}__d { display: none; }
+    .mr-{{ section.id }}__row[data-has-mobile="true"] .mr-{{ section.id }}__m { display: block; }
   }
 
-  {%- comment -%} ===== Mobile custom layout (portrait media + bottom content + single CTA) ===== {%- endcomment -%}
-  {%- if section.settings.mobile_custom_layout -%}
-    {%- assign mov_r = section.settings.mobile_overlay_color | color_extract: 'red' -%}
-    {%- assign mov_g = section.settings.mobile_overlay_color | color_extract: 'green' -%}
-    {%- assign mov_b = section.settings.mobile_overlay_color | color_extract: 'blue' -%}
-    {%- assign mov_grad = section.settings.mobile_gradient_strength | divided_by: 100.0 -%}
-    {%- assign mov_op = section.settings.mobile_overlay_opacity | divided_by: 100.0 -%}
+  /* Section heading */
+  .mr-{{ section.id }}__title {
+    text-align: center;
+    margin: 0 0 {{ s.row_gap }}px;
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: var(--font-h2-size);
+    color: {{ s.heading_color }};
+    text-transform: uppercase;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mr-{{ section.id }}__media img,
+    .mr-{{ section.id }}__media video,
+    .mr-{{ section.id }}__arrow { transition: none; }
+  }
+{% endstyle %}
 
-    /* Mobile-only elements are hidden on desktop */
-    .mr-media-mobile-{{ section.id }},
-    .mr-m-gradient-{{ section.id }},
-    .mr-m-content-{{ section.id }} { display: none; }
+<div class="mr-{{ section.id }}">
+  <div class="mr-{{ section.id }}__inner">
 
-    @media (max-width: 749px) {
-      .mr-row-{{ section.id }} { border-radius: 0; }
+    {%- if s.section_heading != blank -%}
+      <h2 class="mr-{{ section.id }}__title">{{ s.section_heading }}</h2>
+    {%- endif -%}
 
-      /* Media fills the card; the mobile aspect-ratio setting handles portrait sizing */
-      .mr-media-{{ section.id }} > img,
-      .mr-media-{{ section.id }} .mr-video-wrap > video { object-fit: cover; }
-
-      /* Swap to mobile media when provided; otherwise desktop media stays (fallback) */
-      .mr-row-{{ section.id }}[data-mobile-media="true"] .mr-media-desktop-{{ section.id }} { display: none; }
-      .mr-media-mobile-{{ section.id }} { display: block; }
-
-      {%- comment -%} Overlay layout swaps to the single-CTA design; Corner layout keeps its heading + arrow on mobile {%- endcomment -%}
-      {%- if section.settings.content_layout == 'overlay' -%}
-      .mr-row-{{ section.id }} .mr-media-{{ section.id }} { height: {{ section.settings.mobile_card_height }}vh !important; aspect-ratio: auto !important; }
-      .mr-content-{{ section.id }},
-      .mr-overlay-{{ section.id }} { display: none !important; }
-
-      /* Subtle bottom gradient for legibility (no big translucent box) */
-      .mr-m-gradient-{{ section.id }} {
-        display: block;
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        pointer-events: none;
-        background-image: linear-gradient(to top, rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},{{ mov_grad }}) 0%, rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},0) 58%);
-        {%- if mov_op > 0 %}background-color: rgba({{ mov_r }},{{ mov_g }},{{ mov_b }},{{ mov_op }});{%- endif %}
-      }
-
-      /* Bottom-aligned editorial content */
-      .mr-m-content-{{ section.id }} {
-        display: flex;
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        flex-direction: column;
-        justify-content: flex-end;
-        gap: 14px;
-        padding: 24px 22px calc(24px + env(safe-area-inset-bottom, 0px));
-        pointer-events: none;
-      }
-      .mr-m-content-{{ section.id }} > * { pointer-events: auto; }
-      .mr-m-content-{{ section.id }}[data-mpos="bottom-left"]   { align-items: flex-start; text-align: left; }
-      .mr-m-content-{{ section.id }}[data-mpos="bottom-center"] { align-items: center;     text-align: center; }
-      .mr-m-content-{{ section.id }}[data-mpos="bottom-right"]  { align-items: flex-end;    text-align: right; }
-
-      .mr-m-eyebrow-{{ section.id }} {
-        margin: 0;
-        color: #fff;
-        font-size: 11px;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        opacity: 0.9;
-        text-shadow: 0 1px 6px rgba(0,0,0,0.5);
-      }
-      .mr-m-heading-{{ section.id }} {
-        margin: 0;
-        color: #fff;
-        font-size: {{ section.settings.mobile_heading_size }}px;
-        font-weight: {{ section.settings.mobile_heading_weight }};
-        line-height: 1.08;
-        letter-spacing: -0.01em;
-        text-shadow: 0 2px 14px rgba(0,0,0,0.55);
-      }
-      .mr-m-btn-{{ section.id }} {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 48px;
-        padding: 0 26px;
-        margin-top: 4px;
-        font-size: {{ section.settings.mobile_button_size }}px;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #111111;
-        background: #ffffff;
-        border-radius: 2px;
-        text-decoration: none;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-        transition: transform 0.2s ease, opacity 0.2s ease;
-      }
-      .mr-m-btn-{{ section.id }}:active { transform: scale(0.98); }
-      {%- endif -%}
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .mr-m-btn-{{ section.id }} { transition: none; }
-    }
-  {%- endif -%}
-{%- endstyle -%}
-
-<section class="mr-section-{{ section.id }}">
-
-  {%- comment -%} Optional section-level heading {%- endcomment -%}
-  {%- if section.settings.section_heading != blank -%}
-    <div class="mr-section-heading-{{ section.id }}">
-      <h2 class="mr-section-title-{{ section.id }}">{{ section.settings.section_heading }}</h2>
-    </div>
-  {%- endif -%}
-
-  <div class="mr-rows-{{ section.id }}">
     {%- for block in section.blocks -%}
-      {%- if block.type == 'row' -%}
-
-        {%- comment -%} Build per-row CSS vars for overlay + button colours {%- endcomment -%}
-        {%- assign row_vars = "" -%}
-        {%- if block.settings.overlay_color != blank and block.settings.overlay_opacity > 0 -%}
-          {%- assign ov_r = block.settings.overlay_color | color_extract: 'red' -%}
-          {%- assign ov_g = block.settings.overlay_color | color_extract: 'green' -%}
-          {%- assign ov_b = block.settings.overlay_color | color_extract: 'blue' -%}
-          {%- assign ov_a = block.settings.overlay_opacity | divided_by: 100.0 -%}
-          {%- assign ov_val = "rgba(" | append: ov_r | append: "," | append: ov_g | append: "," | append: ov_b | append: "," | append: ov_a | append: ")" -%}
-          {%- assign row_vars = row_vars | append: "--mr-overlay-color:" | append: ov_val | append: ";" -%}
-        {%- endif -%}
-        {%- if block.settings.btn1_bg != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn1-bg:" | append: block.settings.btn1_bg | append: ";" -%}{%- endif -%}
-        {%- if block.settings.btn1_color != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn1-color:" | append: block.settings.btn1_color | append: ";" -%}{%- endif -%}
-        {%- if block.settings.btn1_border != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn1-border:" | append: block.settings.btn1_border | append: ";" -%}{%- endif -%}
-        {%- if block.settings.btn2_bg != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn2-bg:" | append: block.settings.btn2_bg | append: ";" -%}{%- endif -%}
-        {%- if block.settings.btn2_color != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn2-color:" | append: block.settings.btn2_color | append: ";" -%}{%- endif -%}
-        {%- if block.settings.btn2_border != blank -%}{%- assign row_vars = row_vars | append: "--mr-btn2-border:" | append: block.settings.btn2_border | append: ";" -%}{%- endif -%}
-        {%- if block.settings.row_height_override > 0 -%}
-          {%- assign row_vars = row_vars | append: "--mr-row-h:" | append: block.settings.row_height_override | append: "px;" -%}
-        {%- endif -%}
-        {%- if block.settings.row_height_mobile_override > 0 -%}
-          {%- assign row_vars = row_vars | append: "--mr-row-h-mobile:" | append: block.settings.row_height_mobile_override | append: "px;" -%}
-        {%- endif -%}
-        {%- if block.settings.row_aspect_override != blank -%}
-          {%- assign row_vars = row_vars | append: "--mr-ratio:" | append: block.settings.row_aspect_override | append: ";" -%}
-        {%- endif -%}
-        {%- assign content_color = block.settings.content_color | default: '#ffffff' -%}
-        {%- if block.settings.content_box_color != blank and block.settings.content_box_opacity > 0 -%}
-          {%- assign cb_r = block.settings.content_box_color | color_extract: 'red' -%}
-          {%- assign cb_g = block.settings.content_box_color | color_extract: 'green' -%}
-          {%- assign cb_b = block.settings.content_box_color | color_extract: 'blue' -%}
-          {%- assign cb_a = block.settings.content_box_opacity | divided_by: 100.0 -%}
-          {%- assign cb_val = "rgba(" | append: cb_r | append: "," | append: cb_g | append: "," | append: cb_b | append: "," | append: cb_a | append: ")" -%}
-          {%- assign row_vars = row_vars | append: "--mr-content-box-bg:" | append: cb_val | append: ";" -%}
-          {%- assign row_vars = row_vars | append: "--mr-content-box-pad:" | append: block.settings.content_box_padding | append: "px;" -%}
-          {%- assign row_vars = row_vars | append: "--mr-content-box-radius:" | append: block.settings.content_box_radius | append: "px;" -%}
-        {%- endif -%}
-
-        {%- comment -%} Resolve mobile media presence for layout + fallback {%- endcomment -%}
-        {%- assign mr_mobile_on = section.settings.mobile_custom_layout -%}
-        {%- assign mr_has_mobile = false -%}
-        {%- if block.settings.mobile_image != blank or block.settings.mobile_video != blank -%}
-          {%- assign mr_has_mobile = true -%}
-        {%- endif -%}
-
-        <div
-          class="mr-row-{{ section.id }}"
-          data-align-h="{{ block.settings.align_h }}"
-          data-align-v="{{ block.settings.align_v }}"
-          data-height-mode="{{ section.settings.height_mode }}"
-          data-mobile-media="{{ mr_has_mobile }}"
-          style="{{ row_vars }}"
-          {{ block.shopify_attributes }}
-        >
-
-          {%- comment -%} Media — separate desktop & mobile sources. Videos are
-            JS-loaded by viewport (data-mq) so desktop video never loads on mobile
-            and vice-versa. Desktop video only loads on mobile as a fallback when
-            no dedicated mobile media is set. {%- endcomment -%}
-          {%- liquid
-            assign d_image = block.settings.image
-            assign d_video = block.settings.video
-            assign m_image = block.settings.mobile_image
-            assign m_video = block.settings.mobile_video
-            # Explicit media type per viewport, with sensible fallback to whatever is set
-            assign d_use_video = false
-            if block.settings.desktop_media_type == 'video' and d_video != blank
-              assign d_use_video = true
-            elsif d_video != blank and d_image == blank
-              assign d_use_video = true
-            endif
-            assign m_use_video = false
-            if block.settings.mobile_media_type == 'video' and m_video != blank
-              assign m_use_video = true
-            elsif m_video != blank and m_image == blank
-              assign m_use_video = true
-            endif
-            assign d_video_mq = ''
-            if mr_mobile_on and mr_has_mobile
-              assign d_video_mq = '(min-width: 750px)'
-            endif
-          -%}
-          <div class="mr-media-{{ section.id }}">
-            {%- comment -%} Desktop / default media {%- endcomment -%}
-            {%- if d_use_video -%}
-              <div class="mr-video-wrap mr-media-desktop-{{ section.id }}">
-                <video data-mr-video {% if d_video_mq != blank %}data-mq="{{ d_video_mq }}"{% endif %} muted loop playsinline preload="none"{% if d_image != blank %} poster="{{ d_image | image_url: width: 2000 }}"{% endif %}>
-                  {%- for source in d_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
-                </video>
-              </div>
-            {%- elsif d_image != blank -%}
-              <img class="mr-media-desktop-{{ section.id }}" src="{{ d_image | image_url: width: 2400 }}" alt="{{ d_image.alt | default: block.settings.heading | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="{{ d_image.width }}" height="{{ d_image.height }}">
+      {%- liquid
+        assign has_mobile = false
+        if block.settings.mobile_image != blank or block.settings.mobile_video != blank
+          assign has_mobile = true
+        endif
+        assign d_video = false
+        if block.settings.desktop_media_type == 'video' and block.settings.video != blank
+          assign d_video = true
+        endif
+        assign m_video = false
+        if block.settings.mobile_media_type == 'video' and block.settings.mobile_video != blank
+          assign m_video = true
+        endif
+        assign tag = 'div'
+        if block.settings.link != blank
+          assign tag = 'a'
+        endif
+      -%}
+      <{{ tag }}
+        class="mr-{{ section.id }}__row"
+        data-has-mobile="{{ has_mobile }}"
+        {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+        {{ block.shopify_attributes }}
+      >
+        <div class="mr-{{ section.id }}__media">
+          {%- comment -%} Desktop media {%- endcomment -%}
+          <div class="mr-{{ section.id }}__d">
+            {%- if d_video -%}
+              <video class="mr-{{ section.id }}__video" data-mq="(min-width: 750px)" muted loop playsinline preload="none"
+                {% if block.settings.image != blank %}poster="{{ block.settings.image | image_url: width: 1600 }}"{% endif %}>
+                {%- for src in block.settings.video.sources -%}<source data-src="{{ src.url }}" type="{{ src.mime_type }}">{%- endfor -%}
+              </video>
+            {%- elsif block.settings.image != blank -%}
+              <img src="{{ block.settings.image | image_url: width: 2000 }}"
+                srcset="{{ block.settings.image | image_url: width: 1000 }} 1000w, {{ block.settings.image | image_url: width: 2000 }} 2000w"
+                sizes="100vw" alt="{{ block.settings.image.alt | default: block.settings.heading | strip_html | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}">
             {%- else -%}
               {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
-
-            {%- comment -%} Dedicated mobile media (only rendered when custom mobile layout + mobile media set) {%- endcomment -%}
-            {%- if mr_mobile_on and mr_has_mobile -%}
-              {%- if m_use_video -%}
-                <div class="mr-video-wrap mr-media-mobile-{{ section.id }}">
-                  <video data-mr-video data-mq="(max-width: 749px)" muted loop playsinline preload="none"{% if m_image != blank %} poster="{{ m_image | image_url: width: 1200 }}"{% endif %}>
-                    {%- for source in m_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
-                  </video>
-                </div>
-              {%- elsif m_image != blank -%}
-                <img class="mr-media-mobile-{{ section.id }}" src="{{ m_image | image_url: width: 1200 }}" alt="{{ m_image.alt | default: block.settings.heading | escape }}" loading="lazy" width="{{ m_image.width }}" height="{{ m_image.height }}">
-              {%- endif -%}
-            {%- endif -%}
           </div>
 
-          {%- comment -%} Overlay tint {%- endcomment -%}
-          <div class="mr-overlay-{{ section.id }}"></div>
-
-          {%- comment -%} Content {%- endcomment -%}
-          {%- assign has_content = false -%}
-          {%- if block.settings.eyebrow != blank or block.settings.heading != blank or block.settings.subheading != blank or block.settings.btn1_label != blank or block.settings.btn2_label != blank -%}
-            {%- assign has_content = true -%}
-          {%- endif -%}
-
-          {%- if section.settings.content_layout == 'corner' -%}
-            {%- comment -%} Corner layout: text bottom-left, arrow button bottom-right {%- endcomment -%}
-            {%- if block.settings.btn1_link != blank -%}
-              <a
-                class="mr-row-link-{{ section.id }}"
-                href="{{ block.settings.btn1_link }}"
-                aria-hidden="true"
-                tabindex="-1"
-              ></a>
-            {%- endif -%}
-            {%- if has_content -%}
-              <div class="mr-corner-{{ section.id }}" style="color: {{ content_color }};">
-                <div class="mr-corner-text-{{ section.id }}">
-                  {%- if block.settings.eyebrow != blank -%}
-                    <p class="mr-eyebrow-{{ section.id }}">{{ block.settings.eyebrow | escape }}</p>
-                  {%- endif -%}
-                  {%- if block.settings.heading != blank -%}
-                    <h2 class="mr-heading-{{ section.id }}">{{ block.settings.heading }}</h2>
-                  {%- endif -%}
-                  {%- if block.settings.subheading != blank -%}
-                    <p class="mr-subheading-{{ section.id }}">{{ block.settings.subheading }}</p>
-                  {%- endif -%}
-                </div>
-              </div>
-            {%- endif -%}
-            {%- if block.settings.btn1_link != blank or block.settings.btn1_label != blank -%}
-              <a
-                class="mr-arrow-btn-{{ section.id }}"
-                href="{{ block.settings.btn1_link | default: '#' }}"
-                aria-label="{{ block.settings.btn1_label | default: block.settings.heading | strip_html | escape | default: 'View' }}"
-              >
-                <svg viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
-              </a>
-            {%- endif -%}
-
-          {%- elsif has_content -%}
-            <div class="mr-content-{{ section.id }}" style="color: {{ content_color }};">
-              <div class="mr-content-inner-{{ section.id }}">
-
-                {%- if block.settings.eyebrow != blank -%}
-                  <p class="mr-eyebrow-{{ section.id }}">{{ block.settings.eyebrow | escape }}</p>
-                {%- endif -%}
-
-                {%- if block.settings.heading != blank -%}
-                  <h2 class="mr-heading-{{ section.id }}">{{ block.settings.heading }}</h2>
-                {%- endif -%}
-
-                {%- if block.settings.subheading != blank -%}
-                  <p class="mr-subheading-{{ section.id }}">{{ block.settings.subheading }}</p>
-                {%- endif -%}
-
-                {%- if block.settings.btn1_label != blank or block.settings.btn2_label != blank -%}
-                  <div class="mr-btn-row-{{ section.id }}">
-                    {%- if block.settings.btn1_label != blank -%}
-                      <a class="mr-btn-{{ section.id }} mr-btn-primary-{{ section.id }}" href="{{ block.settings.btn1_link | default: '#' }}">
-                        {{ block.settings.btn1_label }}
-                      </a>
-                    {%- endif -%}
-                    {%- if block.settings.btn2_label != blank -%}
-                      <a class="mr-btn-{{ section.id }} mr-btn-secondary-{{ section.id }}" href="{{ block.settings.btn2_link | default: '#' }}">
-                        {{ block.settings.btn2_label }}
-                      </a>
-                    {%- endif -%}
-                  </div>
-                {%- endif -%}
-
-              </div>
+          {%- comment -%} Mobile media (only when set) {%- endcomment -%}
+          {%- if has_mobile -%}
+            <div class="mr-{{ section.id }}__m">
+              {%- if m_video -%}
+                <video class="mr-{{ section.id }}__video" data-mq="(max-width: 749px)" muted loop playsinline preload="none"
+                  {% if block.settings.mobile_image != blank %}poster="{{ block.settings.mobile_image | image_url: width: 900 }}"{% endif %}>
+                  {%- for src in block.settings.mobile_video.sources -%}<source data-src="{{ src.url }}" type="{{ src.mime_type }}">{%- endfor -%}
+                </video>
+              {%- elsif block.settings.mobile_image != blank -%}
+                <img src="{{ block.settings.mobile_image | image_url: width: 1000 }}"
+                  alt="{{ block.settings.mobile_image.alt | default: block.settings.heading | strip_html | escape }}"
+                  loading="lazy" width="{{ block.settings.mobile_image.width }}" height="{{ block.settings.mobile_image.height }}">
+              {%- endif -%}
             </div>
           {%- endif -%}
-
-          {%- comment -%} Mobile single-CTA overlay — Overlay layout only (Corner keeps its heading + arrow) ───── {%- endcomment -%}
-          {%- if mr_mobile_on and section.settings.content_layout == 'overlay' -%}
-            <div class="mr-m-gradient-{{ section.id }}" aria-hidden="true"></div>
-            {%- assign m_heading = block.settings.mobile_heading | default: block.settings.heading -%}
-            {%- assign m_btn_label = block.settings.mobile_button_label | default: block.settings.btn1_label -%}
-            {%- assign m_btn_link = block.settings.mobile_button_link | default: block.settings.btn1_link -%}
-            {%- if m_heading != blank or m_btn_label != blank -%}
-              <div class="mr-m-content-{{ section.id }}" data-mpos="{{ section.settings.mobile_content_position }}">
-                {%- if block.settings.eyebrow != blank -%}
-                  <p class="mr-m-eyebrow-{{ section.id }}">{{ block.settings.eyebrow | escape }}</p>
-                {%- endif -%}
-                {%- if m_heading != blank -%}
-                  <h3 class="mr-m-heading-{{ section.id }}">{{ m_heading }}</h3>
-                {%- endif -%}
-                {%- if m_btn_label != blank -%}
-                  <a class="mr-m-btn-{{ section.id }}" href="{{ m_btn_link | default: '#' }}">{{ m_btn_label }}</a>
-                {%- endif -%}
-              </div>
-            {%- endif -%}
-          {%- endif -%}
-
         </div>
-      {%- endif -%}
-    {%- endfor -%}
-  </div>
 
-</section>
+        {%- if s.overlay_opacity > 0 -%}<div class="mr-{{ section.id }}__overlay"></div>{%- endif -%}
+        <div class="mr-{{ section.id }}__scrim"></div>
+
+        {%- if block.settings.eyebrow != blank or block.settings.heading != blank or block.settings.subheading != blank -%}
+          <div class="mr-{{ section.id }}__content" data-pos="{{ s.content_position }}">
+            <div class="mr-{{ section.id }}__text">
+              {%- if block.settings.eyebrow != blank -%}<p class="mr-{{ section.id }}__eyebrow">{{ block.settings.eyebrow | escape }}</p>{%- endif -%}
+              {%- if block.settings.heading != blank -%}<h3 class="mr-{{ section.id }}__heading">{{ block.settings.heading }}</h3>{%- endif -%}
+              {%- if block.settings.subheading != blank -%}<p class="mr-{{ section.id }}__sub">{{ block.settings.subheading }}</p>{%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.link != blank or block.settings.heading != blank -%}
+          <span class="mr-{{ section.id }}__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        {%- endif -%}
+      </{{ tag }}>
+    {%- endfor -%}
+
+  </div>
+</div>
 
 <script>
   (function () {
-    var section = document.querySelector('.mr-section-{{ section.id }}');
-    if (!section) return;
-
-    /* Load a video's sources only when its viewport (data-mq) matches, so the
-       desktop video never downloads on mobile and vice-versa. */
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    var scope = document.querySelector('.mr-{{ section.id }}');
+    if (!scope) return;
     function loadVideo(v) {
       var mq = v.getAttribute('data-mq');
       if (mq && window.matchMedia && !window.matchMedia(mq).matches) return;
-      if (v.dataset.mrLoaded === '1') { play(v); return; }
-      v.querySelectorAll('source[data-src]').forEach(function (s) {
-        if (!s.getAttribute('src')) s.setAttribute('src', s.getAttribute('data-src'));
-      });
-      v.dataset.mrLoaded = '1';
-      v.muted = true;
-      v.loop = true;
-      v.load();
-      v.addEventListener('loadeddata', function () { play(v); });
-      play(v);
+      if (v.dataset.loaded === '1') { v.play().catch(function(){}); return; }
+      v.querySelectorAll('source[data-src]').forEach(function (s) { if (!s.getAttribute('src')) s.setAttribute('src', s.getAttribute('data-src')); });
+      v.dataset.loaded = '1';
+      v.muted = true; v.loop = true; v.load();
+      v.addEventListener('loadeddata', function () { v.play().catch(function(){}); });
+      v.play().catch(function(){});
     }
-    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
-
-    function run() {
-      section.querySelectorAll('video[data-mr-video]').forEach(loadVideo);
-    }
+    function run() { scope.querySelectorAll('video[data-mq]').forEach(loadVideo); }
     run();
-
-    /* On breakpoint change, load the now-matching video */
     var t;
-    window.addEventListener('resize', function () {
-      clearTimeout(t);
-      t = setTimeout(run, 250);
-    }, { passive: true });
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(run, 250); }, { passive: true });
   })();
 </script>
 
@@ -735,397 +305,104 @@
   "tag": "section",
   "class": "section-media-rows",
   "max_blocks": 6,
-  "blocks": [
-    {
-      "type": "row",
-      "name": "Media row",
-      "settings": [
-        { "type": "header",       "content": "Media — Desktop" },
-        {
-          "type": "select", "id": "desktop_media_type", "label": "Desktop media type",
-          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
-          "default": "image"
-        },
-        { "type": "image_picker", "id": "image",   "label": "Desktop image",       "info": "Also used as the video poster" },
-        { "type": "video",         "id": "video",   "label": "Desktop video" },
-
-        { "type": "header",       "content": "Media — Mobile" },
-        { "type": "paragraph",     "content": "Optional. If empty, the desktop media is used on mobile too." },
-        {
-          "type": "select", "id": "mobile_media_type", "label": "Mobile media type",
-          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
-          "default": "image"
-        },
-        { "type": "image_picker", "id": "mobile_image",   "label": "Mobile image (portrait 9:16)" },
-        { "type": "video",         "id": "mobile_video",   "label": "Mobile video (portrait 9:16)" },
-
-        { "type": "header",       "content": "Mobile content (optional overrides)" },
-        { "type": "text",          "id": "mobile_heading",       "label": "Mobile heading",       "info": "Falls back to the heading below." },
-        { "type": "text",          "id": "mobile_button_label",  "label": "Mobile button label",  "info": "Falls back to Button 1 label." },
-        { "type": "url",           "id": "mobile_button_link",   "label": "Mobile button link",   "info": "Falls back to Button 1 link." },
-
-        { "type": "header",   "content": "Row size (overrides section default)" },
-        {
-          "type": "range", "id": "row_height_override", "label": "Desktop height override",
-          "min": 0, "max": 900, "step": 10, "unit": "px", "default": 0,
-          "info": "Set to 0 to use section default height"
-        },
-        {
-          "type": "range", "id": "row_height_mobile_override", "label": "Mobile height override",
-          "min": 0, "max": 700, "step": 10, "unit": "px", "default": 0,
-          "info": "Set to 0 to use section default"
-        },
-        {
-          "type": "select", "id": "row_aspect_override", "label": "Aspect ratio override",
-          "info": "Only applies when section height mode is Aspect ratio",
-          "options": [
-            { "value": "",       "label": "Use section default" },
-            { "value": "21/9",   "label": "Ultra-wide (21:9)" },
-            { "value": "16/9",   "label": "Widescreen (16:9)" },
-            { "value": "3/1",    "label": "Panoramic (3:1)" },
-            { "value": "4/3",    "label": "Landscape (4:3)" },
-            { "value": "1/1",    "label": "Square (1:1)" },
-            { "value": "3/4",    "label": "Portrait (3:4)" }
-          ],
-          "default": ""
-        },
-
-        { "type": "header",   "content": "Overlay" },
-        { "type": "color",    "id": "overlay_color",   "label": "Overlay colour",  "default": "#000000" },
-        { "type": "range",    "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 20 },
-
-        { "type": "header",   "content": "Content" },
-        { "type": "color",    "id": "content_color", "label": "All text colour",   "default": "#ffffff",
-          "info": "Sets heading, subheading, eyebrow colour all at once" },
-        { "type": "text",     "id": "eyebrow",       "label": "Eyebrow text",      "info": "Small label above the heading" },
-        { "type": "inline_richtext", "id": "heading", "label": "Heading" },
-        { "type": "textarea", "id": "subheading",    "label": "Subheading" },
-
-        { "type": "header",   "content": "Content box background" },
-        { "type": "color",    "id": "content_box_color",   "label": "Box colour",   "default": "#000000",
-          "info": "Background colour behind the text content" },
-        { "type": "range",    "id": "content_box_opacity", "label": "Box opacity",
-          "min": 0, "max": 100, "step": 5, "unit": "%", "default": 0,
-          "info": "Set to 0 to disable the content box background" },
-        { "type": "range",    "id": "content_box_padding", "label": "Box padding",
-          "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
-        { "type": "range",    "id": "content_box_radius",  "label": "Box corner radius",
-          "min": 0, "max": 40, "step": 2, "unit": "px", "default": 8 },
-
-        { "type": "header",   "content": "Content position" },
-        {
-          "type": "select", "id": "align_h", "label": "Horizontal",
-          "options": [
-            { "value": "left",   "label": "← Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right",  "label": "→ Right" }
-          ],
-          "default": "center"
-        },
-        {
-          "type": "select", "id": "align_v", "label": "Vertical",
-          "options": [
-            { "value": "top",    "label": "↑ Top" },
-            { "value": "middle", "label": "Middle" },
-            { "value": "bottom", "label": "↓ Bottom" }
-          ],
-          "default": "middle"
-        },
-
-        { "type": "header",   "content": "Button 1" },
-        { "type": "text",     "id": "btn1_label",  "label": "Label" },
-        { "type": "url",      "id": "btn1_link",   "label": "Link" },
-        { "type": "color",    "id": "btn1_bg",     "label": "Background",     "info": "Leave blank to use section default" },
-        { "type": "color",    "id": "btn1_color",  "label": "Text colour",    "info": "Leave blank to use section default" },
-        { "type": "color",    "id": "btn1_border", "label": "Border colour",  "info": "Leave blank to use section default" },
-
-        { "type": "header",   "content": "Button 2" },
-        { "type": "text",     "id": "btn2_label",  "label": "Label" },
-        { "type": "url",      "id": "btn2_link",   "label": "Link" },
-        { "type": "color",    "id": "btn2_bg",     "label": "Background",     "info": "Leave blank to use section default" },
-        { "type": "color",    "id": "btn2_color",  "label": "Text colour",    "info": "Leave blank to use section default" },
-        { "type": "color",    "id": "btn2_border", "label": "Border colour",  "info": "Leave blank to use section default" }
-      ]
-    }
-  ],
   "settings": [
-    { "type": "header", "content": "Mobile layout" },
-    { "type": "checkbox", "id": "mobile_custom_layout", "label": "Enable mobile custom layout", "default": true, "info": "Portrait media + bottom content + single button on phones. Desktop is unchanged." },
-    {
-      "type": "select", "id": "mobile_content_position", "label": "Mobile content position",
-      "options": [
-        { "value": "bottom-left",   "label": "Bottom left" },
-        { "value": "bottom-center", "label": "Bottom center" },
-        { "value": "bottom-right",  "label": "Bottom right" }
-      ],
-      "default": "bottom-left"
-    },
-    { "type": "range", "id": "mobile_card_height", "label": "Mobile card height", "min": 60, "max": 95, "step": 1, "unit": "vh", "default": 82 },
-    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading size", "min": 18, "max": 56, "step": 1, "unit": "px", "default": 30 },
-    {
-      "type": "select", "id": "mobile_heading_weight", "label": "Mobile heading weight",
-      "options": [
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" },
-        { "value": "800", "label": "Extra bold" }
-      ],
-      "default": "700"
-    },
-    { "type": "range", "id": "mobile_button_size", "label": "Mobile button size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 14 },
-    { "type": "color", "id": "mobile_overlay_color", "label": "Mobile overlay / gradient colour", "default": "#000000" },
-    { "type": "range", "id": "mobile_overlay_opacity", "label": "Mobile overlay opacity (flat)", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 10 },
-    { "type": "range", "id": "mobile_gradient_strength", "label": "Mobile bottom gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 65 },
-
     { "type": "header", "content": "Section heading (optional)" },
-    { "type": "text",   "id": "section_heading",          "label": "Heading" },
-    { "type": "range",  "id": "section_heading_size",     "label": "Size",           "min": 16, "max": 80, "step": 2, "unit": "px", "default": 36 },
-    { "type": "select", "id": "section_heading_weight",   "label": "Weight",         "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"}], "default": "500" },
-    { "type": "select", "id": "section_heading_transform","label": "Case",           "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
-    { "type": "range",  "id": "section_heading_spacing",  "label": "Letter spacing", "min": 0, "max": 30, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
-    { "type": "color",  "id": "section_heading_color",    "label": "Colour",         "default": "#111111" },
-    { "type": "color",  "id": "underline_color",          "label": "Underline colour", "default": "#c47a5a" },
-    { "type": "select", "id": "section_heading_align",    "label": "Alignment",      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
-    { "type": "range",  "id": "section_heading_gap",      "label": "Gap below",      "min": 8, "max": 80, "step": 4, "unit": "px", "default": 32 },
+    { "type": "text", "id": "section_heading", "label": "Heading" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#111111" },
 
-    { "type": "header", "content": "Media aspect ratio" },
-    { "type": "checkbox", "id": "use_aspect_ratio", "label": "Use aspect ratio (separate desktop / mobile)", "default": true, "info": "Overrides the height settings below. Recommended for the editorial layout." },
+    { "type": "header", "content": "Aspect ratio" },
     {
       "type": "select", "id": "desktop_aspect", "label": "Desktop aspect ratio",
       "options": [
-        { "value": "16/9", "label": "16:9 (wide)" },
-        { "value": "3/2",  "label": "3:2" },
-        { "value": "4/3",  "label": "4:3" },
-        { "value": "1/1",  "label": "1:1 (square)" },
-        { "value": "21/9", "label": "21:9 (ultra-wide)" },
-        { "value": "4/5",  "label": "4:5 (portrait)" },
-        { "value": "3/4",  "label": "3:4 (portrait)" }
+        { "value": "21/9", "label": "21:9" },
+        { "value": "16/9", "label": "16:9" },
+        { "value": "3/2", "label": "3:2" },
+        { "value": "4/3", "label": "4:3" },
+        { "value": "1/1", "label": "1:1" },
+        { "value": "4/5", "label": "4:5" },
+        { "value": "3/4", "label": "3:4" }
       ],
       "default": "16/9"
     },
     {
       "type": "select", "id": "mobile_aspect", "label": "Mobile aspect ratio",
       "options": [
-        { "value": "9/16", "label": "9:16 (tall portrait)" },
-        { "value": "3/4",  "label": "3:4 (portrait)" },
-        { "value": "4/5",  "label": "4:5 (portrait)" },
-        { "value": "1/1",  "label": "1:1 (square)" },
-        { "value": "4/3",  "label": "4:3 (landscape)" },
-        { "value": "16/9", "label": "16:9 (wide)" }
+        { "value": "9/16", "label": "9:16" },
+        { "value": "3/4", "label": "3:4" },
+        { "value": "4/5", "label": "4:5" },
+        { "value": "1/1", "label": "1:1" },
+        { "value": "4/3", "label": "4:3" }
       ],
       "default": "9/16"
     },
 
-    { "type": "header", "content": "Row heights" },
+    { "type": "header", "content": "Content & overlay" },
     {
-      "type": "select", "id": "height_mode", "label": "Height mode",
+      "type": "select", "id": "content_position", "label": "Heading position",
       "options": [
-        { "value": "fixed", "label": "Fixed pixel height" },
-        { "value": "ratio", "label": "Aspect ratio" }
+        { "value": "left", "label": "Bottom left" },
+        { "value": "center", "label": "Bottom center" },
+        { "value": "right", "label": "Bottom right" }
       ],
-      "default": "fixed"
+      "default": "left"
     },
-    {
-      "type": "range", "id": "row_height_desktop", "label": "Desktop height",
-      "min": 200, "max": 900, "step": 10, "unit": "px", "default": 480,
-      "info": "Each row block can override this individually"
-    },
-    {
-      "type": "range", "id": "row_height_mobile", "label": "Mobile height",
-      "min": 160, "max": 700, "step": 10, "unit": "px", "default": 320
-    },
-    {
-      "type": "select", "id": "row_aspect", "label": "Aspect ratio (when mode = ratio)",
-      "options": [
-        { "value": "21/9", "label": "Ultra-wide (21:9)" },
-        { "value": "16/9", "label": "Widescreen (16:9)" },
-        { "value": "3/1",  "label": "Panoramic (3:1)" },
-        { "value": "4/3",  "label": "Landscape (4:3)" },
-        { "value": "1/1",  "label": "Square" },
-        { "value": "3/4",  "label": "Portrait (3:4)" }
-      ],
-      "default": "16/9"
-    },
+    { "type": "range", "id": "content_padding", "label": "Content padding", "min": 12, "max": 64, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Mobile heading size", "min": 18, "max": 48, "step": 1, "unit": "px", "default": 30 },
+    { "type": "range", "id": "gradient_strength", "label": "Bottom gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 65 },
+    { "type": "color", "id": "overlay_color", "label": "Overlay colour", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 0 },
+    { "type": "checkbox", "id": "hover_zoom", "label": "Zoom media on hover", "default": true },
 
-    { "type": "header", "content": "Row style" },
-    {
-      "type": "range", "id": "row_gap", "label": "Gap between rows",
-      "min": 0, "max": 40, "step": 2, "unit": "px", "default": 4
-    },
-    {
-      "type": "range", "id": "row_radius", "label": "Row corner radius",
-      "min": 0, "max": 32, "step": 2, "unit": "px", "default": 0
-    },
-    {
-      "type": "select", "id": "media_fit", "label": "Image/video fit",
-      "options": [
-        { "value": "cover",   "label": "Cover (fill)" },
-        { "value": "contain", "label": "Contain" }
-      ],
-      "default": "cover"
-    },
-    {
-      "type": "checkbox", "id": "media_hover_zoom", "label": "Zoom media on hover",
-      "default": true
-    },
+    { "type": "header", "content": "Arrow button" },
+    { "type": "range", "id": "arrow_size", "label": "Size (desktop)", "min": 36, "max": 84, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "arrow_size_mobile", "label": "Size (mobile)", "min": 30, "max": 64, "step": 2, "unit": "px", "default": 44 },
+    { "type": "range", "id": "arrow_offset", "label": "Edge offset", "min": 8, "max": 48, "step": 2, "unit": "px", "default": 24 },
 
-    { "type": "header", "content": "Eyebrow text" },
+    { "type": "header", "content": "Layout & background" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "row_gap", "label": "Gap between rows", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range", "id": "row_radius", "label": "Corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [
     {
-      "type": "range", "id": "eyebrow_size", "label": "Size",
-      "min": 10, "max": 24, "step": 1, "unit": "px", "default": 13
-    },
-    {
-      "type": "select", "id": "eyebrow_weight", "label": "Weight",
-      "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}],
-      "default": "400"
-    },
-    {
-      "type": "select", "id": "eyebrow_transform", "label": "Case",
-      "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}],
-      "default": "uppercase"
-    },
-    {
-      "type": "range", "id": "eyebrow_spacing", "label": "Letter spacing",
-      "min": 0, "max": 40, "step": 1, "unit": "em", "default": 20, "info": "Divided by 100"
-    },
+      "type": "row",
+      "name": "Media row",
+      "settings": [
+        { "type": "header", "content": "Desktop media" },
+        {
+          "type": "select", "id": "desktop_media_type", "label": "Desktop media type",
+          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
+          "default": "image"
+        },
+        { "type": "image_picker", "id": "image", "label": "Desktop image", "info": "Also used as video poster" },
+        { "type": "video", "id": "video", "label": "Desktop video" },
 
-    { "type": "header", "content": "Heading" },
-    {
-      "type": "range", "id": "heading_size", "label": "Size (max)",
-      "min": 20, "max": 120, "step": 2, "unit": "px", "default": 56
-    },
-    {
-      "type": "select", "id": "heading_weight", "label": "Weight",
-      "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"},{"value":"700","label":"Bold"},{"value":"800","label":"Extra bold"}],
-      "default": "700"
-    },
-    {
-      "type": "select", "id": "heading_transform", "label": "Case",
-      "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}],
-      "default": "none"
-    },
-    {
-      "type": "range", "id": "heading_spacing", "label": "Letter spacing",
-      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100"
-    },
-    {
-      "type": "range", "id": "heading_line_height", "label": "Line height",
-      "min": 90, "max": 160, "step": 5, "unit": "%", "default": 115, "info": "Divided by 100"
-    },
+        { "type": "header", "content": "Mobile media (optional)" },
+        { "type": "paragraph", "content": "If empty, the desktop media is used on mobile too." },
+        {
+          "type": "select", "id": "mobile_media_type", "label": "Mobile media type",
+          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
+          "default": "image"
+        },
+        { "type": "image_picker", "id": "mobile_image", "label": "Mobile image (portrait)" },
+        { "type": "video", "id": "mobile_video", "label": "Mobile video (portrait)" },
 
-    { "type": "header", "content": "Subheading" },
-    {
-      "type": "range", "id": "subheading_size", "label": "Size",
-      "min": 12, "max": 28, "step": 1, "unit": "px", "default": 16
-    },
-    {
-      "type": "select", "id": "subheading_weight", "label": "Weight",
-      "options": [{"value":"300","label":"Light"},{"value":"400","label":"Regular"},{"value":"500","label":"Medium"}],
-      "default": "400"
-    },
-    {
-      "type": "range", "id": "subheading_spacing", "label": "Letter spacing",
-      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0
-    },
-    {
-      "type": "range", "id": "subheading_max_width", "label": "Max width",
-      "min": 300, "max": 900, "step": 20, "unit": "px", "default": 560
-    },
-
-    { "type": "header", "content": "Content area" },
-    {
-      "type": "range", "id": "content_max_width", "label": "Content max width",
-      "min": 300, "max": 1200, "step": 20, "unit": "px", "default": 700
-    },
-    {
-      "type": "range", "id": "content_pad_x", "label": "Side padding",
-      "min": 16, "max": 120, "step": 4, "unit": "px", "default": 40
-    },
-    {
-      "type": "range", "id": "content_pad_y", "label": "Top/bottom padding",
-      "min": 16, "max": 120, "step": 4, "unit": "px", "default": 60
-    },
-    {
-      "type": "range", "id": "content_gap", "label": "Gap between elements",
-      "min": 4, "max": 40, "step": 2, "unit": "px", "default": 18
-    },
-
-    { "type": "header", "content": "Content layout" },
-    {
-      "type": "select", "id": "content_layout", "label": "Layout style",
-      "options": [
-        { "value": "corner",  "label": "Corner — ↗ arrow button bottom-left, heading bottom-right" },
-        { "value": "overlay", "label": "Overlay — text + buttons (uses position settings)" }
-      ],
-      "default": "corner",
-      "info": "Corner keeps the image/video visible. The arrow button links to Button 1's link."
-    },
-    {
-      "type": "range", "id": "corner_btn_size", "label": "Arrow button size (desktop)",
-      "min": 36, "max": 96, "step": 2, "unit": "px", "default": 58
-    },
-    {
-      "type": "range", "id": "corner_btn_size_mobile", "label": "Arrow button size (mobile)",
-      "min": 30, "max": 72, "step": 2, "unit": "px", "default": 44
-    },
-    {
-      "type": "range", "id": "corner_btn_offset", "label": "Arrow button edge offset",
-      "min": 8, "max": 60, "step": 2, "unit": "px", "default": 24
-    },
-    {
-      "type": "range", "id": "corner_scrim", "label": "Bottom shade for text legibility",
-      "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35,
-      "info": "Subtle dark gradient behind the bottom-left text (corner layout only)."
-    },
-
-    { "type": "header", "content": "Buttons — default colours" },
-    {
-      "type": "paragraph",
-      "content": "Each row can override these individually. In Corner layout, the arrow button uses Button 1's colours."
-    },
-    { "type": "range",  "id": "btn_size",         "label": "Font size",         "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
-    { "type": "select", "id": "btn_weight",        "label": "Weight",            "options": [{"value":"400","label":"Regular"},{"value":"500","label":"Medium"},{"value":"600","label":"Semi-bold"}], "default": "500" },
-    { "type": "select", "id": "btn_transform",     "label": "Case",              "options": [{"value":"none","label":"As typed"},{"value":"uppercase","label":"UPPERCASE"},{"value":"capitalize","label":"Capitalize"}], "default": "none" },
-    { "type": "range",  "id": "btn_spacing",       "label": "Letter spacing",    "min": 0, "max": 20, "step": 1, "unit": "em", "default": 4 },
-    { "type": "range",  "id": "btn_pad_x",         "label": "Padding X",         "min": 12, "max": 60, "step": 2, "unit": "px", "default": 28 },
-    { "type": "range",  "id": "btn_pad_y",         "label": "Padding Y",         "min": 6, "max": 28, "step": 1, "unit": "px", "default": 14 },
-    { "type": "range",  "id": "btn_radius",        "label": "Radius",            "min": 0, "max": 50, "step": 2, "unit": "px", "default": 50 },
-    { "type": "range",  "id": "btn_border_width",  "label": "Border width",      "min": 0, "max": 4, "step": 1, "unit": "px", "default": 1 },
-    { "type": "range",  "id": "btn_gap",           "label": "Gap between buttons","min": 4, "max": 32, "step": 2, "unit": "px", "default": 14 },
-
-    { "type": "header", "content": "Button 1 defaults" },
-    { "type": "color", "id": "btn1_bg",           "label": "Background",        "default": "#ffffff" },
-    { "type": "color", "id": "btn1_color",        "label": "Text",              "default": "#111111" },
-    { "type": "color", "id": "btn1_border",       "label": "Border",            "default": "#ffffff" },
-    { "type": "color", "id": "btn1_bg_hover",     "label": "Background — hover","default": "#111111" },
-    { "type": "color", "id": "btn1_color_hover",  "label": "Text — hover",      "default": "#ffffff" },
-    { "type": "color", "id": "btn1_border_hover", "label": "Border — hover",    "default": "#111111" },
-
-    { "type": "header", "content": "Button 2 defaults" },
-    { "type": "color", "id": "btn2_bg",           "label": "Background",        "default": "rgba(0,0,0,0)" },
-    { "type": "color", "id": "btn2_color",        "label": "Text",              "default": "#ffffff" },
-    { "type": "color", "id": "btn2_border",       "label": "Border",            "default": "#ffffff" },
-    { "type": "color", "id": "btn2_bg_hover",     "label": "Background — hover","default": "#ffffff" },
-    { "type": "color", "id": "btn2_color_hover",  "label": "Text — hover",      "default": "#111111" },
-    { "type": "color", "id": "btn2_border_hover", "label": "Border — hover",    "default": "#ffffff" },
-
-    { "type": "header", "content": "Background & padding" },
-    { "type": "color",  "id": "bg_color",       "label": "Section background",  "default": "#f0efed" },
-    { "type": "range",  "id": "padding_top",    "label": "Top padding",         "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
-    { "type": "range",  "id": "padding_bottom", "label": "Bottom padding",      "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
-    { "type": "header", "content": "Section heading layout" },
-    { "type": "range",  "id": "max_width",      "label": "Heading max width",   "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
-    { "type": "range",  "id": "side_padding",   "label": "Heading side padding","min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 }
+        { "type": "header", "content": "Content" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading" },
+        { "type": "text", "id": "subheading", "label": "Subheading" },
+        { "type": "url", "id": "link", "label": "Link (whole row + arrow)" }
+      ]
+    }
   ],
   "presets": [
     {
       "name": "Media Rows",
-      "blocks": [
-        { "type": "row", "settings": { "heading": "New Collection", "btn1_label": "Shop Now", "btn2_label": "View All", "overlay_opacity": 25 } },
-        { "type": "row", "settings": { "heading": "Summer Essentials", "btn1_label": "Explore", "overlay_opacity": 20 } },
-        { "type": "row", "settings": { "heading": "Limited Edition", "btn1_label": "Shop Now", "btn2_label": "Learn More", "overlay_opacity": 30 } }
-      ]
+      "blocks": [ { "type": "row" }, { "type": "row" } ]
     }
   ]
 }
