@@ -748,7 +748,7 @@
         "feature_ftN9Ft"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 22px !important; } }"
+        "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 22px !important; }}"
       ],
       "name": "Service Features",
       "settings": {
@@ -843,7 +843,7 @@
         "image_zNQUqn"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.lb-heading-template--27682793849196__lookbook_WqjCKQ {font-size: 25px !important; }}"
+        "@media screen and (max-width: 767px) {.lb-heading-template--27799287628140__lookbook_WqjCKQ {font-size: 22px !important; }}"
       ],
       "name": "Lookbook",
       "settings": {
