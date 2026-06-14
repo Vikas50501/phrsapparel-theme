@@ -108,7 +108,9 @@
     },
     "about_us_section_iR7Xkw": {
       "type": "about-us-section",
-      "custom_css": [],
+      "custom_css": [
+        ".au-section-label-template--27799166976364__about_us_section_iR7Xkw{margin-bottom: 20px !important;}"
+      ],
       "name": "Advanced News Slider",
       "settings": {
         "display_weight": "400",
