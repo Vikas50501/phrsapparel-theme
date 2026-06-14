@@ -63,9 +63,83 @@
         "padding_top": 36,
         "padding_bottom": 20
       }
+    },
+    "media_row_aUmhJV": {
+      "type": "media-row",
+      "blocks": {
+        "row_yJYmV7": {
+          "type": "row",
+          "settings": {
+            "desktop_media_type": "video",
+            "video": "shopify://files/videos/Video 2.mp4",
+            "mobile_media_type": "image",
+            "mobile_video": "shopify://files/videos/Video 2.mp4",
+            "eyebrow": "",
+            "heading": "BILLIONAIRE RELIGION TRACKSUIT",
+            "subheading": "",
+            "link": "shopify://products/billionaire-religion-tracksuit"
+          }
+        },
+        "row_3FkLXx": {
+          "type": "row",
+          "settings": {
+            "desktop_media_type": "image",
+            "image": "shopify://shop_images/cropped_summer.jpg",
+            "mobile_media_type": "image",
+            "mobile_image": "shopify://shop_images/cropped_summer.jpg",
+            "eyebrow": "",
+            "heading": "SUMMER ESSENTIALS",
+            "subheading": "",
+            "link": "shopify://collections/bikini"
+          }
+        },
+        "row_ebqTL6": {
+          "type": "row",
+          "settings": {
+            "desktop_media_type": "image",
+            "video": "shopify://files/videos/0001.mp4",
+            "mobile_media_type": "image",
+            "mobile_video": "shopify://files/videos/0001.mp4",
+            "eyebrow": "",
+            "heading": "EXCLUSIVES",
+            "subheading": "",
+            "link": "shopify://collections/new-in"
+          }
+        }
+      },
+      "block_order": [
+        "row_yJYmV7",
+        "row_3FkLXx",
+        "row_ebqTL6"
+      ],
+      "name": "Media Rows",
+      "settings": {
+        "section_heading": "",
+        "heading_color": "#111111",
+        "desktop_aspect": "16/9",
+        "mobile_aspect": "9/16",
+        "content_position": "left",
+        "content_padding": 28,
+        "heading_size_mobile": 30,
+        "gradient_strength": 65,
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "hover_zoom": true,
+        "arrow_size": 56,
+        "arrow_size_mobile": 44,
+        "arrow_offset": 24,
+        "bg_color": "#ffffff",
+        "max_width": 1400,
+        "side_padding": 0,
+        "row_gap": 8,
+        "row_radius": 0,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
     }
   },
   "order": [
-    "footer"
+    "footer",
+    "media_row_aUmhJV"
   ]
 }
