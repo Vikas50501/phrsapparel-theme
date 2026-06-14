@@ -501,6 +501,25 @@
 
 /* ═══════════════ SECTION VISIBILITY TOGGLES ═════════════════════ */
 .au-section-hidden { display: none !important; }
+
+/* ═══════════════ CUSTOM OVERRIDES ═══════════════════════════════ */
+.au-display-title-{{ section.id }} {
+  text-transform: uppercase !important;
+}
+.au-section-label-{{ section.id }} {
+  margin-bottom: 0 !important;
+}
+@media screen and (max-width: 767px) {
+  h2.au-cta-title-{{ section.id }} {
+    font-size: 25px !important;
+  }
+  h2.au-display-title-{{ section.id }} {
+    font-size: 25px !important;
+  }
+  .au-intro-grid-{{ section.id }} {
+    gap: 35px !important;
+  }
+}
 {%- endstyle -%}
 
 <div class="au-{{ section.id }}">
