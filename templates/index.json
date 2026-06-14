@@ -955,7 +955,7 @@
         "row_xUf7VP"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.mr-section-title-template--27682793849196__media_row_zRnCzC {font-size: 25px !important; }}"
+        "@media screen and (max-width: 767px) {.mr-template--27799287628140__media_row_zRnCzC__title{font-size: 22px !important; }}"
       ],
       "name": "Media Rows",
       "settings": {
