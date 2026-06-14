@@ -109,7 +109,8 @@
     "about_us_section_iR7Xkw": {
       "type": "about-us-section",
       "custom_css": [
-        ".au-display-title-template--27682794013036__about_us_section_iR7Xkw {text-transform: uppercase !important;}"
+        ".au-display-title-template--27682794013036__about_us_section_iR7Xkw {text-transform: uppercase !important;}",
+        "@media screen and (max-width: 767px) {h2.au-display-title-template--27682794013036__about_us_section_iR7Xkw {font-size: 25px !important; }}"
       ],
       "name": "Advanced News Slider",
       "settings": {
@@ -314,6 +315,7 @@
         "heading_transform": "none",
         "heading_spacing": 0,
         "heading_color": "#111111",
+        "underline_color": "#c47a5a",
         "heading_align": "center",
         "heading_pad_x": 24,
         "heading_pad_bottom": 24,
@@ -359,6 +361,7 @@
         "viewmore_url": "",
         "viewmore_new_tab": false,
         "viewmore_show_arrow": true,
+        "viewmore_color_scheme": "",
         "viewmore_align": "center",
         "viewmore_pad_top": 32,
         "bg_color": "#ffffff",
