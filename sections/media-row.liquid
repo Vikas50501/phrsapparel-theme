@@ -539,6 +539,19 @@
             assign d_video = block.settings.video
             assign m_image = block.settings.mobile_image
             assign m_video = block.settings.mobile_video
+            # Explicit media type per viewport, with sensible fallback to whatever is set
+            assign d_use_video = false
+            if block.settings.desktop_media_type == 'video' and d_video != blank
+              assign d_use_video = true
+            elsif d_video != blank and d_image == blank
+              assign d_use_video = true
+            endif
+            assign m_use_video = false
+            if block.settings.mobile_media_type == 'video' and m_video != blank
+              assign m_use_video = true
+            elsif m_video != blank and m_image == blank
+              assign m_use_video = true
+            endif
             assign d_video_mq = ''
             if mr_mobile_on and mr_has_mobile
               assign d_video_mq = '(min-width: 750px)'
@@ -546,7 +559,7 @@
           -%}
           <div class="mr-media-{{ section.id }}">
             {%- comment -%} Desktop / default media {%- endcomment -%}
-            {%- if d_video != blank -%}
+            {%- if d_use_video -%}
               <div class="mr-video-wrap mr-media-desktop-{{ section.id }}">
                 <video data-mr-video {% if d_video_mq != blank %}data-mq="{{ d_video_mq }}"{% endif %} muted loop playsinline preload="none"{% if d_image != blank %} poster="{{ d_image | image_url: width: 2000 }}"{% endif %}>
                   {%- for source in d_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
@@ -560,7 +573,7 @@
 
             {%- comment -%} Dedicated mobile media (only rendered when custom mobile layout + mobile media set) {%- endcomment -%}
             {%- if mr_mobile_on and mr_has_mobile -%}
-              {%- if m_video != blank -%}
+              {%- if m_use_video -%}
                 <div class="mr-video-wrap mr-media-mobile-{{ section.id }}">
                   <video data-mr-video data-mq="(max-width: 749px)" muted loop playsinline preload="none"{% if m_image != blank %} poster="{{ m_image | image_url: width: 1200 }}"{% endif %}>
                     {%- for source in m_video.sources -%}<source data-src="{{ source.url }}" type="{{ source.mime_type }}">{%- endfor -%}
@@ -728,11 +741,21 @@
       "name": "Media row",
       "settings": [
         { "type": "header",       "content": "Media — Desktop" },
+        {
+          "type": "select", "id": "desktop_media_type", "label": "Desktop media type",
+          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
+          "default": "image"
+        },
         { "type": "image_picker", "id": "image",   "label": "Desktop image",       "info": "Also used as the video poster" },
         { "type": "video",         "id": "video",   "label": "Desktop video" },
 
         { "type": "header",       "content": "Media — Mobile" },
         { "type": "paragraph",     "content": "Optional. If empty, the desktop media is used on mobile too." },
+        {
+          "type": "select", "id": "mobile_media_type", "label": "Mobile media type",
+          "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ],
+          "default": "image"
+        },
         { "type": "image_picker", "id": "mobile_image",   "label": "Mobile image (portrait 9:16)" },
         { "type": "video",         "id": "mobile_video",   "label": "Mobile video (portrait 9:16)" },
 
