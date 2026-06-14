@@ -912,7 +912,7 @@
           "settings": {
             "desktop_media_type": "video",
             "video": "shopify://files/videos/Video 2.mp4",
-            "mobile_media_type": "image",
+            "mobile_media_type": "video",
             "mobile_video": "shopify://files/videos/Video 2.mp4",
             "eyebrow": "",
             "heading": "BILLIONAIRE RELIGION TRACKSUIT",
@@ -937,7 +937,7 @@
           "settings": {
             "desktop_media_type": "video",
             "video": "shopify://files/videos/0001.mp4",
-            "mobile_media_type": "image",
+            "mobile_media_type": "video",
             "mobile_video": "shopify://files/videos/0001.mp4",
             "eyebrow": "",
             "heading": "EXCLUSIVES",
