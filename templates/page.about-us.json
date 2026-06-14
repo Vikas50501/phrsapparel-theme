@@ -111,7 +111,8 @@
       "custom_css": [
         ".au-display-title-template--27682794013036__about_us_section_iR7Xkw {text-transform: uppercase !important;}",
         "@media screen and (max-width: 767px) {h2.au-display-title-template--27682794013036__about_us_section_iR7Xkw {font-size: 25px !important; }}",
-        "@media screen and (max-width: 767px) {.au-intro-grid-template--27682794013036__about_us_section_iR7Xkw {gap: 35px !important; }}"
+        "@media screen and (max-width: 767px) {.au-intro-grid-template--27682794013036__about_us_section_iR7Xkw {gap: 35px !important; }}",
+        ".au-section-label-template--27682794013036__about_us_section_iR7Xkw {margin-bottom: 0 !important;}"
       ],
       "name": "Advanced News Slider",
       "settings": {
