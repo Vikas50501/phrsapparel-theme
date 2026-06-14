@@ -907,25 +907,13 @@
     "media_row_zRnCzC": {
       "type": "media-row",
       "blocks": {
-        "row_xUf7VP": {
-          "type": "row",
-          "settings": {
-            "desktop_media_type": "image",
-            "video": "shopify://files/videos/0001.mp4",
-            "mobile_media_type": "image",
-            "mobile_video": "shopify://files/videos/0001.mp4",
-            "eyebrow": "",
-            "heading": "EXCLUSIVES",
-            "subheading": "",
-            "link": "shopify://collections/new-in"
-          }
-        },
         "row_VHJywK": {
           "type": "row",
           "settings": {
-            "desktop_media_type": "image",
+            "desktop_media_type": "video",
             "video": "shopify://files/videos/Video 2.mp4",
             "mobile_media_type": "image",
+            "mobile_video": "shopify://files/videos/Video 2.mp4",
             "eyebrow": "",
             "heading": "BILLIONAIRE RELIGION TRACKSUIT",
             "subheading": "",
@@ -943,12 +931,25 @@
             "subheading": "",
             "link": ""
           }
+        },
+        "row_xUf7VP": {
+          "type": "row",
+          "settings": {
+            "desktop_media_type": "video",
+            "video": "shopify://files/videos/0001.mp4",
+            "mobile_media_type": "image",
+            "mobile_video": "shopify://files/videos/0001.mp4",
+            "eyebrow": "",
+            "heading": "EXCLUSIVES",
+            "subheading": "",
+            "link": "shopify://collections/new-in"
+          }
         }
       },
       "block_order": [
-        "row_xUf7VP",
         "row_VHJywK",
-        "row_HzYWwz"
+        "row_HzYWwz",
+        "row_xUf7VP"
       ],
       "custom_css": [
         "@media screen and (max-width: 767px) {h2.mr-section-title-template--27682793849196__media_row_zRnCzC {font-size: 25px !important; }}"
