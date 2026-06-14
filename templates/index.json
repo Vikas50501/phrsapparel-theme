@@ -668,7 +668,7 @@
         "image_YXqGcP"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading, h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {font-size: 25px !important; } h2.tp-heading-template--27682793849196__trending_products_kdCqCQ {padding-bottom: 10px !important; }}",
+        "@media screen and (max-width: 767px) {h2.tp-heading-template--27799287628140__trending_products_kdCqCQ{font-size: 22px !important; padding-bottom: 10px !important; }}",
         ".tp-button-wrap-template--27682793849196__trending_products_kdCqCQ.color-scheme-1 {background: transparent !important;}"
       ],
       "name": "Trending Products",
