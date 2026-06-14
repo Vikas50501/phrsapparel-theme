@@ -957,7 +957,7 @@
       "name": "Media Rows",
       "settings": {
         "section_heading": "JOIN OUR COMMUNITY",
-        "heading_color": "#111111",
+        "heading_color": "#000000",
         "desktop_aspect": "16/9",
         "mobile_aspect": "4/3",
         "content_position": "left",
