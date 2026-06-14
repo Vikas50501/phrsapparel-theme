@@ -546,15 +546,15 @@
           "type": "row1_item",
           "settings": {
             "text": "NEW Arrivals",
-            "link": "",
+            "link": "shopify://products/ph-panel-t-shirt-white",
             "image": "shopify://shop_images/1_ph_1.jpg"
           }
         },
         "row1_item_Dmwagy": {
           "type": "row1_item",
           "settings": {
-            "text": "PHARELIGIONS",
-            "link": "",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/billionaire-religion-tracksuit",
             "image": "shopify://shop_images/IMG_6509.jpg"
           }
         },
@@ -562,23 +562,23 @@
           "type": "row1_item",
           "settings": {
             "text": "NEW Arrivals",
-            "link": "",
+            "link": "shopify://products/futura-bikini-black",
             "image": "shopify://shop_images/3_Phareligions_1.jpg"
           }
         },
         "row2_item_YacqVJ": {
           "type": "row2_item",
           "settings": {
-            "text": "PHARELIGIONS",
-            "link": "",
-            "image": "shopify://shop_images/9.jpg"
+            "text": "NEW Arrivals",
+            "link": "shopify://products/iphone-cases-multicolor",
+            "image": "shopify://shop_images/concretejungleiphonecase.png"
           }
         },
         "row2_item_D8Ncn6": {
           "type": "row2_item",
           "settings": {
-            "text": "PHARELIGIONS",
-            "link": "",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/purple-glowride-reflective-skateboard",
             "image": "shopify://shop_images/Purple-Skateboard-1.jpg"
           }
         }
