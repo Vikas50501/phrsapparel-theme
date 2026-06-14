@@ -13,10 +13,6 @@
     assign grad_color = '#000000'
   endif
   assign grad_alpha = s.gradient_strength | default: 75 | divided_by: 100.0
-  assign grad_alpha_mid = grad_alpha | times: 0.5
-  assign grad_solid = grad_color | color_modify: 'alpha', grad_alpha
-  assign grad_mid = grad_color | color_modify: 'alpha', grad_alpha_mid
-  assign grad_clear = grad_color | color_modify: 'alpha', 0
   assign grad_height = s.gradient_height | default: 60
 -%}
 
@@ -74,13 +70,15 @@
   .mr-{{ section.id }}__row:hover video { transform: scale(1.04); }
   {%- endif %}
 
-  /* Bottom gradient scrim */
+  /* Bottom gradient scrim — raw colour fading to transparent; strength via opacity
+     (avoids colour filters that can render empty and drop the whole rule) */
   .mr-{{ section.id }}__scrim {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
-    background: linear-gradient(to top, {{ grad_solid }} 0%, {{ grad_solid }} 12%, {{ grad_mid }} {{ grad_height | times: 0.55 | round }}%, {{ grad_clear }} {{ grad_height }}%);
+    opacity: {{ grad_alpha }};
+    background: linear-gradient(to top, {{ grad_color }} 0%, {{ grad_color }} 12%, transparent {{ grad_height }}%);
   }
   {%- if s.top_gradient_strength > 0 %}
   /* Top gradient scrim — keeps the site header readable over the video */
