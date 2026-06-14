@@ -237,21 +237,42 @@
     justify-content: inherit;
   }
 
-  /* ── Staggered entry animation for active slide ──────── */
+  /* ── Staggered entry animation for active slide ──────────
+     Elements start hidden (opacity:0) so the un-animated button never
+     flashes as a white box on load before the slide settles. The
+     animation (fill-mode: both) reveals them and holds the end state. ── */
+  .hero-{{ section.id }}-script,
+  .hero-{{ section.id }}-heading,
+  .hero-{{ section.id }}-logo,
+  .hero-{{ section.id }}-description,
+  .hero-{{ section.id }}-btn-row {
+    opacity: 0;
+  }
   .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-script,
   .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-heading,
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-logo,
   .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-description,
-  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-btn {
-    animation: hero-fade-up-{{ section.id }} 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-btn-row {
+    animation: hero-fade-up-{{ section.id }} 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
-  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-script     { animation-delay: 0.15s; }
-  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-heading    { animation-delay: 0.30s; }
-  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-description { animation-delay: 0.45s; }
-  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-btn        { animation-delay: 0.60s; }
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-script      { animation-delay: 0.15s; }
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-heading,
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-logo         { animation-delay: 0.30s; }
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-description  { animation-delay: 0.45s; }
+  .hero-{{ section.id }}-slide.is-active .hero-{{ section.id }}-btn-row      { animation-delay: 0.55s; }
 
   @keyframes hero-fade-up-{{ section.id }} {
     from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Respect reduced-motion: show everything immediately, no flash, no motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-{{ section.id }}-script,
+    .hero-{{ section.id }}-heading,
+    .hero-{{ section.id }}-logo,
+    .hero-{{ section.id }}-description,
+    .hero-{{ section.id }}-btn-row { opacity: 1; animation: none; }
   }
 
   /* ── Arrow navigation ────────────────────────────────── */
