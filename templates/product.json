@@ -13,7 +13,7 @@
       "type": "main-product",
       "settings": {
         "shipping_return_text": "Free return within 30 days of purchase.",
-        "shipping_delivery_text": "Estimate delivery times: 12-26 days (International)",
+        "shipping_delivery_text": "Same-Day Delivery Across the UAE | Worldwide Shipping in 7 Days",
         "shipping_policy_content": "<p>We offer free standard shipping on all orders over $79. Delivery typically takes 5-7 business days for domestic orders and 12-26 business days for international orders.</p><p>Express shipping options are available at checkout. All orders are shipped with tracking information provided via email.</p><p>For returns, you have 30 days from the date of purchase to return your item. Products must be in original condition with tags attached. Return shipping is free for domestic orders.</p>",
         "show_new_arrivals": true,
         "new_arrivals_collection": "apparel",
