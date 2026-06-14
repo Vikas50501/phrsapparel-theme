@@ -919,6 +919,9 @@
             "mobile_video": "shopify://files/videos/Video 2.mp4",
             "eyebrow": "",
             "heading": "BILLIONAIRE RELIGION TRACKSUIT",
+            "heading_color": "#000000",
+            "heading_size_desktop": 30,
+            "heading_size_mobile": 20,
             "subheading": "",
             "link": ""
           }
@@ -931,6 +934,9 @@
             "mobile_media_type": "image",
             "eyebrow": "",
             "heading": "SUMMER ESSENTIALS",
+            "heading_color": "#FFFFFF",
+            "heading_size_desktop": 30,
+            "heading_size_mobile": 20,
             "subheading": "",
             "link": ""
           }
@@ -944,6 +950,9 @@
             "mobile_video": "shopify://files/videos/0001.mp4",
             "eyebrow": "",
             "heading": "EXCLUSIVES",
+            "heading_color": "#ffffff",
+            "heading_size_desktop": 0,
+            "heading_size_mobile": 0,
             "subheading": "",
             "link": "shopify://collections/new-in"
           }
@@ -961,12 +970,14 @@
       "settings": {
         "section_heading": "JOIN OUR COMMUNITY",
         "heading_color": "#000000",
+        "underline_color": "#c47a5a",
         "desktop_aspect": "16/9",
         "mobile_aspect": "4/3",
         "content_position": "left",
         "text_color": "#ffffff",
         "content_padding": 12,
         "heading_size_mobile": 18,
+        "gradient_color": "#000000",
         "gradient_strength": 60,
         "top_gradient_strength": 45,
         "top_gradient_height": 35,
