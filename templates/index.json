@@ -431,7 +431,7 @@
         "category_YzXyRd"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.cc-heading-template--27799287628140__circle_category_Dzgfaw{font-size: 22px !important; }}"
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27799287628140__circle_category_Dzgfaw {font-size: 22px !important; }}"
       ],
       "name": "Category Circles Slider",
       "settings": {
@@ -517,7 +517,7 @@
         "product_aPC6Tm"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading {font-size: 25px !important; }}"
+        "@media screen and (max-width: 767px) {h2.cc-heading-template--27682793849196__circle_category_Dzgfaw, h2.ts-heading {font-size: 22px !important; }}"
       ],
       "name": "Top Selling Products",
       "settings": {
