@@ -22,17 +22,18 @@
     }
   }
   .mr-{{ section.id }}__inner {
-    max-width: {{ s.max_width }}px;
+    max-width: {% if s.full_width %}none{% else %}{{ s.max_width }}px{% endif %};
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: {{ s.row_gap }}px;
-    padding: 0 {{ s.side_padding }}px;
+    padding: 0 {% if s.full_width %}0{% else %}{{ s.side_padding }}px{% endif %};
   }
   .mr-{{ section.id }}__row {
     position: relative;
+    isolation: isolate; /* keeps the arrow/heading layered inside the row, never over the sticky header */
     overflow: hidden;
-    border-radius: {{ s.row_radius }}px;
+    border-radius: {% if s.full_width %}0{% else %}{{ s.row_radius }}px{% endif %};
     text-decoration: none;
     display: block;
   }
@@ -70,6 +71,17 @@
     pointer-events: none;
     background: linear-gradient(to top, rgba(0,0,0,{{ s.gradient_strength | divided_by: 100.0 }}) 0%, rgba(0,0,0,0) 55%);
   }
+  {%- if s.top_gradient_strength > 0 %}
+  /* Top gradient scrim — keeps the site header readable over the video */
+  .mr-{{ section.id }}__scrim-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: {{ s.top_gradient_height }}%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,{{ s.top_gradient_strength | divided_by: 100.0 }}) 0%, rgba(0,0,0,0) 100%);
+  }
+  {%- endif %}
   {%- if s.overlay_opacity > 0 %}
   .mr-{{ section.id }}__overlay {
     position: absolute;
@@ -98,7 +110,7 @@
   .mr-{{ section.id }}__text { max-width: 80%; padding-right: {{ s.arrow_size | plus: 24 }}px; }
   .mr-{{ section.id }}__eyebrow {
     margin: 0 0 8px;
-    color: #fff;
+    color: {{ s.text_color }};
     font-size: 1.2rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -107,7 +119,7 @@
   }
   .mr-{{ section.id }}__heading {
     margin: 0;
-    color: #fff;
+    color: {{ s.text_color }};
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
     font-size: var(--font-h2-size);
@@ -120,7 +132,7 @@
   }
   .mr-{{ section.id }}__sub {
     margin: 10px 0 0;
-    color: #fff;
+    color: {{ s.text_color }};
     font-size: 1.4rem;
     line-height: 1.5;
     opacity: 0.92;
@@ -140,14 +152,14 @@
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: #fff;
-    border: 1.5px solid rgba(255,255,255,0.85);
+    color: {{ s.arrow_color }};
+    border: 1.5px solid {{ s.arrow_color }};
     transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
     pointer-events: none;
   }
   .mr-{{ section.id }}__row:hover .mr-{{ section.id }}__arrow {
-    background: #fff;
-    color: #111;
+    background: {{ s.arrow_color }};
+    color: {{ s.arrow_hover_text }};
     transform: scale(1.06);
   }
   @media screen and (max-width: 749px) {
@@ -254,6 +266,7 @@
         </div>
 
         {%- if s.overlay_opacity > 0 -%}<div class="mr-{{ section.id }}__overlay"></div>{%- endif -%}
+        {%- if s.top_gradient_strength > 0 -%}<div class="mr-{{ section.id }}__scrim-top"></div>{%- endif -%}
         <div class="mr-{{ section.id }}__scrim"></div>
 
         {%- if block.settings.eyebrow != blank or block.settings.heading != blank or block.settings.subheading != blank -%}
@@ -346,22 +359,29 @@
       ],
       "default": "left"
     },
+    { "type": "color", "id": "text_color", "label": "Heading / text colour", "default": "#ffffff" },
     { "type": "range", "id": "content_padding", "label": "Content padding", "min": 12, "max": 64, "step": 2, "unit": "px", "default": 28 },
     { "type": "range", "id": "heading_size_mobile", "label": "Mobile heading size", "min": 18, "max": 48, "step": 1, "unit": "px", "default": 30 },
     { "type": "range", "id": "gradient_strength", "label": "Bottom gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 65 },
+    { "type": "header", "content": "Top overlay (header readability)" },
+    { "type": "range", "id": "top_gradient_strength", "label": "Top gradient strength", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 45 },
+    { "type": "range", "id": "top_gradient_height", "label": "Top gradient height", "min": 10, "max": 60, "step": 5, "unit": "%", "default": 35 },
     { "type": "color", "id": "overlay_color", "label": "Overlay colour", "default": "#000000" },
     { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 0 },
     { "type": "checkbox", "id": "hover_zoom", "label": "Zoom media on hover", "default": true },
 
     { "type": "header", "content": "Arrow button" },
+    { "type": "color", "id": "arrow_color", "label": "Arrow colour", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_hover_text", "label": "Arrow colour on hover (icon)", "default": "#111111" },
     { "type": "range", "id": "arrow_size", "label": "Size (desktop)", "min": 36, "max": 84, "step": 2, "unit": "px", "default": 56 },
     { "type": "range", "id": "arrow_size_mobile", "label": "Size (mobile)", "min": 30, "max": 64, "step": 2, "unit": "px", "default": 44 },
     { "type": "range", "id": "arrow_offset", "label": "Edge offset", "min": 8, "max": 48, "step": 2, "unit": "px", "default": 24 },
 
     { "type": "header", "content": "Layout & background" },
+    { "type": "checkbox", "id": "full_width", "label": "Full width (no side padding)", "default": true },
     { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
-    { "type": "range", "id": "max_width", "label": "Max width", "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "max_width", "label": "Max width (when not full width)", "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "side_padding", "label": "Side padding (when not full width)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 0 },
     { "type": "range", "id": "row_gap", "label": "Gap between rows", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 8 },
     { "type": "range", "id": "row_radius", "label": "Corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 0 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
