@@ -546,6 +546,15 @@
     "marquee_images_YyjmJr": {
       "type": "marquee-images",
       "blocks": {
+        "row2_item_qrzhJz": {
+          "type": "row2_item",
+          "settings": {
+            "item_type": "logo",
+            "text": "",
+            "link": "shopify://products/ghetto-glory-jerseys-red",
+            "image": "shopify://shop_images/ghettogloryred.jpg"
+          }
+        },
         "row1_item_pgpkGn": {
           "type": "row1_item",
           "settings": {
@@ -593,6 +602,7 @@
         }
       },
       "block_order": [
+        "row2_item_qrzhJz",
         "row1_item_pgpkGn",
         "row1_item_Dmwagy",
         "row1_item_jVLcPA",
