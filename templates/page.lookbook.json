@@ -703,8 +703,14 @@
         "image_WaHCxd",
         "image_pDYN97"
       ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {.lb-popup-btn-template--27799166943596__lookbook_iWLXMR {padding: 8px 10px !important; }}"
+      ],
       "name": "Lookbook",
       "settings": {
+        "hide_desktop": false,
+        "hide_tablet": false,
+        "hide_mobile": false,
         "heading": "",
         "heading_size": 32,
         "heading_weight": "500",
@@ -724,7 +730,9 @@
         "img_radius": 0,
         "img_hover_scale": 104,
         "img_placeholder_bg": "#f0efed",
+        "always_show_cards": false,
         "popup_width": 240,
+        "popup_width_mobile": 160,
         "popup_radius": 8,
         "popup_shadow": "0 8px 32px rgba(0,0,0,0.14)",
         "popup_bg": "#ffffff",
