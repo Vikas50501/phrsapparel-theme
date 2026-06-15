@@ -11,6 +11,9 @@
   "sections": {
     "main": {
       "type": "main-product",
+      "custom_css": [
+        "@media screen and (max-width: 767px) {h2.kushi-new-arrivals__heading {font-size: 22px !important; }}"
+      ],
       "settings": {
         "shipping_return_text": "Free return within 30 days of purchase.",
         "shipping_delivery_text": "Same-Day Delivery Across the UAE | Worldwide Shipping in 7 Days",
