@@ -172,7 +172,7 @@
                 assign is_logo = true
               endif
               assign logo_src = section.settings.logo_image
-              if is_logo and block.settings.image != blank
+              if logo_src == blank
                 assign logo_src = block.settings.image
               endif
             -%}
@@ -217,7 +217,7 @@
                 assign is_logo = true
               endif
               assign logo_src = section.settings.logo_image
-              if is_logo and block.settings.image != blank
+              if logo_src == blank
                 assign logo_src = block.settings.image
               endif
             -%}
