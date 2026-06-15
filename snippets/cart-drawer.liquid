@@ -495,40 +495,51 @@
           </details>
         {%- endif -%}
 
-        {%- comment -%} Frequently Bought Together — cart upsell (recommendations API) {%- endcomment -%}
-        <div
-          id="CartDrawer-Recommendations"
-          class="cart-fbt"
-          data-heading="Frequently Bought Together"
-          data-intent="related"
-          data-limit="6"
-          data-currency="{{ cart.currency.symbol }}"
-          hidden
-        ></div>
-
-        {%- comment -%} Fallback products (used when Shopify has no recommendation data yet) {%- endcomment -%}
-        <script type="application/json" id="CartDrawer-FbtFallback">
-        [
-          {%- for product in collections.all.products limit: 14 -%}
-            {%- if product.available -%}
-            {
-              "id": {{ product.id }},
-              "title": {{ product.title | json }},
-              "url": {{ product.url | json }},
-              "price": {{ product.price }},
-              "available": true,
-              "featured_image": {{ product.featured_image | image_url: width: 200 | json }},
-              "variants": [
-                {%- for variant in product.variants -%}
-                  { "id": {{ variant.id }}, "available": {{ variant.available }} }{%- unless forloop.last -%},{%- endunless -%}
-                {%- endfor -%}
-              ]
-            },
-            {%- endif -%}
-          {%- endfor -%}
-          {}
-        ]
-        </script>
+        {%- comment -%}
+          Frequently Bought Together — rendered server-side so it ALWAYS shows and
+          re-renders correctly with the drawer on every add/remove (no JS race, no flicker).
+          Excludes products already in the cart; limited to a tidy row.
+        {%- endcomment -%}
+        {%- liquid
+          assign fbt_limit = 8
+          assign fbt_heading = 'Frequently Bought Together'
+          assign cart_pids = ','
+          for line_item in cart.items
+            assign cart_pids = cart_pids | append: line_item.product_id | append: ','
+          endfor
+        -%}
+        {%- if cart.item_count > 0 -%}
+          {%- assign fbt_shown = 0 -%}
+          {%- capture fbt_cards -%}
+            {%- for product in collections.all.products -%}
+              {%- if fbt_shown >= fbt_limit -%}{%- break -%}{%- endif -%}
+              {%- assign pid_token = product.id | prepend: ',' | append: ',' -%}
+              {%- if product.available and product.selected_or_first_available_variant != blank -%}
+                {%- unless cart_pids contains pid_token -%}
+                  <div class="cart-fbt__card">
+                    <a class="cart-fbt__media" href="{{ product.url }}">
+                      {%- if product.featured_image != blank -%}
+                        <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" loading="lazy" width="200" height="200" draggable="false">
+                      {%- endif -%}
+                    </a>
+                    <div class="cart-fbt__info">
+                      <a class="cart-fbt__title" href="{{ product.url }}">{{ product.title }}</a>
+                      <div class="cart-fbt__price">{{ product.price | money }}</div>
+                      <button type="button" class="cart-fbt__add" data-vid="{{ product.selected_or_first_available_variant.id }}">Add +</button>
+                    </div>
+                  </div>
+                  {%- assign fbt_shown = fbt_shown | plus: 1 -%}
+                {%- endunless -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if fbt_shown > 0 -%}
+            <div class="cart-fbt">
+              <p class="cart-fbt__head">{{ fbt_heading }}</p>
+              <div class="cart-fbt__track" data-fbt-track>{{ fbt_cards }}</div>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
 
         <style>
           .cart-fbt { margin: 4px 0 10px; }
@@ -553,95 +564,35 @@
             if (window.__cartFbtInit) return;
             window.__cartFbtInit = true;
 
-            var ID = 'CartDrawer-Recommendations';
-            function el() { return document.getElementById(ID); }
-            function cfg(root, key, def) { var v = root && root.dataset[key]; return (v !== undefined && v !== '') ? v : def; }
-            function money(cents, sym) { var v = (cents || 0) / 100; return sym + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
-            function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-            function fallbackProducts() {
-              var s = document.getElementById('CartDrawer-FbtFallback');
-              if (!s) return [];
-              try { return (JSON.parse(s.textContent) || []).filter(function (p) { return p && p.id; }); } catch (e) { return []; }
-            }
-
-            function render(root, products, cart) {
-              var LIMIT = parseInt(cfg(root, 'limit', '6'), 10) || 6;
-              var HEADING = cfg(root, 'heading', 'You may also like');
-              var SYM = cfg(root, 'currency', '');
-              var inCart = {};
-              cart.items.forEach(function (i) { inCart[i.product_id] = true; });
-              var list = products.filter(function (p) { return p.available && !inCart[p.id]; }).slice(0, LIMIT);
-              if (!list.length) { root.hidden = true; root.innerHTML = ''; return; }
-
-              var html = '<p class="cart-fbt__head">' + esc(HEADING) + '</p><div class="cart-fbt__track" data-fbt-track>';
-              list.forEach(function (p) {
-                var v = (p.variants || []).filter(function (x) { return x.available; })[0] || (p.variants || [])[0];
-                if (!v) return;
-                var img = p.featured_image || (p.images && p.images[0]) || '';
-                html += '<div class="cart-fbt__card">'
-                  + '<a class="cart-fbt__media" href="' + p.url + '">' + (img ? '<img src="' + img + '" alt="' + esc(p.title) + '" loading="lazy" draggable="false">' : '') + '</a>'
-                  + '<div class="cart-fbt__info">'
-                  + '<a class="cart-fbt__title" href="' + p.url + '">' + esc(p.title) + '</a>'
-                  + '<div class="cart-fbt__price">' + money(p.price, SYM) + '</div>'
-                  + '<button type="button" class="cart-fbt__add" data-vid="' + v.id + '">Add +</button>'
-                  + '</div></div>';
-              });
-              html += '</div>';
-              root.innerHTML = html;
-              root.hidden = false;
-              enableDrag(root.querySelector('[data-fbt-track]'));
-            }
-
-            /* Drag + wheel scrolling so the row is easy to scroll on desktop too */
-            function enableDrag(track) {
-              if (!track || track.dataset.dragInit) return;
-              track.dataset.dragInit = '1';
-              var down = false, moved = false, sx = 0, sl = 0;
-              track.addEventListener('pointerdown', function (e) { down = true; moved = false; sx = e.clientX; sl = track.scrollLeft; });
-              track.addEventListener('pointermove', function (e) {
-                if (!down) return;
-                var d = e.clientX - sx;
-                if (Math.abs(d) > 4) { moved = true; track.classList.add('is-dragging'); }
-                track.scrollLeft = sl - d;
-              });
-              function end() { down = false; track.classList.remove('is-dragging'); }
-              window.addEventListener('pointerup', end);
-              window.addEventListener('pointercancel', end);
-              /* prevent a drag from also triggering the card link */
-              track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
-              /* vertical wheel scrolls the row horizontally */
-              track.addEventListener('wheel', function (e) {
-                if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && track.scrollWidth > track.clientWidth) {
-                  track.scrollLeft += e.deltaY; e.preventDefault();
-                }
-              }, { passive: false });
-            }
-
-            var loading = false;
-            function load() {
-              var root = el();
-              if (!root || loading) return;
-              loading = true;
-              var INTENT = cfg(root, 'intent', 'related');
-              var LIMIT = parseInt(cfg(root, 'limit', '6'), 10) || 6;
-              fetch('/cart.js', { headers: { 'Accept': 'application/json' } })
-                .then(function (r) { return r.json(); })
-                .then(function (cart) {
-                  var rt = el(); if (!rt) return;
-                  if (!cart.items || !cart.items.length) { rt.hidden = true; rt.innerHTML = ''; return; }
-                  var pid = cart.items[0].product_id;
-                  return fetch('/recommendations/products.json?product_id=' + pid + '&intent=' + INTENT + '&limit=' + (LIMIT + 4))
-                    .then(function (r) { return r.json(); })
-                    .then(function (res) { return (res && res.products) || []; })
-                    .catch(function () { return []; })
-                    .then(function (products) {
-                      if (!products.length) products = fallbackProducts();
-                      var r2 = el(); if (r2) render(r2, products, cart);
-                    });
-                })
-                .catch(function () { var rt = el(); if (rt) rt.hidden = true; })
-                .finally(function () { loading = false; });
-            }
+            /* Horizontal scroll helpers — delegated, so they keep working after every drawer re-render */
+            var drag = null, suppressClick = false;
+            document.addEventListener('pointerdown', function (e) {
+              var track = e.target.closest('.cart-fbt__track');
+              if (!track) return;
+              drag = { track: track, x: e.clientX, sl: track.scrollLeft };
+              suppressClick = false;
+            });
+            document.addEventListener('pointermove', function (e) {
+              if (!drag) return;
+              var d = e.clientX - drag.x;
+              if (Math.abs(d) > 4) { suppressClick = true; drag.track.classList.add('is-dragging'); }
+              drag.track.scrollLeft = drag.sl - d;
+            });
+            function endDrag() { if (drag) { drag.track.classList.remove('is-dragging'); } drag = null; }
+            document.addEventListener('pointerup', endDrag);
+            document.addEventListener('pointercancel', endDrag);
+            /* if it was a drag, swallow the click so the card link doesn't open */
+            document.addEventListener('click', function (e) {
+              if (suppressClick && e.target.closest('.cart-fbt__track')) { e.preventDefault(); e.stopPropagation(); suppressClick = false; }
+            }, true);
+            /* vertical wheel -> horizontal scroll */
+            document.addEventListener('wheel', function (e) {
+              var track = e.target.closest('.cart-fbt__track');
+              if (!track) return;
+              if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && track.scrollWidth > track.clientWidth) {
+                track.scrollLeft += e.deltaY; e.preventDefault();
+              }
+            }, { passive: false });
 
             /* Add+ via delegation so it survives cart re-renders */
             document.addEventListener('click', function (e) {
@@ -671,22 +622,14 @@
                   if (res.status) return;
                   if (drawer && res.sections && typeof drawer.renderContents === 'function') {
                     drawer.classList.remove('is-empty');
-                    drawer.renderContents(res);
+                    drawer.renderContents(res); /* re-renders the drawer incl. the server-rendered FBT row */
                   }
-                  load();
                 })
                 .catch(function () {})
                 .finally(function () { btn.disabled = false; btn.textContent = original; });
             });
 
-            if (typeof subscribe === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
-              subscribe(window.PUB_SUB_EVENTS.cartUpdate, function () { setTimeout(load, 60); });
-            }
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', load);
-            } else {
-              load();
-            }
+            /* No load()/fetch needed — the row is rendered server-side and re-renders with the drawer. */
           })();
         </script>
 
