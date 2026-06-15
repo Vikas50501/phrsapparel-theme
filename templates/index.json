@@ -549,7 +549,7 @@
         "row1_item_pgpkGn": {
           "type": "row1_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/ph-panel-t-shirt-white",
             "image": "shopify://shop_images/1_ph_1.jpg"
@@ -573,10 +573,28 @@
             "image": "shopify://shop_images/3_Phareligions_1.jpg"
           }
         },
+        "row1_item_JtCRaE": {
+          "type": "row1_item",
+          "settings": {
+            "item_type": "logo",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/ph-silicon-hoodie-set",
+            "image": "shopify://shop_images/phsiliconset2.jpg"
+          }
+        },
+        "row2_item_qrzhJz": {
+          "type": "row2_item",
+          "settings": {
+            "item_type": "logo",
+            "text": "",
+            "link": "shopify://products/ghetto-glory-jerseys-red",
+            "image": "shopify://shop_images/ghettogloryred.jpg"
+          }
+        },
         "row2_item_YacqVJ": {
           "type": "row2_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/iphone-cases-multicolor",
             "image": "shopify://shop_images/concretejungleiphonecase.png"
@@ -585,10 +603,19 @@
         "row2_item_D8Ncn6": {
           "type": "row2_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/purple-glowride-reflective-skateboard",
             "image": "shopify://shop_images/Purple-Skateboard-1.jpg"
+          }
+        },
+        "row2_item_3Yxifg": {
+          "type": "row2_item",
+          "settings": {
+            "item_type": "logo",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/ipac-singlet-black",
+            "image": "shopify://shop_images/blackipacsinglet.jpg"
           }
         }
       },
@@ -596,14 +623,17 @@
         "row1_item_pgpkGn",
         "row1_item_Dmwagy",
         "row1_item_jVLcPA",
+        "row1_item_JtCRaE",
+        "row2_item_qrzhJz",
         "row2_item_YacqVJ",
-        "row2_item_D8Ncn6"
+        "row2_item_D8Ncn6",
+        "row2_item_3Yxifg"
       ],
       "name": "Marquee Ticker",
       "settings": {
         "logo_image": "shopify://shop_images/PHAREL_FINAL_LOGO_1.png",
         "logo_height": 76,
-        "logo_height_mobile": 30,
+        "logo_height_mobile": 40,
         "text_size": 60,
         "text_weight": "300",
         "text_transform": "uppercase",
