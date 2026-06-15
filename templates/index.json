@@ -546,19 +546,10 @@
     "marquee_images_YyjmJr": {
       "type": "marquee-images",
       "blocks": {
-        "row2_item_qrzhJz": {
-          "type": "row2_item",
-          "settings": {
-            "item_type": "logo",
-            "text": "",
-            "link": "shopify://products/ghetto-glory-jerseys-red",
-            "image": "shopify://shop_images/ghettogloryred.jpg"
-          }
-        },
         "row1_item_pgpkGn": {
           "type": "row1_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/ph-panel-t-shirt-white",
             "image": "shopify://shop_images/1_ph_1.jpg"
@@ -567,7 +558,7 @@
         "row1_item_Dmwagy": {
           "type": "row1_item",
           "settings": {
-            "item_type": "logo",
+            "item_type": "text",
             "text": "NEW Arrivals",
             "link": "shopify://products/billionaire-religion-tracksuit",
             "image": "shopify://shop_images/IMG_6509.jpg"
@@ -582,6 +573,15 @@
             "image": "shopify://shop_images/3_Phareligions_1.jpg"
           }
         },
+        "row2_item_qrzhJz": {
+          "type": "row2_item",
+          "settings": {
+            "item_type": "logo",
+            "text": "",
+            "link": "shopify://products/ghetto-glory-jerseys-red",
+            "image": "shopify://shop_images/ghettogloryred.jpg"
+          }
+        },
         "row2_item_YacqVJ": {
           "type": "row2_item",
           "settings": {
@@ -594,7 +594,7 @@
         "row2_item_D8Ncn6": {
           "type": "row2_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/purple-glowride-reflective-skateboard",
             "image": "shopify://shop_images/Purple-Skateboard-1.jpg"
@@ -602,10 +602,10 @@
         }
       },
       "block_order": [
-        "row2_item_qrzhJz",
         "row1_item_pgpkGn",
         "row1_item_Dmwagy",
         "row1_item_jVLcPA",
+        "row2_item_qrzhJz",
         "row2_item_YacqVJ",
         "row2_item_D8Ncn6"
       ],
