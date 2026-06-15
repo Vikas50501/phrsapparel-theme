@@ -58,6 +58,7 @@
   /* ── Image panel ─────────────────────────────────────── */
   .lb-panel-{{ section.id }} {
     position: relative;
+    isolation: isolate; /* keep the product cards layered inside the panel, never over the sticky header */
     overflow: visible;
     cursor: pointer;
   }
@@ -93,16 +94,16 @@
     right: {{ section.settings.popup_offset_x }}px;
     z-index: 20;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;            /* keep one row; scroll instead of stacking/overflowing */
+    flex-direction: column;       /* desktop/tablet: stacked vertically */
+    align-items: flex-start;
+    flex-wrap: nowrap;
     gap: {{ section.settings.popup_gap }}px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    max-height: calc(100% - {{ section.settings.popup_offset_y | times: 2 }}px);
+    overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    padding-bottom: 2px;
     pointer-events: none;
     opacity: 0;
     transform: translateY(10px);
@@ -111,7 +112,8 @@
   .lb-popups-wrap-{{ section.id }}::-webkit-scrollbar { display: none; }
 
   .lb-panel-{{ section.id }}:hover .lb-popups-wrap-{{ section.id }},
-  .lb-panel-{{ section.id }}:focus-within .lb-popups-wrap-{{ section.id }} {
+  .lb-panel-{{ section.id }}:focus-within .lb-popups-wrap-{{ section.id }},
+  .lb-panel-{{ section.id }}.lb-active .lb-popups-wrap-{{ section.id }} {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
@@ -228,12 +230,15 @@
     transform: translateX(3px);
   }
 
-  /* ── Mobile: smaller product cards, always shown, horizontal scroll ── */
+  /* ── Mobile: smaller cards, HORIZONTAL scroll, revealed on tap ── */
   @media (max-width: 749px) {
     .lb-popups-wrap-{{ section.id }} {
-      opacity: 1;
-      transform: none;
-      pointer-events: auto;
+      flex-direction: row;        /* mobile: horizontal */
+      align-items: stretch;
+      flex-wrap: nowrap;
+      max-height: none;
+      overflow-x: auto;
+      overflow-y: hidden;
       left: {{ section.settings.popup_offset_x | times: 0.5 | round }}px;
       right: {{ section.settings.popup_offset_x | times: 0.5 | round }}px;
       bottom: {{ section.settings.popup_offset_y | times: 0.5 | round }}px;
@@ -388,6 +393,32 @@
   {%- endif -%}
 
 </section>
+
+<script>
+(function () {
+  var sec = document.getElementById('lb-section-{{ section.id }}');
+  if (!sec) return;
+  var panels = sec.querySelectorAll('.lb-panel-{{ section.id }}');
+  var mq = window.matchMedia('(max-width: 749px)');
+
+  panels.forEach(function (panel) {
+    panel.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;     /* let "Shop Now" links navigate */
+      if (!mq.matches) return;               /* tap-to-reveal only on mobile; desktop uses hover */
+      var open = panel.classList.contains('lb-active');
+      panels.forEach(function (p) { p.classList.remove('lb-active'); });
+      if (!open) panel.classList.add('lb-active');
+    });
+  });
+
+  /* tap outside any panel closes the open card */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.lb-panel-{{ section.id }}')) {
+      panels.forEach(function (p) { p.classList.remove('lb-active'); });
+    }
+  });
+})();
+</script>
 
 {% schema %}
 {
