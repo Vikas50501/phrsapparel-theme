@@ -171,29 +171,25 @@
               if block.settings.item_type == 'logo'
                 assign is_logo = true
               endif
-              assign logo_src = section.settings.logo_image
-              if logo_src == blank
-                assign logo_src = block.settings.image
-              endif
             -%}
-            {%- if is_logo and logo_src != blank -%}
+            {%- comment -%} Optional product image — shown for BOTH text and logo items {%- endcomment -%}
+            {%- if block.settings.image != blank -%}
+              <span class="mq-img-{{ section.id }}" {{ block.shopify_attributes }}>
+                <img src="{{ block.settings.image | image_url: width: 300 }}" alt="{{ block.settings.image.alt | default: block.settings.text | escape }}" loading="lazy">
+              </span>
+            {%- endif -%}
+            {%- comment -%} Then the logo (uses section Logo image) or the text {%- endcomment -%}
+            {%- if is_logo and section.settings.logo_image != blank -%}
               {%- if block.settings.link != blank -%}
-                <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ logo_src | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
+                <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
               {%- else -%}
-                <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ logo_src | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
+                <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
               {%- endif -%}
-            {%- else -%}
-              {%- if block.settings.image != blank -%}
-                <span class="mq-img-{{ section.id }}" {{ block.shopify_attributes }}>
-                  <img src="{{ block.settings.image | image_url: width: 300 }}" alt="{{ block.settings.image.alt | default: block.settings.text | escape }}" loading="lazy">
-                </span>
-              {%- endif -%}
-              {%- if block.settings.text != blank -%}
-                {%- if block.settings.link != blank -%}
-                  <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
-                {%- else -%}
-                  <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
-                {%- endif -%}
+            {%- elsif block.settings.text != blank -%}
+              {%- if block.settings.link != blank -%}
+                <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+              {%- else -%}
+                <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
               {%- endif -%}
             {%- endif -%}
             {%- if section.settings.show_separator and forloop.last == false -%}
@@ -216,29 +212,25 @@
               if block.settings.item_type == 'logo'
                 assign is_logo = true
               endif
-              assign logo_src = section.settings.logo_image
-              if logo_src == blank
-                assign logo_src = block.settings.image
-              endif
             -%}
-            {%- if is_logo and logo_src != blank -%}
+            {%- comment -%} Optional product image — shown for BOTH text and logo items {%- endcomment -%}
+            {%- if block.settings.image != blank -%}
+              <span class="mq-img-{{ section.id }}" {{ block.shopify_attributes }}>
+                <img src="{{ block.settings.image | image_url: width: 300 }}" alt="{{ block.settings.image.alt | default: block.settings.text | escape }}" loading="lazy">
+              </span>
+            {%- endif -%}
+            {%- comment -%} Then the logo (uses section Logo image) or the text {%- endcomment -%}
+            {%- if is_logo and section.settings.logo_image != blank -%}
               {%- if block.settings.link != blank -%}
-                <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ logo_src | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
+                <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
               {%- else -%}
-                <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ logo_src | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
+                <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
               {%- endif -%}
-            {%- else -%}
-              {%- if block.settings.image != blank -%}
-                <span class="mq-img-{{ section.id }}" {{ block.shopify_attributes }}>
-                  <img src="{{ block.settings.image | image_url: width: 300 }}" alt="{{ block.settings.image.alt | default: block.settings.text | escape }}" loading="lazy">
-                </span>
-              {%- endif -%}
-              {%- if block.settings.text != blank -%}
-                {%- if block.settings.link != blank -%}
-                  <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
-                {%- else -%}
-                  <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
-                {%- endif -%}
+            {%- elsif block.settings.text != blank -%}
+              {%- if block.settings.link != blank -%}
+                <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+              {%- else -%}
+                <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
               {%- endif -%}
             {%- endif -%}
             {%- if section.settings.show_separator and forloop.last == false -%}
@@ -277,7 +269,7 @@
         },
         { "type": "text",         "id": "text",  "label": "Text",  "info": "Used when 'This item shows' = Text" },
         { "type": "url",          "id": "link",  "label": "Link",  "info": "Optional — makes the item a link" },
-        { "type": "image_picker", "id": "image", "label": "Image", "info": "For a Logo item: upload the logo here (or use the section Logo image). For a Text item: optional image shown before the text." }
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional product image, shown before the text/logo in this item." }
       ]
     },
     {
@@ -298,7 +290,7 @@
         },
         { "type": "text",         "id": "text",  "label": "Text",  "info": "Used when 'This item shows' = Text" },
         { "type": "url",          "id": "link",  "label": "Link",  "info": "Optional — makes the item a link" },
-        { "type": "image_picker", "id": "image", "label": "Image", "info": "For a Logo item: upload the logo here (or use the section Logo image). For a Text item: optional image shown before the text." }
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional product image, shown before the text/logo in this item." }
       ]
     }
   ],
