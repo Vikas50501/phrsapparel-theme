@@ -558,7 +558,7 @@
         "row1_item_Dmwagy": {
           "type": "row1_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/billionaire-religion-tracksuit",
             "image": "shopify://shop_images/IMG_6509.jpg"
@@ -576,7 +576,7 @@
         "row1_item_JtCRaE": {
           "type": "row1_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/ph-silicon-hoodie-set",
             "image": "shopify://shop_images/phsiliconset2.jpg"
@@ -594,7 +594,7 @@
         "row2_item_YacqVJ": {
           "type": "row2_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/iphone-cases-multicolor",
             "image": "shopify://shop_images/concretejungleiphonecase.png"
@@ -612,7 +612,7 @@
         "row2_item_3Yxifg": {
           "type": "row2_item",
           "settings": {
-            "item_type": "text",
+            "item_type": "logo",
             "text": "NEW Arrivals",
             "link": "shopify://products/ipac-singlet-black",
             "image": "shopify://shop_images/blackipacsinglet.jpg"
