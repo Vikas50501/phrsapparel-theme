@@ -1,35 +1,46 @@
-{%- assign cc_underline_display = 'block' -%}
-{%- unless section.settings.show_underline -%}{%- assign cc_underline_display = 'none' -%}{%- endunless -%}
+{%- liquid
+  assign s = section.settings
+  assign mobile_items = s.mobile_items_visible | default: 3
+  assign m_gap = s.mobile_item_gap | default: 14
+  assign m_gap_total = m_gap | times: mobile_items
+  assign dir = 'normal'
+  if s.marquee_direction == 'right'
+    assign dir = 'reverse'
+  endif
+  assign cc_underline_display = 'block'
+  unless s.show_underline
+    assign cc_underline_display = 'none'
+  endunless
+-%}
 {%- style -%}
   /* ════════════════════════════════════════════════════
-     CATEGORY CIRCLES SLIDER — matches video exactly
+     CATEGORY CIRCLES — seamless infinite marquee
   ════════════════════════════════════════════════════ */
 
   .cc-section-{{ section.id }} {
-    background: {{ section.settings.bg_color }};
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    background: {{ s.bg_color }};
+    padding-top: {{ s.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ s.padding_bottom | times: 0.75 | round: 0 }}px;
     overflow: hidden;
   }
 
   @media screen and (min-width: 750px) {
     .cc-section-{{ section.id }} {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-top: {{ s.padding_top }}px;
+      padding-bottom: {{ s.padding_bottom }}px;
     }
   }
 
-  /* Max-width container — section always centered */
   .cc-container-{{ section.id }} {
-    max-width: {{ section.settings.max_width }}px;
+    max-width: {{ s.max_width }}px;
     margin: 0 auto;
     width: 100%;
   }
 
   /* ── Heading ─────────────────────────────────────────── */
   .cc-heading-wrap-{{ section.id }} {
-    text-align: {{ section.settings.heading_align }};
-    margin-bottom: {{ section.settings.heading_gap }}px;
+    text-align: {{ s.heading_align }};
+    margin-bottom: {{ s.heading_gap }}px;
     padding: 0 24px;
   }
 
@@ -38,37 +49,35 @@
     position: relative;
     font-size: var(--font-h2-size);
     font-weight: var(--font-h2-weight);
-    font-style: normal;
     font-family: inherit;
-    color: {{ section.settings.heading_color }};
-    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    color: {{ s.heading_color }};
+    letter-spacing: {{ s.heading_spacing | divided_by: 100.0 }}em;
     line-height: 1.2;
     margin: 0;
-    padding-bottom: {{ section.settings.underline_gap }}px;
+    padding-bottom: {{ s.underline_gap }}px;
   }
 
-  /* Underline accent */
   .cc-heading-{{ section.id }}::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: {{ section.settings.underline_width }}px;
-    height: {{ section.settings.underline_height }}px;
-    background: {{ section.settings.underline_color }};
-    border-radius: {{ section.settings.underline_height }}px;
+    width: {{ s.underline_width }}px;
+    height: {{ s.underline_height }}px;
+    background: {{ s.underline_color }};
+    border-radius: {{ s.underline_height }}px;
     display: {{ cc_underline_display }};
   }
 
   .cc-heading-wrap-{{ section.id }}[data-align="left"]  .cc-heading-{{ section.id }}::after { left: 0; transform: none; }
   .cc-heading-wrap-{{ section.id }}[data-align="right"] .cc-heading-{{ section.id }}::after { left: auto; right: 0; transform: none; }
 
-  /* ── Slider viewport ─────────────────────────────────── */
+  /* ── Marquee viewport ────────────────────────────────── */
   .cc-viewport-{{ section.id }} {
     overflow: hidden;
     position: relative;
-    padding: {{ section.settings.slider_pad_y }}px 0;
+    padding: {{ s.slider_pad_y }}px 0;
   }
 
   /* Fade edges */
@@ -78,53 +87,52 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: {{ section.settings.edge_fade }}px;
+    width: {{ s.edge_fade }}px;
     z-index: 2;
     pointer-events: none;
   }
+  .cc-viewport-{{ section.id }}::before { left: 0;  background: linear-gradient(to right, {{ s.bg_color }}, transparent); }
+  .cc-viewport-{{ section.id }}::after  { right: 0; background: linear-gradient(to left,  {{ s.bg_color }}, transparent); }
 
-  .cc-viewport-{{ section.id }}::before {
-    left: 0;
-    background: linear-gradient(to right, {{ section.settings.bg_color }}, transparent);
-  }
-
-  .cc-viewport-{{ section.id }}::after {
-    right: 0;
-    background: linear-gradient(to left, {{ section.settings.bg_color }}, transparent);
-  }
-
+  /* ── Track: two identical copies, animate -50% for a seamless loop ── */
   .cc-track-{{ section.id }} {
     display: flex;
-    gap: {{ section.settings.item_gap }}px;
     width: max-content;
     will-change: transform;
-    cursor: grab;
-    user-select: none;
-    padding-left: {{ section.settings.track_start_pad }}px;
-    padding-right: {{ section.settings.track_start_pad }}px;
+    animation: cc-scroll-{{ section.id }} {{ s.marquee_speed }}s linear infinite;
+    animation-direction: {{ dir }};
   }
-
-  .cc-track-{{ section.id }}.is-dragging { cursor: grabbing; }
+  @keyframes cc-scroll-{{ section.id }} {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  {%- if s.pause_on_hover %}
+  .cc-viewport-{{ section.id }}:hover .cc-track-{{ section.id }} { animation-play-state: paused; }
+  {%- endif %}
+  @media (prefers-reduced-motion: reduce) {
+    .cc-track-{{ section.id }} { animation: none; }
+  }
 
   /* ── Each category item ──────────────────────────────── */
   .cc-item-{{ section.id }} {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: {{ section.settings.label_gap }}px;
+    gap: {{ s.label_gap }}px;
     flex-shrink: 0;
     text-decoration: none;
     color: inherit;
-    width: {{ section.settings.circle_size }}px;
+    width: {{ s.circle_size }}px;
+    margin-right: {{ s.item_gap }}px;
   }
 
   .cc-circle-{{ section.id }} {
-    width: {{ section.settings.circle_size }}px;
-    height: {{ section.settings.circle_size }}px;
+    width: {{ s.circle_size }}px;
+    height: {{ s.circle_size }}px;
     border-radius: 50%;
     overflow: hidden;
-    background: {{ section.settings.circle_bg }};
-    border: {{ section.settings.circle_border_width }}px solid {{ section.settings.circle_border_color }};
+    background: {{ s.circle_bg }};
+    border: {{ s.circle_border_width }}px solid {{ s.circle_border_color }};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -138,7 +146,7 @@
   .cc-item-{{ section.id }}:hover .cc-circle-{{ section.id }} {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(0,0,0,0.10);
-    border-color: {{ section.settings.circle_border_hover }};
+    border-color: {{ s.circle_border_hover }};
   }
 
   .cc-circle-{{ section.id }} img {
@@ -149,13 +157,12 @@
     pointer-events: none;
     transform-origin: center center;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    padding: {{ section.settings.image_padding }}px;
+    padding: {{ s.image_padding }}px;
     box-sizing: border-box;
   }
 
-  /* On hover — image rotates (like the video) */
   .cc-item-{{ section.id }}:hover .cc-circle-{{ section.id }} img {
-    transform: rotate({{ section.settings.hover_rotate }}deg) scale({{ section.settings.hover_scale | divided_by: 100.0 }});
+    transform: rotate({{ s.hover_rotate }}deg) scale({{ s.hover_scale | divided_by: 100.0 }});
   }
 
   .cc-circle-{{ section.id }} .placeholder-svg {
@@ -166,93 +173,63 @@
 
   /* ── Label ───────────────────────────────────────────── */
   .cc-label-{{ section.id }} {
-    font-size: {{ section.settings.label_size }}px;
-    font-weight: {{ section.settings.label_weight }};
+    font-size: {{ s.label_size }}px;
+    font-weight: {{ s.label_weight }};
     font-family: inherit;
-    color: {{ section.settings.label_color }};
-    letter-spacing: {{ section.settings.label_spacing | divided_by: 100.0 }}em;
-    text-transform: {{ section.settings.label_transform }};
+    color: {{ s.label_color }};
+    letter-spacing: {{ s.label_spacing | divided_by: 100.0 }}em;
+    text-transform: {{ s.label_transform }};
     text-align: center;
     line-height: 1.3;
     margin: 0;
-    padding: 0;
     transition: color 0.3s;
   }
 
   .cc-item-{{ section.id }}:hover .cc-label-{{ section.id }} {
-    color: {{ section.settings.label_hover_color }};
+    color: {{ s.label_hover_color }};
   }
 
-  /* ── Dots pagination ─────────────────────────────────── */
-  .cc-dots-{{ section.id }} {
-    display: flex;
-    justify-content: center;
-    gap: {{ section.settings.dot_gap }}px;
-    margin-top: {{ section.settings.dots_margin_top }}px;
-  }
-
-  .cc-dot-{{ section.id }} {
-    width: {{ section.settings.dot_size }}px;
-    height: {{ section.settings.dot_size }}px;
-    border-radius: 50%;
-    background: {{ section.settings.dot_color }};
-    opacity: 0.35;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: opacity 0.25s, background 0.25s, width 0.25s;
-    flex-shrink: 0;
-  }
-
-  .cc-dot-{{ section.id }}.is-active {
-    opacity: 1;
-    background: {{ section.settings.dot_active_color }};
-    width: {{ section.settings.dot_size | times: 2 }}px;
-    border-radius: {{ section.settings.dot_size }}px;
-  }
-
-  /* ── Mobile: 2 circles visible ───────────────────────── */
+  /* ── Mobile: show exactly N circles, fully editable ──── */
   @media screen and (max-width: 749px) {
+    .cc-section-{{ section.id }} {
+      padding-top: {{ s.mobile_padding_top }}px;
+      padding-bottom: {{ s.mobile_padding_bottom }}px;
+    }
+    .cc-heading-{{ section.id }} { font-size: {{ s.mobile_heading_size }}px; }
     .cc-item-{{ section.id }},
     .cc-circle-{{ section.id }} {
-      width: calc((100vw - {{ section.settings.item_gap }}px - {{ section.settings.track_start_pad | times: 2 }}px) / 2) !important;
-      height: calc((100vw - {{ section.settings.item_gap }}px - {{ section.settings.track_start_pad | times: 2 }}px) / 2) !important;
+      width: calc((100vw - {{ m_gap_total }}px) / {{ mobile_items }});
     }
+    .cc-circle-{{ section.id }} {
+      height: calc((100vw - {{ m_gap_total }}px) / {{ mobile_items }});
+    }
+    .cc-item-{{ section.id }} { margin-right: {{ m_gap }}px; }
+    .cc-circle-{{ section.id }} img { padding: {{ s.mobile_image_padding }}px; }
+    .cc-label-{{ section.id }} { font-size: {{ s.mobile_label_size }}px; }
   }
 {%- endstyle -%}
 
 <div class="cc-section-{{ section.id }}" id="cc-section-{{ section.id }}">
 
   <div class="cc-container-{{ section.id }}">
+    {%- if s.heading != blank -%}
+      <div class="cc-heading-wrap-{{ section.id }}" data-align="{{ s.heading_align }}">
+        <h2 class="cc-heading-{{ section.id }}">{{ s.heading }}</h2>
+      </div>
+    {%- endif -%}
+  </div>
 
-  {%- comment -%} Heading {%- endcomment -%}
-  {%- if section.settings.heading != blank -%}
-    <div class="cc-heading-wrap-{{ section.id }}" data-align="{{ section.settings.heading_align }}">
-      <h2 class="cc-heading-{{ section.id }}">{{ section.settings.heading }}</h2>
-    </div>
-  {%- endif -%}
-
-  </div>{%- comment -%}/.cc-container — viewport goes full width for the slider{%- endcomment -%}
-
-  {%- comment -%} Slider — full width so edge fade works edge-to-edge {%- endcomment -%}
+  {%- comment -%} Marquee — full width so the edge fade works edge-to-edge {%- endcomment -%}
   <div class="cc-viewport-{{ section.id }}" id="cc-viewport-{{ section.id }}">
     <div class="cc-track-{{ section.id }}" id="cc-track-{{ section.id }}">
+
+      {%- comment -%} Copy 1 (real blocks) {%- endcomment -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'category' -%}
-          <a
-            class="cc-item-{{ section.id }}"
-            href="{{ block.settings.link | default: '#' }}"
-            {{ block.shopify_attributes }}
-          >
+          <a class="cc-item-{{ section.id }}" href="{{ block.settings.link | default: '#' }}" {{ block.shopify_attributes }}>
             <div class="cc-circle-{{ section.id }}">
               {%- if block.settings.image != blank -%}
-                <img
-                  src="{{ block.settings.image | img_url: '600x600' }}"
-                  alt="{{ block.settings.image.alt | default: block.settings.label | escape }}"
-                  loading="lazy"
-                  width="{{ section.settings.circle_size }}"
-                  height="{{ section.settings.circle_size }}"
-                >
+                <img src="{{ block.settings.image | img_url: '600x600' }}" alt="{{ block.settings.image.alt | default: block.settings.label | escape }}" loading="lazy" width="{{ s.circle_size }}" height="{{ s.circle_size }}">
               {%- else -%}
                 {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
               {%- endif -%}
@@ -263,198 +240,29 @@
           </a>
         {%- endif -%}
       {%- endfor -%}
+
+      {%- comment -%} Copy 2 (clone for the seamless loop; hidden from a11y) {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'category' -%}
+          <a class="cc-item-{{ section.id }}" href="{{ block.settings.link | default: '#' }}" aria-hidden="true" tabindex="-1">
+            <div class="cc-circle-{{ section.id }}">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | img_url: '600x600' }}" alt="" loading="lazy" width="{{ s.circle_size }}" height="{{ s.circle_size }}">
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.label != blank -%}
+              <span class="cc-label-{{ section.id }}">{{ block.settings.label }}</span>
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+
     </div>
   </div>
 
-  {%- comment -%} Dots {%- endcomment -%}
-  {%- if section.settings.show_dots -%}
-    <div class="cc-container-{{ section.id }}">
-      <div class="cc-dots-{{ section.id }}" id="cc-dots-{{ section.id }}"></div>
-    </div>
-  {%- endif -%}
-
 </div>
-
-<script>
-(function () {
-  'use strict';
-
-  var SID         = '{{ section.id }}';
-  var ITEMS_SHOW  = {{ section.settings.items_per_page }};
-  var GAP         = {{ section.settings.item_gap }};
-  var AUTOPLAY    = {{ section.settings.enable_autoplay }};
-  var AUTO_SPEED  = {{ section.settings.autoplay_speed }} * 100;
-  var LOOP        = {{ section.settings.enable_loop }};
-
-  /* ── Mobile override: always show 2 items on small screens ── */
-  var MOBILE_ITEMS = 2;
-  var MOBILE_BP    = 749;
-
-  function getItemsShow() {
-    return window.innerWidth <= MOBILE_BP ? MOBILE_ITEMS : ITEMS_SHOW;
-  }
-
-  var section  = document.getElementById('cc-section-'  + SID);
-  var viewport = document.getElementById('cc-viewport-' + SID);
-  var track    = document.getElementById('cc-track-'    + SID);
-  var dotsWrap = document.getElementById('cc-dots-'     + SID);
-
-  if (!track) return;
-
-  var items = Array.from(track.querySelectorAll('.cc-item-' + SID));
-  var n = items.length;
-  if (n === 0) return;
-
-  var current   = 0;
-  var totalPages = 0;
-  var timer     = null;
-  var isDragging = false;
-  var startX    = 0;
-  var scrollStart = 0;
-  var itemW     = 0;
-
-  function getItemW() {
-    return items[0] ? items[0].offsetWidth + GAP : 200;
-  }
-
-  function calcPages() {
-    totalPages = Math.ceil(n / getItemsShow());
-  }
-
-  /* ── Build dots ─────────────────────────────────────── */
-  function buildDots() {
-    if (!dotsWrap) return;
-    calcPages();
-    dotsWrap.innerHTML = '';
-    for (var i = 0; i < totalPages; i++) {
-      var d = document.createElement('button');
-      d.className = 'cc-dot-' + SID + (i === 0 ? ' is-active' : '');
-      d.type = 'button';
-      d.setAttribute('aria-label', 'Go to page ' + (i + 1));
-      d.dataset.idx = i;
-      d.addEventListener('click', function () {
-        go(parseInt(this.dataset.idx, 10));
-        stopAuto();
-      });
-      dotsWrap.appendChild(d);
-    }
-  }
-
-  function paintDots() {
-    if (!dotsWrap) return;
-    var dots = dotsWrap.querySelectorAll('.cc-dot-' + SID);
-    dots.forEach(function (d, i) {
-      d.classList.toggle('is-active', i === current);
-    });
-  }
-
-  /* ── Scroll to page ─────────────────────────────────── */
-  function go(idx) {
-    calcPages();
-    idx = Math.max(0, Math.min(totalPages - 1, idx));
-    current = idx;
-    itemW = getItemW();
-    var offset = current * getItemsShow() * itemW;
-    track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    track.style.transform  = 'translateX(-' + offset + 'px)';
-    paintDots();
-  }
-
-  function next() {
-    if (current < totalPages - 1) {
-      go(current + 1);
-    } else if (LOOP) {
-      go(0);
-    }
-  }
-
-  /* ── Autoplay ────────────────────────────────────────── */
-  function startAuto() {
-    if (!AUTOPLAY) return;
-    stopAuto();
-    timer = setInterval(next, AUTO_SPEED);
-  }
-
-  function stopAuto() {
-    if (timer) { clearInterval(timer); timer = null; }
-  }
-
-  /* ── Drag / swipe ────────────────────────────────────── */
-  function onPointerDown(e) {
-    isDragging  = true;
-    startX      = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-    scrollStart = current * getItemsShow() * getItemW();
-    track.style.transition = 'none';
-    track.classList.add('is-dragging');
-    stopAuto();
-  }
-
-  function onPointerMove(e) {
-    if (!isDragging) return;
-    var x    = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    var diff = startX - x;
-    track.style.transform = 'translateX(-' + (scrollStart + diff) + 'px)';
-  }
-
-  function onPointerUp(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    track.classList.remove('is-dragging');
-    var x    = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
-    var diff = startX - x;
-    if (diff > 50)       { go(current + 1); }
-    else if (diff < -50) { go(current - 1); }
-    else                 { go(current); }
-    startAuto();
-  }
-
-  track.addEventListener('mousedown',   onPointerDown);
-  track.addEventListener('mousemove',   onPointerMove);
-  track.addEventListener('mouseup',     onPointerUp);
-  track.addEventListener('mouseleave',  onPointerUp);
-  track.addEventListener('touchstart',  onPointerDown, { passive: true });
-  track.addEventListener('touchmove',   onPointerMove, { passive: true });
-  track.addEventListener('touchend',    onPointerUp);
-
-  /* Prevent link navigation when dragging */
-  track.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      if (Math.abs(startX - (e.clientX || startX)) > 8) e.preventDefault();
-    });
-  });
-
-  /* Pause on hover */
-  viewport.addEventListener('mouseenter', stopAuto);
-  viewport.addEventListener('mouseleave', startAuto);
-
-  /* Pause when hidden */
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) stopAuto(); else startAuto();
-  });
-
-  /* ── Recalculate on resize ───────────────────────────── */
-  window.addEventListener('resize', function () {
-    itemW = getItemW();
-    buildDots();
-    go(0);
-  }, { passive: true });
-
-  /* ── Init ────────────────────────────────────────────── */
-  buildDots();
-  startAuto();
-
-  /* Shopify editor */
-  document.addEventListener('shopify:section:load', function (e) {
-    if (e.detail && e.detail.sectionId === SID) {
-      stopAuto();
-      buildDots();
-      go(0);
-      startAuto();
-    }
-  });
-
-})();
-</script>
 
 {% schema %}
 {
@@ -475,30 +283,7 @@
   ],
   "settings": [
     { "type": "header", "content": "Heading" },
-    {
-      "type": "text", "id": "heading", "label": "Heading text",
-      "default": "Season Collection"
-    },
-    {
-      "type": "range", "id": "heading_size", "label": "Heading size",
-      "min": 20, "max": 80, "step": 2, "unit": "px", "default": 36
-    },
-    {
-      "type": "select", "id": "heading_weight", "label": "Font weight",
-      "options": [
-        { "value": "300", "label": "Light" },
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "400"
-    },
-    {
-      "type": "range", "id": "heading_spacing", "label": "Letter spacing",
-      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0,
-      "info": "Divided by 100"
-    },
+    { "type": "text", "id": "heading", "label": "Heading text", "default": "Season Collection" },
     {
       "type": "select", "id": "heading_align", "label": "Alignment",
       "options": [
@@ -508,66 +293,46 @@
       ],
       "default": "center"
     },
+    { "type": "range", "id": "heading_spacing", "label": "Letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
     { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#111111" },
-    {
-      "type": "range", "id": "heading_gap", "label": "Gap below heading",
-      "min": 16, "max": 80, "step": 4, "unit": "px", "default": 36
-    },
+    { "type": "range", "id": "heading_gap", "label": "Gap below heading", "min": 16, "max": 80, "step": 4, "unit": "px", "default": 36 },
 
     { "type": "header", "content": "Heading underline" },
-    {
-      "type": "checkbox", "id": "show_underline", "label": "Show underline",
-      "default": true
-    },
+    { "type": "checkbox", "id": "show_underline", "label": "Show underline", "default": true },
     { "type": "color", "id": "underline_color", "label": "Underline colour", "default": "#c47a5a" },
+    { "type": "range", "id": "underline_width", "label": "Underline width", "min": 20, "max": 200, "step": 4, "unit": "px", "default": 100 },
+    { "type": "range", "id": "underline_height", "label": "Underline thickness", "min": 1, "max": 8, "step": 1, "unit": "px", "default": 3 },
+    { "type": "range", "id": "underline_gap", "label": "Gap above underline", "min": 4, "max": 24, "step": 2, "unit": "px", "default": 10 },
+
+    { "type": "header", "content": "Carousel (infinite scroll)" },
+    { "type": "range", "id": "marquee_speed", "label": "Scroll speed (seconds per loop)", "min": 10, "max": 120, "step": 5, "unit": "s", "default": 40, "info": "Higher = slower. Speed scales with how many items you have." },
     {
-      "type": "range", "id": "underline_width", "label": "Underline width",
-      "min": 20, "max": 200, "step": 4, "unit": "px", "default": 100
+      "type": "select", "id": "marquee_direction", "label": "Scroll direction",
+      "options": [
+        { "value": "left",  "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
     },
-    {
-      "type": "range", "id": "underline_height", "label": "Underline thickness",
-      "min": 1, "max": 8, "step": 1, "unit": "px", "default": 3
-    },
-    {
-      "type": "range", "id": "underline_gap", "label": "Gap above underline",
-      "min": 4, "max": 24, "step": 2, "unit": "px", "default": 10
-    },
+    { "type": "checkbox", "id": "pause_on_hover", "label": "Pause on hover", "default": true },
+    { "type": "range", "id": "item_gap", "label": "Gap between items (desktop)", "min": 8, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "slider_pad_y", "label": "Carousel top/bottom padding", "min": 0, "max": 60, "step": 4, "unit": "px", "default": 12 },
+    { "type": "range", "id": "edge_fade", "label": "Edge fade width", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40, "info": "Fades items at the left and right edges into the background" },
 
     { "type": "header", "content": "Circles" },
-    {
-      "type": "range", "id": "circle_size", "label": "Circle diameter",
-      "min": 80, "max": 280, "step": 4, "unit": "px", "default": 188
-    },
-    {
-      "type": "range", "id": "image_padding", "label": "Image inner padding",
-      "min": 0, "max": 60, "step": 2, "unit": "px", "default": 20,
-      "info": "Space between the image and the circle edge"
-    },
+    { "type": "range", "id": "circle_size", "label": "Circle diameter (desktop)", "min": 80, "max": 280, "step": 4, "unit": "px", "default": 188 },
+    { "type": "range", "id": "image_padding", "label": "Image inner padding", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 20, "info": "Space between the image and the circle edge" },
     { "type": "color", "id": "circle_bg", "label": "Circle background", "default": "#f5f5f5" },
-    {
-      "type": "range", "id": "circle_border_width", "label": "Border thickness",
-      "min": 0, "max": 6, "step": 1, "unit": "px", "default": 1
-    },
+    { "type": "range", "id": "circle_border_width", "label": "Border thickness", "min": 0, "max": 6, "step": 1, "unit": "px", "default": 1 },
     { "type": "color", "id": "circle_border_color", "label": "Border colour", "default": "#e8e8e8" },
     { "type": "color", "id": "circle_border_hover", "label": "Border colour — hover", "default": "#bbbbbb" },
 
     { "type": "header", "content": "Image hover animation" },
-    {
-      "type": "range", "id": "hover_rotate", "label": "Rotation on hover",
-      "min": -45, "max": 45, "step": 1, "unit": "°", "default": -15,
-      "info": "Degrees the image rotates when hovered. Negative = anti-clockwise."
-    },
-    {
-      "type": "range", "id": "hover_scale", "label": "Scale on hover",
-      "min": 80, "max": 130, "step": 2, "unit": "%", "default": 110,
-      "info": "Image size on hover (100 = no scale, 110 = 10% larger)"
-    },
+    { "type": "range", "id": "hover_rotate", "label": "Rotation on hover", "min": -45, "max": 45, "step": 1, "unit": "°", "default": -15 },
+    { "type": "range", "id": "hover_scale", "label": "Scale on hover", "min": 80, "max": 130, "step": 2, "unit": "%", "default": 110 },
 
     { "type": "header", "content": "Label" },
-    {
-      "type": "range", "id": "label_size", "label": "Label font size",
-      "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14
-    },
+    { "type": "range", "id": "label_size", "label": "Label font size (desktop)", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
     {
       "type": "select", "id": "label_weight", "label": "Label weight",
       "options": [
@@ -587,88 +352,25 @@
       ],
       "default": "none"
     },
-    {
-      "type": "range", "id": "label_spacing", "label": "Label letter spacing",
-      "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0,
-      "info": "Divided by 100"
-    },
+    { "type": "range", "id": "label_spacing", "label": "Label letter spacing", "min": 0, "max": 20, "step": 1, "unit": "em", "default": 0, "info": "Divided by 100" },
     { "type": "color", "id": "label_color", "label": "Label colour", "default": "#111111" },
     { "type": "color", "id": "label_hover_color", "label": "Label colour — hover", "default": "#555555" },
-    {
-      "type": "range", "id": "label_gap", "label": "Gap between circle and label",
-      "min": 4, "max": 32, "step": 2, "unit": "px", "default": 14
-    },
+    { "type": "range", "id": "label_gap", "label": "Gap between circle and label", "min": 4, "max": 32, "step": 2, "unit": "px", "default": 14 },
 
-    { "type": "header", "content": "Slider layout" },
-    {
-      "type": "range", "id": "track_start_pad", "label": "Starting gap (left/right)",
-      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40,
-      "info": "Space before the first and after the last circle"
-    },
-    {
-      "type": "range", "id": "items_per_page", "label": "Items visible per page",
-      "min": 2, "max": 8, "step": 1, "default": 6,
-      "info": "Also sets how many items scroll at a time"
-    },
-    {
-      "type": "range", "id": "item_gap", "label": "Gap between items",
-      "min": 8, "max": 60, "step": 2, "unit": "px", "default": 24
-    },
-    {
-      "type": "range", "id": "slider_pad_y", "label": "Slider top/bottom padding",
-      "min": 0, "max": 60, "step": 4, "unit": "px", "default": 12
-    },
-    {
-      "type": "range", "id": "edge_fade", "label": "Edge fade width",
-      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40,
-      "info": "Fades items at the left and right edges into the background"
-    },
-
-    { "type": "header", "content": "Autoplay" },
-    {
-      "type": "checkbox", "id": "enable_autoplay", "label": "Enable autoplay", "default": true
-    },
-    {
-      "type": "range", "id": "autoplay_speed", "label": "Autoplay interval",
-      "min": 20, "max": 99, "step": 1, "default": 40,
-      "info": "Multiplied by 100ms (40 = 4 seconds)"
-    },
-    {
-      "type": "checkbox", "id": "enable_loop", "label": "Loop back to start", "default": true
-    },
-
-    { "type": "header", "content": "Dots" },
-    { "type": "checkbox", "id": "show_dots", "label": "Show pagination dots", "default": true },
-    {
-      "type": "range", "id": "dot_size", "label": "Dot size",
-      "min": 6, "max": 16, "step": 1, "unit": "px", "default": 9
-    },
-    {
-      "type": "range", "id": "dot_gap", "label": "Gap between dots",
-      "min": 4, "max": 24, "step": 2, "unit": "px", "default": 8
-    },
-    {
-      "type": "range", "id": "dots_margin_top", "label": "Dots top margin",
-      "min": 8, "max": 60, "step": 4, "unit": "px", "default": 24
-    },
-    { "type": "color", "id": "dot_color", "label": "Dot colour", "default": "#111111" },
-    { "type": "color", "id": "dot_active_color", "label": "Active dot colour", "default": "#111111" },
+    { "type": "header", "content": "📱 Mobile" },
+    { "type": "range", "id": "mobile_items_visible", "label": "Circles visible on mobile", "min": 2, "max": 5, "step": 1, "default": 3 },
+    { "type": "range", "id": "mobile_item_gap", "label": "Gap between items (mobile)", "min": 4, "max": 40, "step": 2, "unit": "px", "default": 14 },
+    { "type": "range", "id": "mobile_image_padding", "label": "Image inner padding (mobile)", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12 },
+    { "type": "range", "id": "mobile_label_size", "label": "Label font size (mobile)", "min": 9, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Heading size (mobile)", "min": 16, "max": 48, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Top padding (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Bottom padding (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 32 },
 
     { "type": "header", "content": "Background & padding" },
     { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
-    {
-      "type": "range", "id": "max_width", "label": "Section max width",
-      "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400,
-      "info": "Section is always centered within this width"
-    },
-    {
-      "type": "range", "id": "padding_top", "label": "Top padding",
-      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60
-    },
-    {
-      "type": "range", "id": "padding_bottom", "label": "Bottom padding",
-      "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60
-    }
+    { "type": "range", "id": "max_width", "label": "Section max width", "min": 800, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "padding_top", "label": "Top padding (desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding (desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 }
   ],
   "presets": [
     {
