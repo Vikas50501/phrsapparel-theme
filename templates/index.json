@@ -467,7 +467,7 @@
         "item_gap": 24,
         "slider_pad_y": 12,
         "edge_fade": 40,
-        "enable_autoplay": true,
+        "enable_autoplay": false,
         "autoplay_speed": 30,
         "enable_loop": true,
         "show_dots": true,
