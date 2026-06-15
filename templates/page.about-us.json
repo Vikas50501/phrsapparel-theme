@@ -109,7 +109,7 @@
     "about_us_section_iR7Xkw": {
       "type": "about-us-section",
       "custom_css": [
-        ".au-section-label-template--27799166976364__about_us_section_iR7Xkw{margin-bottom: 20px !important;}"
+        ".au-section-label-template--27799166976364__about_us_section_iR7Xkw {margin-bottom: 20px !important;}"
       ],
       "name": "Advanced News Slider",
       "settings": {
@@ -129,7 +129,7 @@
         "eyebrow_line": 24,
         "max_width": 1300,
         "side_pad": 40,
-        "section_pad": 64,
+        "section_pad": 48,
         "bg": "#f0efed",
         "hide_hero": true,
         "hero_height": 600,
