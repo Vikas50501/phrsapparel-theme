@@ -214,7 +214,9 @@
     "contact_form_L9gc8C": {
       "type": "contact-form",
       "custom_css": [
-        "@media screen and (max-width: 767px) {.ct2-page-title-template--27799167074668__contact_form_L9gc8C {font-size: 22px !important; }}"
+        "@media screen and (max-width: 767px) {.ct2-page-title-template--27799167074668__contact_form_L9gc8C {font-size: 22px !important; }}",
+        "@media screen and (max-width: 749px) {.ct2-left-title-template--27799167074668__contact_form_L9gc8C {font-size: 22px; }}",
+        "@media screen and (max-width: 749px) {.ct2-form-title-template--27799167074668__contact_form_L9gc8C {font-size: 22px; }}"
       ],
       "name": "Contact Us",
       "settings": {
