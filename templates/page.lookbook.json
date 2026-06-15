@@ -711,11 +711,12 @@
         "heading_transform": "none",
         "heading_spacing": 0,
         "heading_color": "#111111",
+        "underline_color": "#c47a5a",
         "heading_align": "center",
         "heading_pad_x": 24,
         "heading_pad_bottom": 24,
         "columns": 3,
-        "columns_mobile": "1",
+        "columns_mobile": "2",
         "grid_gap": 4,
         "max_width": 1400,
         "side_padding": 0,
@@ -756,10 +757,11 @@
         "viewmore_url": "",
         "viewmore_new_tab": false,
         "viewmore_show_arrow": true,
+        "viewmore_color_scheme": "",
         "viewmore_align": "center",
         "viewmore_pad_top": 32,
         "bg_color": "#ffffff",
-        "padding_top": 40,
+        "padding_top": 0,
         "padding_bottom": 40
       }
     }
