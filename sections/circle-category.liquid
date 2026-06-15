@@ -366,26 +366,26 @@
     viewport.addEventListener('mouseleave', function () { if (!isDown) { syncPos(); paused = false; last = null; } });
   }
 
-  /* Manual drag (mouse / pen) */
+  /* Manual drag — MOUSE/PEN only (touch uses native scroll so taps open links).
+     No pointer-capture, so a real click still reaches the <a>. */
   if (DRAG) {
     var startX = 0, startSL = 0, moved = false;
     scroller.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;            /* let native touch scroll + tap-to-link work */
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       isDown = true; moved = false; startX = e.clientX; startSL = scroller.scrollLeft;
-      scroller.classList.add('is-dragging');
-      try { scroller.setPointerCapture(e.pointerId); } catch (err) {}
     });
-    scroller.addEventListener('pointermove', function (e) {
+    window.addEventListener('pointermove', function (e) {
       if (!isDown) return;
       var d = e.clientX - startX;
-      if (Math.abs(d) > 4) moved = true;
-      scroller.scrollLeft = startSL - d;
-      normalize();
+      if (Math.abs(d) > 8) { moved = true; scroller.classList.add('is-dragging'); }
+      if (moved) { scroller.scrollLeft = startSL - d; normalize(); }
     });
     function up() { if (!isDown) return; isDown = false; scroller.classList.remove('is-dragging'); resumeSoon(); }
-    scroller.addEventListener('pointerup', up);
-    scroller.addEventListener('pointercancel', up);
-    scroller.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    /* only swallow the click if it was an actual drag */
+    scroller.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
   }
 
   /* Native touch swipe + trackpad: pause auto, wrap, resume */
