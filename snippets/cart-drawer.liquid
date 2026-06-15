@@ -506,6 +506,30 @@
           hidden
         ></div>
 
+        {%- comment -%} Fallback products (used when Shopify has no recommendation data yet) {%- endcomment -%}
+        <script type="application/json" id="CartDrawer-FbtFallback">
+        [
+          {%- for product in collections.all.products limit: 14 -%}
+            {%- if product.available -%}
+            {
+              "id": {{ product.id }},
+              "title": {{ product.title | json }},
+              "url": {{ product.url | json }},
+              "price": {{ product.price }},
+              "available": true,
+              "featured_image": {{ product.featured_image | image_url: width: 200 | json }},
+              "variants": [
+                {%- for variant in product.variants -%}
+                  { "id": {{ variant.id }}, "available": {{ variant.available }} }{%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+              ]
+            },
+            {%- endif -%}
+          {%- endfor -%}
+          {}
+        ]
+        </script>
+
         <style>
           .cart-fbt { margin: 4px 0 10px; }
           .cart-fbt[hidden] { display: none; }
@@ -534,6 +558,11 @@
             function cfg(root, key, def) { var v = root && root.dataset[key]; return (v !== undefined && v !== '') ? v : def; }
             function money(cents, sym) { var v = (cents || 0) / 100; return sym + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(2)); }
             function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+            function fallbackProducts() {
+              var s = document.getElementById('CartDrawer-FbtFallback');
+              if (!s) return [];
+              try { return (JSON.parse(s.textContent) || []).filter(function (p) { return p && p.id; }); } catch (e) { return []; }
+            }
 
             function render(root, products, cart) {
               var LIMIT = parseInt(cfg(root, 'limit', '6'), 10) || 6;
@@ -603,7 +632,12 @@
                   var pid = cart.items[0].product_id;
                   return fetch('/recommendations/products.json?product_id=' + pid + '&intent=' + INTENT + '&limit=' + (LIMIT + 4))
                     .then(function (r) { return r.json(); })
-                    .then(function (res) { var r2 = el(); if (r2) render(r2, res.products || [], cart); });
+                    .then(function (res) { return (res && res.products) || []; })
+                    .catch(function () { return []; })
+                    .then(function (products) {
+                      if (!products.length) products = fallbackProducts();
+                      var r2 = el(); if (r2) render(r2, products, cart);
+                    });
                 })
                 .catch(function () { var rt = el(); if (rt) rt.hidden = true; })
                 .finally(function () { loading = false; });
