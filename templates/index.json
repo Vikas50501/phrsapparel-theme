@@ -1172,9 +1172,9 @@
       "name": "Popup Discount",
       "settings": {
         "show_launcher": true,
-        "launcher_label": "Get 20% Off",
+        "launcher_label": "Get 10% Off",
         "launcher_icon": "",
-        "heading": "Get 20% Off Your First Order",
+        "heading": "Get 10% Off Your First Order",
         "subheading": "",
         "button_label": "Get My Discount",
         "fineprint": "By signing up you agree to receive marketing emails. Unsubscribe anytime.",
