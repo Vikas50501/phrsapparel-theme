@@ -631,7 +631,7 @@
       ],
       "name": "Marquee Ticker",
       "settings": {
-        "logo_image": "shopify://shop_images/Copilot_20260615_180106.png",
+        "logo_image": "shopify://shop_images/PHAREL_FINAL_LOGO_1.png",
         "logo_height": 76,
         "logo_height_mobile": 40,
         "text_size": 60,
@@ -1169,6 +1169,7 @@
     },
     "popup_discount_XdWmaA": {
       "type": "popup-discount",
+      "disabled": true,
       "name": "Popup Discount",
       "settings": {
         "show_launcher": true,
