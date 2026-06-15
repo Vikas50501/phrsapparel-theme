@@ -414,12 +414,15 @@
 .template-collection .kc-card__media {
   display: block;
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1; /* square on every viewport; container holds size before image loads (no layout shift) */
   background: var(--kc-card-bg);
   border-radius: 0;
   overflow: hidden;
 }
-.template-collection .kc-card__media img {
+.template-collection .kc-card__media img,
+.template-collection .kc-card__media svg {
+  position: absolute;
+  inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
