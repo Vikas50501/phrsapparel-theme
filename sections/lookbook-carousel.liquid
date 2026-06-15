@@ -1,0 +1,316 @@
+{%- comment -%}
+  Lookbook Carousel
+  Desktop: a centered grid (same look as the Lookbook section — heading + orange
+  underline, image cards with hover zoom). Choose how many columns to show.
+  Mobile: a smooth, seamless infinite marquee carousel showing multiple items.
+  Only the MOBILE presentation differs; desktop styling matches the Lookbook.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign dir = 'normal'
+  if s.marquee_direction == 'right'
+    assign dir = 'reverse'
+  endif
+-%}
+
+{%- style -%}
+  .lbc-{{ section.id }} {
+    background: {{ s.bg_color }};
+    padding-top: {{ s.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ s.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media (min-width: 750px) {
+    .lbc-{{ section.id }} {
+      padding-top: {{ s.padding_top }}px;
+      padding-bottom: {{ s.padding_bottom }}px;
+    }
+  }
+
+  /* ── Heading (matches Lookbook: centered + orange underline) ── */
+  .lbc-heading-wrap-{{ section.id }} {
+    text-align: center;
+    margin-bottom: {{ s.heading_gap }}px;
+    padding: 0 24px;
+  }
+  .lbc-heading-{{ section.id }} {
+    display: inline-block;
+    position: relative;
+    font-size: var(--font-h2-size);
+    font-weight: var(--font-h2-weight);
+    font-family: inherit;
+    color: {{ s.heading_color }};
+    line-height: 1.2;
+    margin: 0;
+    padding-bottom: 10px;
+  }
+  .lbc-heading-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: {{ s.underline_color }};
+    border-radius: 3px;
+  }
+
+  /* ── Track: DESKTOP grid (clone copy hidden) ── */
+  .lbc-viewport-{{ section.id }} { overflow: hidden; }
+  .lbc-track-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat({{ s.columns }}, 1fr);
+    gap: {{ s.grid_gap }}px;
+    max-width: {{ s.max_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ s.side_padding }}px;
+  }
+  .lbc-item--dup-{{ section.id }} { display: none; }
+
+  /* ── Item / image ── */
+  .lbc-item-{{ section.id }} { display: block; text-decoration: none; color: inherit; }
+  .lbc-img-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ s.image_aspect }};
+    overflow: hidden;
+    background: {{ s.img_placeholder_bg }};
+    border-radius: {{ s.img_radius }}px;
+  }
+  .lbc-img-{{ section.id }} img,
+  .lbc-img-{{ section.id }} .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .lbc-item-{{ section.id }}:hover .lbc-img-{{ section.id }} img {
+    transform: scale({{ s.img_hover_scale | divided_by: 100.0 }});
+  }
+  .lbc-cap-{{ section.id }} {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: {{ s.caption_size }}px;
+    color: {{ s.heading_color }};
+  }
+
+  /* ── View more button ── */
+  .lbc-viewmore-wrap-{{ section.id }} {
+    text-align: center;
+    padding-top: {{ s.viewmore_pad_top }}px;
+  }
+  .lbc-viewmore-{{ section.id }} { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+  /* ════════════════════════════════════════════════════
+     MOBILE: seamless infinite marquee carousel
+  ════════════════════════════════════════════════════ */
+  @media (max-width: 749px) {
+    .lbc-track-{{ section.id }} {
+      display: flex;
+      grid-template-columns: none;
+      width: max-content;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      gap: 0;
+      animation: lbc-scroll-{{ section.id }} {{ s.marquee_speed }}s linear infinite;
+      animation-direction: {{ dir }};
+    }
+    .lbc-item-{{ section.id }} {
+      flex-shrink: 0;
+      width: calc((100vw / {{ s.mobile_items }}) - {{ s.mobile_gap }}px);
+      margin-right: {{ s.mobile_gap }}px;
+    }
+    .lbc-item--dup-{{ section.id }} { display: block; }
+    .lbc-img-{{ section.id }} { border-radius: {{ s.mobile_img_radius }}px; }
+    {%- if s.mobile_image_aspect != blank %}
+    .lbc-img-{{ section.id }} { aspect-ratio: {{ s.mobile_image_aspect }}; }
+    {%- endif %}
+    {%- if s.pause_on_hover %}
+    .lbc-viewport-{{ section.id }}:hover .lbc-track-{{ section.id }} { animation-play-state: paused; }
+    {%- endif %}
+  }
+  @keyframes lbc-scroll-{{ section.id }} {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lbc-track-{{ section.id }} { animation: none; }
+  }
+{%- endstyle -%}
+
+<section class="lbc-{{ section.id }}" id="lbc-{{ section.id }}">
+
+  {%- if s.heading != blank -%}
+    <div class="lbc-heading-wrap-{{ section.id }}">
+      <h2 class="lbc-heading-{{ section.id }}">{{ s.heading }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="lbc-viewport-{{ section.id }}">
+    <div class="lbc-track-{{ section.id }}">
+
+      {%- comment -%} Copy 1 — real blocks {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'image' -%}
+          {%- liquid
+            assign tag = 'div'
+            if block.settings.link != blank
+              assign tag = 'a'
+            endif
+          -%}
+          <{{ tag }} class="lbc-item-{{ section.id }}"{% if block.settings.link != blank %} href="{{ block.settings.link }}"{% endif %} {{ block.shopify_attributes }}>
+            <div class="lbc-img-{{ section.id }}">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 800 }}"
+                  srcset="{{ block.settings.image | image_url: width: 400 }} 400w, {{ block.settings.image | image_url: width: 800 }} 800w"
+                  sizes="(max-width: 749px) 60vw, 33vw"
+                  alt="{{ block.settings.image.alt | default: block.settings.caption | escape }}"
+                  loading="lazy" width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}">
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.caption != blank -%}<span class="lbc-cap-{{ section.id }}">{{ block.settings.caption }}</span>{%- endif -%}
+          </{{ tag }}>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- comment -%} Copy 2 — clone for the mobile loop (hidden on desktop & from a11y) {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'image' -%}
+          {%- liquid
+            assign tag = 'div'
+            if block.settings.link != blank
+              assign tag = 'a'
+            endif
+          -%}
+          <{{ tag }} class="lbc-item-{{ section.id }} lbc-item--dup-{{ section.id }}"{% if block.settings.link != blank %} href="{{ block.settings.link }}"{% endif %} aria-hidden="true" tabindex="-1">
+            <div class="lbc-img-{{ section.id }}">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 800 }}" alt="" loading="lazy" width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}">
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.caption != blank -%}<span class="lbc-cap-{{ section.id }}">{{ block.settings.caption }}</span>{%- endif -%}
+          </{{ tag }}>
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+
+  {%- if s.button_label != blank and s.button_link != blank -%}
+    <div class="lbc-viewmore-wrap-{{ section.id }}">
+      <a class="button lbc-viewmore-{{ section.id }}" href="{{ s.button_link }}">
+        {{ s.button_label }}
+        <span class="lbc-viewmore-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% schema %}
+{
+  "name": "Lookbook Carousel",
+  "tag": "section",
+  "class": "section-lookbook-carousel",
+  "max_blocks": 16,
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "caption", "label": "Caption (optional)" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our Lookbook" },
+    { "type": "color", "id": "heading_color", "label": "Heading / caption colour", "default": "#111111" },
+    { "type": "color", "id": "underline_color", "label": "Underline colour", "default": "#c47a5a" },
+    { "type": "range", "id": "heading_gap", "label": "Gap below heading", "min": 12, "max": 64, "step": 4, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Desktop layout" },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 3 },
+    {
+      "type": "select", "id": "image_aspect", "label": "Image ratio",
+      "options": [
+        { "value": "2/3", "label": "2:3 (portrait)" },
+        { "value": "3/4", "label": "3:4" },
+        { "value": "4/5", "label": "4:5" },
+        { "value": "1/1", "label": "1:1 (square)" },
+        { "value": "4/3", "label": "4:3" },
+        { "value": "16/9", "label": "16:9" }
+      ],
+      "default": "2/3"
+    },
+    { "type": "range", "id": "img_radius", "label": "Corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "img_hover_scale", "label": "Hover zoom", "min": 100, "max": 120, "step": 1, "unit": "%", "default": 104 },
+    { "type": "color", "id": "img_placeholder_bg", "label": "Image background", "default": "#f0efed" },
+    { "type": "range", "id": "grid_gap", "label": "Gap between items", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "caption_size", "label": "Caption font size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 0 },
+
+    { "type": "header", "content": "📱 Mobile carousel" },
+    { "type": "range", "id": "mobile_items", "label": "Items visible on mobile", "min": 1.5, "max": 4, "step": 0.5, "default": 2.5, "info": "Use a .5 value (e.g. 2.5) to peek the next item" },
+    { "type": "range", "id": "mobile_gap", "label": "Gap between items (mobile)", "min": 4, "max": 30, "step": 2, "unit": "px", "default": 10 },
+    { "type": "range", "id": "mobile_img_radius", "label": "Corner radius (mobile)", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 6 },
+    {
+      "type": "select", "id": "mobile_image_aspect", "label": "Image ratio (mobile)",
+      "info": "Leave on 'Same as desktop' to keep the desktop ratio",
+      "options": [
+        { "value": "", "label": "Same as desktop" },
+        { "value": "2/3", "label": "2:3 (portrait)" },
+        { "value": "3/4", "label": "3:4" },
+        { "value": "4/5", "label": "4:5" },
+        { "value": "1/1", "label": "1:1 (square)" }
+      ],
+      "default": ""
+    },
+    { "type": "range", "id": "marquee_speed", "label": "Scroll speed (seconds per loop)", "min": 10, "max": 120, "step": 5, "unit": "s", "default": 35, "info": "Higher = slower" },
+    {
+      "type": "select", "id": "marquee_direction", "label": "Scroll direction",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "checkbox", "id": "pause_on_hover", "label": "Pause on touch/hover", "default": true },
+
+    { "type": "header", "content": "View more button (optional)" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "range", "id": "viewmore_pad_top", "label": "Gap above button", "min": 8, "max": 60, "step": 4, "unit": "px", "default": 28 },
+
+    { "type": "header", "content": "Background & spacing" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#ffffff" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook Carousel",
+      "blocks": [
+        { "type": "image" },
+        { "type": "image" },
+        { "type": "image" },
+        { "type": "image" },
+        { "type": "image" },
+        { "type": "image" }
+      ]
+    }
+  ]
+}
+{% endschema %}
