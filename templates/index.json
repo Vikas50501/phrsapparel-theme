@@ -890,6 +890,9 @@
       ],
       "name": "Lookbook",
       "settings": {
+        "hide_desktop": false,
+        "hide_tablet": false,
+        "hide_mobile": true,
         "heading": "OUR LOOKBOOK",
         "heading_size": 32,
         "heading_weight": "500",
@@ -910,6 +913,7 @@
         "img_hover_scale": 104,
         "img_placeholder_bg": "#f0efed",
         "popup_width": 240,
+        "popup_width_mobile": 160,
         "popup_radius": 8,
         "popup_shadow": "0 8px 32px rgba(0,0,0,0.14)",
         "popup_bg": "#ffffff",
@@ -1041,7 +1045,7 @@
         "button_label": "VIEW ALL",
         "button_link": "shopify://pages/lookbook",
         "viewmore_pad_top": 28,
-        "bg_color": "#F0EFED",
+        "bg_color": "#f0efed",
         "padding_top": 60,
         "padding_bottom": 60
       }
