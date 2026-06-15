@@ -324,6 +324,7 @@
   function measure() { oneCopy = track.scrollWidth / 2; }
   measure();
   window.addEventListener('resize', function () { measure(); }, { passive: true });
+  window.addEventListener('load', function () { measure(); }, { passive: true });
 
   if (DIR < 0) { scroller.scrollLeft = oneCopy; }
 
@@ -334,17 +335,24 @@
   }
 
   var paused = false, isDown = false, idle = null, last = null;
+  var pos = scroller.scrollLeft;
+  function syncPos() { pos = scroller.scrollLeft; }
   function pause()  { paused = true; }
-  function resumeSoon() { clearTimeout(idle); idle = setTimeout(function () { paused = false; last = null; }, 1200); }
+  function resumeSoon() { clearTimeout(idle); idle = setTimeout(function () { syncPos(); paused = false; last = null; }, 1200); }
 
-  /* Auto-scroll loop */
+  /* Auto-scroll loop — accumulate position as a float so sub-pixel speeds still
+     advance on mobile, where scrollLeft is integer-quantised (adding 0.4px/frame
+     would otherwise round back to 0 forever). */
   function frame(ts) {
     if (last == null) last = ts;
     var dt = ts - last; last = ts;
+    if (dt > 100) dt = 16; /* tab was inactive — avoid a big jump */
     if (AUTOPLAY && !paused && !isDown && oneCopy > 0) {
       var pxPerMs = oneCopy / (DURATION * 1000);
-      scroller.scrollLeft += DIR * pxPerMs * dt;
-      normalize();
+      pos += DIR * pxPerMs * dt;
+      if (pos >= oneCopy) { pos -= oneCopy; }
+      else if (pos < 0)   { pos += oneCopy; }
+      scroller.scrollLeft = pos;
     }
     requestAnimationFrame(frame);
   }
@@ -355,7 +363,7 @@
   var canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (PAUSE_HOVER && canHover) {
     viewport.addEventListener('mouseenter', pause);
-    viewport.addEventListener('mouseleave', function () { if (!isDown) { paused = false; last = null; } });
+    viewport.addEventListener('mouseleave', function () { if (!isDown) { syncPos(); paused = false; last = null; } });
   }
 
   /* Manual drag (mouse / pen) */
@@ -399,7 +407,7 @@
   if (prev) prev.addEventListener('click', function () { nudge(-step()); });
   if (next) next.addEventListener('click', function () { nudge(step()); });
 
-  document.addEventListener('visibilitychange', function () { if (document.hidden) paused = true; else { paused = false; last = null; } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { paused = true; } else { syncPos(); paused = false; last = null; } });
 })();
 </script>
 
