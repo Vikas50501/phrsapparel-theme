@@ -77,7 +77,7 @@
   .cc-viewport-{{ section.id }} {
     overflow: hidden;
     position: relative;
-    padding: {{ s.slider_pad_y }}px 0;
+    padding: 0;
   }
 
   /* Fade edges */
@@ -101,6 +101,8 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
+    /* vertical room so the hover lift + shadow are not clipped */
+    padding: {{ s.slider_pad_y | plus: 14 }}px 0;
     {% if s.enable_drag %}cursor: grab;{% endif %}
   }
   .cc-scroller-{{ section.id }}::-webkit-scrollbar { display: none; }
@@ -348,8 +350,10 @@
   }
   requestAnimationFrame(frame);
 
-  /* Pause on hover */
-  if (PAUSE_HOVER) {
+  /* Pause on hover — only on real hover devices (NOT touch, where mouseenter
+     fires without a matching mouseleave and would pause autoplay forever) */
+  var canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (PAUSE_HOVER && canHover) {
     viewport.addEventListener('mouseenter', pause);
     viewport.addEventListener('mouseleave', function () { if (!isDown) { paused = false; last = null; } });
   }
@@ -378,7 +382,7 @@
 
   /* Native touch swipe + trackpad: pause auto, wrap, resume */
   scroller.addEventListener('touchstart', pause, { passive: true });
-  scroller.addEventListener('touchend',   resumeSoon, { passive: true });
+  scroller.addEventListener('touchend', function () { isDown = false; scroller.classList.remove('is-dragging'); resumeSoon(); }, { passive: true });
   scroller.addEventListener('wheel', function () { pause(); resumeSoon(); }, { passive: true });
   scroller.addEventListener('scroll', function () { if (!AUTOPLAY || paused || isDown) normalize(); }, { passive: true });
 
