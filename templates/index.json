@@ -1012,6 +1012,9 @@
       ],
       "name": "Lookbook Carousel",
       "settings": {
+        "hide_desktop": true,
+        "hide_tablet": true,
+        "hide_mobile": false,
         "heading": "Our Lookbook",
         "heading_color": "#111111",
         "underline_color": "#c47a5a",
@@ -1032,10 +1035,10 @@
         "marquee_speed": 50,
         "marquee_direction": "left",
         "pause_on_hover": true,
-        "button_label": "",
-        "button_link": "",
+        "button_label": "VIEW ALL",
+        "button_link": "shopify://pages/lookbook",
         "viewmore_pad_top": 28,
-        "bg_color": "#ffffff",
+        "bg_color": "#F0EFED",
         "padding_top": 60,
         "padding_bottom": 60
       }
