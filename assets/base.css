@@ -3790,3 +3790,10 @@ p.totals__total-value { font-weight: 700; }
   p.cart__login-title.h3 { font-size: 22px; }
   a.cart-item__name.h4.break { font-size: 22px; }
 }
+
+@media screen and (max-width: 767px) {
+  h2.drawer__heading {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+  }
+}
