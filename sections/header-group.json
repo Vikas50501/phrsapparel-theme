@@ -42,7 +42,7 @@
         "announcement_FPyVcM"
       ],
       "custom_css": [
-        "span {font-size: 14px !important;}"
+        "span {font-size: 14px !important; font-weight: 700;}"
       ],
       "settings": {
         "auto_rotate": true,
