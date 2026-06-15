@@ -226,7 +226,7 @@
         "heading_spacing": 0,
         "heading_color": "#111111",
         "heading_align": "center",
-        "subheading_size": 16,
+        "subheading_size": 14,
         "subheading_weight": "400",
         "subheading_color": "#666666",
         "show_heading_underline": true,
