@@ -214,7 +214,7 @@
     "contact_form_L9gc8C": {
       "type": "contact-form",
       "custom_css": [
-        "@media screen and (max-width: 767px) {h2.ct2-page-title-template--27682794078572__contact_form_L9gc8C {font-size: 25px !important; }}"
+        "@media screen and (max-width: 767px) {.ct2-page-title-template--27799167074668__contact_form_L9gc8C {font-size: 22px !important; }}"
       ],
       "name": "Contact Us",
       "settings": {
@@ -230,13 +230,13 @@
         "subheading_weight": "400",
         "subheading_color": "#666666",
         "show_heading_underline": true,
-        "underline_color": "#C47A5A",
+        "underline_color": "#c47a5a",
         "underline_width": 100,
         "underline_h": 4,
         "underline_gap": 10,
         "heading_sub_gap": 10,
         "heading_bottom_gap": 48,
-        "accent_color": "#C47A5A",
+        "accent_color": "#c47a5a",
         "focus_ring": "#c8a88240",
         "left_bg": "#1a1a1a",
         "left_text": "#ffffff",
