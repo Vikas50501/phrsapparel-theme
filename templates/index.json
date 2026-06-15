@@ -871,7 +871,7 @@
         "heading_pad_x": 24,
         "heading_pad_bottom": 24,
         "columns": 3,
-        "columns_mobile": "1",
+        "columns_mobile": "2",
         "grid_gap": 4,
         "max_width": 1400,
         "side_padding": 0,
