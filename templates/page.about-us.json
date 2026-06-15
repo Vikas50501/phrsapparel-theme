@@ -186,7 +186,7 @@
         "band_body": "",
         "band_reverse": false,
         "band_aspect": "4/5",
-        "band_gap": 60,
+        "band_gap": 20,
         "band_radius": 4,
         "band_text_pad": 20,
         "hide_team": false,
