@@ -84,6 +84,24 @@
     color: {{ section.settings.text_hover_color }};
   }
 
+  /* ── Logo item (replaces text when enabled) ───────── */
+  .mq-logo-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: {{ section.settings.logo_height }}px;
+    text-decoration: none;
+  }
+  .mq-logo-{{ section.id }} img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+  @media (max-width: 749px) {
+    .mq-logo-{{ section.id }} { height: {{ section.settings.logo_height_mobile }}px; }
+  }
+
   /* ── Separator between items ──────────────────────── */
   .mq-sep-{{ section.id }} {
     display: inline-flex;
@@ -158,10 +176,18 @@
               </span>
             {%- endif -%}
             {%- if block.settings.text != blank -%}
-              {%- if block.settings.link != blank -%}
-                <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+              {%- if section.settings.use_logo and section.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
+                {%- else -%}
+                  <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
+                {%- endif -%}
               {%- else -%}
-                <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+                {%- if block.settings.link != blank -%}
+                  <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+                {%- else -%}
+                  <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+                {%- endif -%}
               {%- endif -%}
             {%- endif -%}
             {%- if section.settings.show_separator and forloop.last == false -%}
@@ -189,10 +215,18 @@
               </span>
             {%- endif -%}
             {%- if block.settings.text != blank -%}
-              {%- if block.settings.link != blank -%}
-                <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+              {%- if section.settings.use_logo and section.settings.logo_image != blank -%}
+                {%- if block.settings.link != blank -%}
+                  <a class="mq-logo-{{ section.id }}" href="{{ block.settings.link }}" aria-label="{{ shop.name | escape }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></a>
+                {%- else -%}
+                  <span class="mq-logo-{{ section.id }}" {{ block.shopify_attributes }}><img src="{{ section.settings.logo_image | image_url: width: 700 }}" alt="{{ shop.name | escape }}" loading="lazy"></span>
+                {%- endif -%}
               {%- else -%}
-                <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+                {%- if block.settings.link != blank -%}
+                  <a class="mq-text-{{ section.id }}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</a>
+                {%- else -%}
+                  <span class="mq-text-{{ section.id }}" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+                {%- endif -%}
               {%- endif -%}
             {%- endif -%}
             {%- if section.settings.show_separator and forloop.last == false -%}
@@ -241,6 +275,12 @@
     }
   ],
   "settings": [
+    { "type": "header", "content": "Logo (replaces text)" },
+    { "type": "checkbox", "id": "use_logo", "label": "Use logo instead of text", "default": false, "info": "When on, every text item shows your logo image below. Product images stay." },
+    { "type": "image_picker", "id": "logo_image", "label": "Logo image" },
+    { "type": "range", "id": "logo_height", "label": "Logo height (desktop)", "min": 20, "max": 140, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "logo_height_mobile", "label": "Logo height (mobile)", "min": 14, "max": 90, "step": 2, "unit": "px", "default": 30 },
+
     { "type": "header", "content": "Text style" },
     {
       "type": "range", "id": "text_size", "label": "Text size",
