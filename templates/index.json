@@ -549,7 +549,7 @@
         "row1_item_pgpkGn": {
           "type": "row1_item",
           "settings": {
-            "item_type": "logo",
+            "item_type": "text",
             "text": "NEW Arrivals",
             "link": "shopify://products/ph-panel-t-shirt-white",
             "image": "shopify://shop_images/1_ph_1.jpg"
@@ -558,7 +558,7 @@
         "row1_item_Dmwagy": {
           "type": "row1_item",
           "settings": {
-            "item_type": "logo",
+            "item_type": "text",
             "text": "NEW Arrivals",
             "link": "shopify://products/billionaire-religion-tracksuit",
             "image": "shopify://shop_images/IMG_6509.jpg"
@@ -567,7 +567,7 @@
         "row1_item_jVLcPA": {
           "type": "row1_item",
           "settings": {
-            "item_type": "logo",
+            "item_type": "text",
             "text": "NEW ARRIVALS",
             "link": "shopify://products/futura-bikini-black",
             "image": "shopify://shop_images/3_Phareligions_1.jpg"
