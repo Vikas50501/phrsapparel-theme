@@ -51,7 +51,19 @@
 
   @media (max-width: 550px) {
     .sf-grid-{{ section.id }} {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 12px;
+    }
+    /* Stack icon above text, centered, so two-up reads cleanly on phones */
+    .sf-item-{{ section.id }} {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+      padding: 12px 6px;
+    }
+    .sf-text-wrap-{{ section.id }} {
+      align-items: center;
+      text-align: center;
     }
   }
 
