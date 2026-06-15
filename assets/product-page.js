@@ -164,6 +164,21 @@
     thumb.classList.add('active');
   };
 
+  /* Prev/next arrows on the main image */
+  window.kushiSlide = function(dir) {
+    var items = Array.prototype.slice.call(document.querySelectorAll('.kushi-thumbnail-slider__item'));
+    if (!items.length) return;
+    var idx = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].classList.contains('active')) { idx = i; break; }
+    }
+    idx = (idx + dir + items.length) % items.length;
+    var next = items[idx];
+    var src = next.getAttribute('data-full');
+    if (src) kushiChangeImage(next, src);
+    try { next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
+  };
+
   /* Color swatches */
   window.kushiActivateSwatch = function(el) {
     el.closest('.kushi-swatch-group').querySelectorAll('.kushi-swatch-element').forEach(function(s) {

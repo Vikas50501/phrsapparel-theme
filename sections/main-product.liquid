@@ -64,6 +64,14 @@
             {%- else -%}
               <img id="kushi-main-image" src="" alt="{{ product.title | escape }}">
             {%- endif -%}
+            {%- if product.images.size > 1 -%}
+              <button type="button" class="kushi-media-arrow kushi-media-arrow--prev" aria-label="Previous image" onclick="kushiSlide(-1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </button>
+              <button type="button" class="kushi-media-arrow kushi-media-arrow--next" aria-label="Next image" onclick="kushiSlide(1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
+            {%- endif -%}
           </div>
           {%- if product.images.size > 1 -%}
             <div class="kushi-thumbnail-slider">
