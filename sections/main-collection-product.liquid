@@ -64,6 +64,20 @@
 
           {%- for filter in collection.filters -%}
             {%- assign lbl = filter.label | downcase -%}
+            {%- liquid
+              assign kc_skip = false
+              assign hide_norm = section.settings.hide_filters | downcase | replace: ' ', ''
+              assign lbl_norm = filter.label | downcase | replace: ' ', ''
+              if hide_norm != blank
+                assign hide_tokens = hide_norm | split: ','
+                for t in hide_tokens
+                  if t == lbl_norm
+                    assign kc_skip = true
+                  endif
+                endfor
+              endif
+            -%}
+            {%- if kc_skip -%}{%- continue -%}{%- endif -%}
             <div class="kc-group" data-open="true">
               <button type="button" class="kc-group__head" onclick="kcolToggle(this)">
                 <span>{{ filter.label }}</span>
@@ -255,6 +269,17 @@
   "tag": "section",
   "class": "section-kc-collection",
   "settings": [
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "text",
+      "id": "hide_filters",
+      "label": "Hide these filters",
+      "default": "Category",
+      "info": "Comma-separated filter names to hide (e.g. Category, Brand). Matches the filter's label."
+    },
     {
       "type": "range",
       "id": "products_per_page",
