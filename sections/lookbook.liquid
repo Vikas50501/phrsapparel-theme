@@ -110,11 +110,16 @@
   }
   .lb-popups-wrap-{{ section.id }}::-webkit-scrollbar { display: none; }
 
-  .lb-panel-{{ section.id }}:hover .lb-popups-wrap-{{ section.id }} {
+  .lb-panel-{{ section.id }}:hover .lb-popups-wrap-{{ section.id }},
+  .lb-panel-{{ section.id }}:focus-within .lb-popups-wrap-{{ section.id }} {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
   }
+  {%- if section.settings.always_show_cards %}
+  /* Always show the product cards (no hover needed) */
+  .lb-popups-wrap-{{ section.id }} { opacity: 1; transform: none; pointer-events: auto; }
+  {%- endif %}
 
   .lb-popup-{{ section.id }} {
     background: {{ section.settings.popup_bg }};
@@ -463,6 +468,7 @@
     { "type": "color",  "id": "img_placeholder_bg","label": "Placeholder colour", "default": "#f0efed" },
 
     { "type": "header", "content": "Product card popup" },
+    { "type": "checkbox", "id": "always_show_cards", "label": "Always show cards (don't require hover)", "default": false, "info": "Off = cards appear on hover (desktop). On = cards always visible." },
     { "type": "range",  "id": "popup_width",       "label": "Card width",      "min": 160, "max": 400, "step": 8, "unit": "px", "default": 240 },
     { "type": "range",  "id": "popup_width_mobile","label": "Card width (mobile)", "min": 120, "max": 280, "step": 4, "unit": "px", "default": 160 },
     { "type": "range",  "id": "popup_radius",      "label": "Corner radius",   "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
