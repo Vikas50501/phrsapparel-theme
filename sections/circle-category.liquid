@@ -3,9 +3,9 @@
   assign mobile_items = s.mobile_items_visible | default: 3
   assign m_gap = s.mobile_item_gap | default: 14
   assign m_gap_total = m_gap | times: mobile_items
-  assign dir = 'normal'
+  assign dir_num = 1
   if s.marquee_direction == 'right'
-    assign dir = 'reverse'
+    assign dir_num = -1
   endif
   assign cc_underline_display = 'block'
   unless s.show_underline
@@ -94,23 +94,50 @@
   .cc-viewport-{{ section.id }}::before { left: 0;  background: linear-gradient(to right, {{ s.bg_color }}, transparent); }
   .cc-viewport-{{ section.id }}::after  { right: 0; background: linear-gradient(to left,  {{ s.bg_color }}, transparent); }
 
-  /* ── Track: two identical copies, animate -50% for a seamless loop ── */
+  /* ── Scroller: native swipe/drag; JS drives the auto-scroll ── */
+  .cc-scroller-{{ section.id }} {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    {% if s.enable_drag %}cursor: grab;{% endif %}
+  }
+  .cc-scroller-{{ section.id }}::-webkit-scrollbar { display: none; }
+  .cc-scroller-{{ section.id }}.is-dragging { cursor: grabbing; }
+  .cc-scroller-{{ section.id }}.is-dragging a { pointer-events: none; }
+
+  /* ── Track: two identical copies for the seamless loop ── */
   .cc-track-{{ section.id }} {
     display: flex;
     width: max-content;
-    will-change: transform;
-    animation: cc-scroll-{{ section.id }} {{ s.marquee_speed }}s linear infinite;
-    animation-direction: {{ dir }};
   }
-  @keyframes cc-scroll-{{ section.id }} {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+
+  /* ── Prev / next arrows ──────────────────────────────── */
+  .cc-arrow-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: {{ s.arrow_size }}px;
+    height: {{ s.arrow_size }}px;
+    border-radius: 50%;
+    border: none;
+    background: {{ s.arrow_bg }};
+    color: {{ s.arrow_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.14);
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
-  {%- if s.pause_on_hover %}
-  .cc-viewport-{{ section.id }}:hover .cc-track-{{ section.id }} { animation-play-state: paused; }
-  {%- endif %}
-  @media (prefers-reduced-motion: reduce) {
-    .cc-track-{{ section.id }} { animation: none; }
+  .cc-arrow-{{ section.id }}--prev { left: 12px; }
+  .cc-arrow-{{ section.id }}--next { right: 12px; }
+  .cc-arrow-{{ section.id }} svg { width: 44%; height: 44%; }
+  .cc-arrow-{{ section.id }}:hover { transform: translateY(-50%) scale(1.08); }
+  @media screen and (max-width: 749px) {
+    .cc-arrow-{{ section.id }} { width: {{ s.arrow_size | times: 0.8 | round }}px; height: {{ s.arrow_size | times: 0.8 | round }}px; }
   }
 
   /* ── Each category item ──────────────────────────────── */
@@ -219,8 +246,19 @@
     {%- endif -%}
   </div>
 
-  {%- comment -%} Marquee — full width so the edge fade works edge-to-edge {%- endcomment -%}
+  {%- comment -%} Carousel — full width so the edge fade works edge-to-edge {%- endcomment -%}
   <div class="cc-viewport-{{ section.id }}" id="cc-viewport-{{ section.id }}">
+
+    {%- if s.show_arrows -%}
+      <button type="button" class="cc-arrow-{{ section.id }} cc-arrow-{{ section.id }}--prev" id="cc-prev-{{ section.id }}" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <button type="button" class="cc-arrow-{{ section.id }} cc-arrow-{{ section.id }}--next" id="cc-next-{{ section.id }}" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    {%- endif -%}
+
+    <div class="cc-scroller-{{ section.id }}" id="cc-scroller-{{ section.id }}">
     <div class="cc-track-{{ section.id }}" id="cc-track-{{ section.id }}">
 
       {%- comment -%} Copy 1 (real blocks) {%- endcomment -%}
@@ -260,9 +298,106 @@
       {%- endfor -%}
 
     </div>
+    </div>
   </div>
 
 </div>
+
+<script>
+(function () {
+  'use strict';
+  var SID      = '{{ section.id }}';
+  var AUTOPLAY = {{ s.enable_autoplay | default: true, allow_false: true }};
+  var DRAG     = {{ s.enable_drag | default: true, allow_false: true }};
+  var PAUSE_HOVER = {{ s.pause_on_hover | default: true, allow_false: true }};
+  var DIR      = {{ dir_num }};
+  var DURATION = {{ s.marquee_speed }};
+
+  var viewport = document.getElementById('cc-viewport-' + SID);
+  var scroller = document.getElementById('cc-scroller-' + SID);
+  var track    = document.getElementById('cc-track-' + SID);
+  if (!scroller || !track) return;
+
+  var oneCopy = 0;
+  function measure() { oneCopy = track.scrollWidth / 2; }
+  measure();
+  window.addEventListener('resize', function () { measure(); }, { passive: true });
+
+  if (DIR < 0) { scroller.scrollLeft = oneCopy; }
+
+  function normalize() {
+    if (oneCopy <= 0) return;
+    if (scroller.scrollLeft >= oneCopy) { scroller.scrollLeft -= oneCopy; }
+    else if (scroller.scrollLeft < 0)   { scroller.scrollLeft += oneCopy; }
+  }
+
+  var paused = false, isDown = false, idle = null, last = null;
+  function pause()  { paused = true; }
+  function resumeSoon() { clearTimeout(idle); idle = setTimeout(function () { paused = false; last = null; }, 1200); }
+
+  /* Auto-scroll loop */
+  function frame(ts) {
+    if (last == null) last = ts;
+    var dt = ts - last; last = ts;
+    if (AUTOPLAY && !paused && !isDown && oneCopy > 0) {
+      var pxPerMs = oneCopy / (DURATION * 1000);
+      scroller.scrollLeft += DIR * pxPerMs * dt;
+      normalize();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* Pause on hover */
+  if (PAUSE_HOVER) {
+    viewport.addEventListener('mouseenter', pause);
+    viewport.addEventListener('mouseleave', function () { if (!isDown) { paused = false; last = null; } });
+  }
+
+  /* Manual drag (mouse / pen) */
+  if (DRAG) {
+    var startX = 0, startSL = 0, moved = false;
+    scroller.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      isDown = true; moved = false; startX = e.clientX; startSL = scroller.scrollLeft;
+      scroller.classList.add('is-dragging');
+      try { scroller.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    scroller.addEventListener('pointermove', function (e) {
+      if (!isDown) return;
+      var d = e.clientX - startX;
+      if (Math.abs(d) > 4) moved = true;
+      scroller.scrollLeft = startSL - d;
+      normalize();
+    });
+    function up() { if (!isDown) return; isDown = false; scroller.classList.remove('is-dragging'); resumeSoon(); }
+    scroller.addEventListener('pointerup', up);
+    scroller.addEventListener('pointercancel', up);
+    scroller.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+
+  /* Native touch swipe + trackpad: pause auto, wrap, resume */
+  scroller.addEventListener('touchstart', pause, { passive: true });
+  scroller.addEventListener('touchend',   resumeSoon, { passive: true });
+  scroller.addEventListener('wheel', function () { pause(); resumeSoon(); }, { passive: true });
+  scroller.addEventListener('scroll', function () { if (!AUTOPLAY || paused || isDown) normalize(); }, { passive: true });
+
+  /* Arrows */
+  var prev = document.getElementById('cc-prev-' + SID);
+  var next = document.getElementById('cc-next-' + SID);
+  function step() { return Math.max(160, scroller.clientWidth * 0.8); }
+  function nudge(d) {
+    pause();
+    scroller.scrollBy({ left: d, behavior: 'smooth' });
+    setTimeout(normalize, 450);
+    resumeSoon();
+  }
+  if (prev) prev.addEventListener('click', function () { nudge(-step()); });
+  if (next) next.addEventListener('click', function () { nudge(step()); });
+
+  document.addEventListener('visibilitychange', function () { if (document.hidden) paused = true; else { paused = false; last = null; } });
+})();
+</script>
 
 {% schema %}
 {
@@ -305,6 +440,7 @@
     { "type": "range", "id": "underline_gap", "label": "Gap above underline", "min": 4, "max": 24, "step": 2, "unit": "px", "default": 10 },
 
     { "type": "header", "content": "Carousel (infinite scroll)" },
+    { "type": "checkbox", "id": "enable_autoplay", "label": "Auto-scroll (continuous)", "default": true, "info": "Turn off to make it a manual slider (drag / arrows only)." },
     { "type": "range", "id": "marquee_speed", "label": "Scroll speed (seconds per loop)", "min": 10, "max": 120, "step": 5, "unit": "s", "default": 40, "info": "Higher = slower. Speed scales with how many items you have." },
     {
       "type": "select", "id": "marquee_direction", "label": "Scroll direction",
@@ -315,6 +451,11 @@
       "default": "left"
     },
     { "type": "checkbox", "id": "pause_on_hover", "label": "Pause on hover", "default": true },
+    { "type": "checkbox", "id": "enable_drag", "label": "Allow drag / swipe", "default": true },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show prev / next arrows", "default": false },
+    { "type": "range", "id": "arrow_size", "label": "Arrow size", "min": 28, "max": 64, "step": 2, "unit": "px", "default": 40 },
+    { "type": "color", "id": "arrow_bg", "label": "Arrow background", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_color", "label": "Arrow icon colour", "default": "#111111" },
     { "type": "range", "id": "item_gap", "label": "Gap between items (desktop)", "min": 8, "max": 60, "step": 2, "unit": "px", "default": 24 },
     { "type": "range", "id": "slider_pad_y", "label": "Carousel top/bottom padding", "min": 0, "max": 60, "step": 4, "unit": "px", "default": 12 },
     { "type": "range", "id": "edge_fade", "label": "Edge fade width", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40, "info": "Fades items at the left and right edges into the background" },
