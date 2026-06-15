@@ -419,14 +419,17 @@
   border-radius: 0;
   overflow: hidden;
 }
-.template-collection .kc-card__media img,
-.template-collection .kc-card__media svg {
+/* Scope to the media LINK only — never the quick-action button icons */
+.template-collection .kc-card__media-link img,
+.template-collection .kc-card__media-link svg {
   position: absolute;
   inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.5s ease;
+  padding: 20px 25px;
+  background: #fff;
 }
 .template-collection .kc-card:hover .kc-card__media img { transform: scale(1.04); }
 
