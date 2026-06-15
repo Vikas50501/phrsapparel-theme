@@ -14,6 +14,13 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
+        "announcement_tHxLpG": {
+          "type": "announcement",
+          "settings": {
+            "text": "PAY LATER WITH TAMARA",
+            "link": ""
+          }
+        },
         "announcement-bar-0": {
           "type": "announcement",
           "settings": {
@@ -30,6 +37,7 @@
         }
       },
       "block_order": [
+        "announcement_tHxLpG",
         "announcement-bar-0",
         "announcement_FPyVcM"
       ],
