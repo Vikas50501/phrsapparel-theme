@@ -573,6 +573,15 @@
             "image": "shopify://shop_images/3_Phareligions_1.jpg"
           }
         },
+        "row1_item_JtCRaE": {
+          "type": "row1_item",
+          "settings": {
+            "item_type": "text",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/ph-silicon-hoodie-set",
+            "image": "shopify://shop_images/phsiliconset2.jpg"
+          }
+        },
         "row2_item_qrzhJz": {
           "type": "row2_item",
           "settings": {
@@ -599,15 +608,26 @@
             "link": "shopify://products/purple-glowride-reflective-skateboard",
             "image": "shopify://shop_images/Purple-Skateboard-1.jpg"
           }
+        },
+        "row2_item_3Yxifg": {
+          "type": "row2_item",
+          "settings": {
+            "item_type": "text",
+            "text": "NEW Arrivals",
+            "link": "shopify://products/ipac-singlet-black",
+            "image": "shopify://shop_images/blackipacsinglet.jpg"
+          }
         }
       },
       "block_order": [
         "row1_item_pgpkGn",
         "row1_item_Dmwagy",
         "row1_item_jVLcPA",
+        "row1_item_JtCRaE",
         "row2_item_qrzhJz",
         "row2_item_YacqVJ",
-        "row2_item_D8Ncn6"
+        "row2_item_D8Ncn6",
+        "row2_item_3Yxifg"
       ],
       "name": "Marquee Ticker",
       "settings": {
