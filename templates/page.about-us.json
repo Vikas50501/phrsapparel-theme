@@ -158,7 +158,7 @@
         "intro_gap": 80,
         "hide_stats": false,
         "stats_bg": "#ffffff",
-        "stats_pad": 56,
+        "stats_pad": 48,
         "stats_item_pad": 32,
         "stats_cols": 4,
         "stat_num_color": "#111111",
