@@ -179,6 +179,27 @@
     try { next.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
   };
 
+  /* Mobile sticky Add to Cart — mirror price + button state from the main controls */
+  (function () {
+    var priceSrc = document.getElementById('kushi-price-sale');
+    var priceDst = document.getElementById('kushi-sticky-price');
+    if (priceSrc && priceDst) {
+      var syncPrice = function () { priceDst.textContent = priceSrc.textContent; };
+      syncPrice();
+      new MutationObserver(syncPrice).observe(priceSrc, { childList: true, characterData: true, subtree: true });
+    }
+    var btnSrc = document.getElementById('kushi-btn-atc');
+    var btnDst = document.getElementById('kushi-sticky-btn');
+    if (btnSrc && btnDst) {
+      var syncBtn = function () {
+        btnDst.disabled = btnSrc.disabled;
+        btnDst.textContent = (btnSrc.textContent || '').trim();
+      };
+      syncBtn();
+      new MutationObserver(syncBtn).observe(btnSrc, { attributes: true, attributeFilter: ['disabled'], childList: true, characterData: true, subtree: true });
+    }
+  })();
+
   /* Color swatches */
   window.kushiActivateSwatch = function(el) {
     el.closest('.kushi-swatch-group').querySelectorAll('.kushi-swatch-element').forEach(function(s) {
