@@ -845,8 +845,10 @@
   align-items: center;
 }
 .template-product .kushi-list-payment__item svg {
-  width: 48px;
-  height: 32px;
+  width: 44px;
+  height: auto; /* preserve the icon's 38:24 ratio — no stretching */
+  display: block;
+  border-radius: 4px;
 }
 .template-product .kushi-payment-text {
   text-align: center;

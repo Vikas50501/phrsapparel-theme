@@ -299,25 +299,16 @@
 
           {%- comment -%} Payment Badges {%- endcomment -%}
           <div class="kushi-payment">
+            {%- liquid
+              assign pay_types = shop.enabled_payment_types
+              if pay_types == blank or pay_types.size == 0
+                assign pay_types = 'visa,master,american_express,paypal,apple_pay,google_pay' | split: ','
+              endif
+            -%}
             <ul class="kushi-list-payment">
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#142688"/><path d="M15 19.21V13h3.27c.97 0 1.69.22 2.16.66.47.44.7 1.06.7 1.86 0 .8-.24 1.43-.7 1.87-.47.44-1.19.66-2.16.66H16.5v1.16H15zm1.5-2.5h1.77c.57 0 .99-.12 1.27-.37.28-.24.42-.6.42-1.06 0-.47-.14-.83-.42-1.07-.28-.24-.7-.37-1.27-.37H16.5v2.87z" fill="#fff"/></svg>
-              </li>
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><circle fill="#EB001B" cx="15" cy="12" r="7"/><circle fill="#F79E1B" cx="23" cy="12" r="7"/><path fill="#FF5F00" d="M22 12c0-2.4-1.2-4.5-3-5.7-1.8 1.3-3 3.4-3 5.7s1.2 4.5 3 5.7c1.8-1.2 3-3.3 3-5.7z"/></svg>
-              </li>
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#006FCF"/><path d="M8.971 10.268l.774 1.876H8.203l.768-1.876zm16.075.078h-2.977v1.078h2.937v1.238h-2.937v1.177h2.977v.867l1.754-2.192-1.754-2.17v.002zm-14.063-2.39h2.525l.859 1.873.86-1.873h2.533v5.074l-2.164-5.074h-2.181l-2.313 5.345H7.703l-.427-1.04h-2.57l-.41 1.04H2.556l2.427-5.345zm14.063 0h4.848l1.356 1.738 1.4-1.738h1.814l-2.26 2.622L35 15.303h-1.883l-1.397-1.753-1.428 1.753h-4.874V7.956z" fill="#fff"/></svg>
-              </li>
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32" fill="#1A1F71"/><path d="M13.63 16.49h-2.24l1.4-8.65h2.24l-1.4 8.65zm10.34-8.43c-.44-.17-1.14-.36-2.01-.36-2.22 0-3.78 1.18-3.79 2.87-.02 1.25 1.12 1.95 1.97 2.36.88.43 1.17.7 1.17 1.08-.01.58-.7.85-1.35.85-.9 0-1.38-.13-2.12-.45l-.29-.14-.32 1.95c.53.24 1.5.45 2.51.46 2.36 0 3.89-1.16 3.91-2.97.01-.99-.59-1.74-1.89-2.36-.79-.4-1.27-.67-1.27-1.08.01-.37.41-.75 1.3-.75.74-.01 1.28.16 1.7.34l.2.1.31-1.9zm5.85.22h-1.73c-.54 0-.94.15-1.17.72l-3.33 7.94h2.36l.47-1.3h2.88l.27 1.3h2.08l-1.83-8.66zm-2.77 5.6l.89-2.42c-.01.02.18-.5.3-.83l.15.75.52 2.5h-1.86zM12.79 7.84l-2.2 5.9-.24-1.2c-.41-1.38-1.68-2.88-3.1-3.62l2.01 7.55h2.38l3.54-8.63h-2.39z" fill="#fff"/><path d="M8.44 7.84H4.81l-.03.18c2.82.72 4.68 2.46 5.45 4.55l-.79-3.99c-.14-.55-.53-.72-1-.74z" fill="#F2AE14"/></svg>
-              </li>
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path d="M21.382 9.713c0 1.668-1.177 2.858-2.821 2.858h-1.549a.283.283 0 00-.283.283v2.29a.283.283 0 01-.283.284h-1.089a.283.283 0 01-.283-.283V6.856c0-.156.126-.283.283-.283h3.204c1.644 0 2.821 1.19 2.821 2.858v.282zm-2.077-.088c0-.636-.474-1.148-1.06-1.148h-1.233a.283.283 0 00-.283.283v1.787c0 .157.126.283.283.283h1.233c.586 0 1.06-.512 1.06-1.147v-.058z" fill="#009CDE"/></svg>
-              </li>
-              <li class="kushi-list-payment__item">
-                <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" width="48" height="32"><rect x=".5" y=".5" width="37" height="23" rx="3" fill="#fff" stroke="#d9d9d9"/><path fill="#000" d="M17.714 10.595h2.548v2.81h-2.548z"/><path d="M18.057 12a1.8 1.8 0 01.687-1.419 1.79 1.79 0 100 2.838A1.8 1.8 0 0118.057 12z" fill="#FF5F00"/><path d="M21.57 12a1.79 1.79 0 01-2.896 1.419 1.79 1.79 0 000-2.838A1.79 1.79 0 0121.57 12z" fill="#EB001B"/></svg>
-              </li>
+              {%- for type in pay_types -%}
+                <li class="kushi-list-payment__item">{{ type | payment_type_svg_tag: class: 'kushi-pay-svg' }}</li>
+              {%- endfor -%}
             </ul>
             <p class="kushi-payment-text">100% Secured Payment</p>
           </div>
