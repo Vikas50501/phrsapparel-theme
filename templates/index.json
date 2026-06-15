@@ -1010,6 +1010,9 @@
         "image_DHFUWK",
         "image_Xt3ghz"
       ],
+      "custom_css": [
+        "h2.lbc-heading-template--27799287628140__lookbook_carousel_pdcFbm {font-size: 22px;}"
+      ],
       "name": "Lookbook Carousel",
       "settings": {
         "hide_desktop": true,
