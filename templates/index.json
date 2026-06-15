@@ -790,7 +790,7 @@
         "feature_ftN9Ft"
       ],
       "custom_css": [
-        "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 22px !important; }}"
+        "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 16px !important; }}"
       ],
       "name": "Service Features",
       "settings": {
