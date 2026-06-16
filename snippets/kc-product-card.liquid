@@ -79,8 +79,7 @@
     <a href="{{ product.url }}" class="kc-card__title">{{ product.title }}</a>
     <div class="kc-card__price">
       {%- if product.compare_at_price > product.price -%}
-        {%- assign kc_disc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
-        <span class="kc-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s> <span class="kc-card__disc">-{{ kc_disc }}%</span>
+        <span class="kc-on-sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
       {%- else -%}
         {{ product.price | money }}
       {%- endif -%}
