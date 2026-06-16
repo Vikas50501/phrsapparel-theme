@@ -3797,3 +3797,18 @@ p.totals__total-value { font-weight: 700; }
     font-weight: 600 !important;
   }
 }
+
+/* ===== Discount percentage badge (consistent across price displays) ===== */
+.price-item--discount {
+  display: inline-block;
+  margin-left: 6px;
+  color: #c0392b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.kc-card__disc {
+  margin-left: 6px;
+  color: #c0392b;
+  font-weight: 600;
+  white-space: nowrap;
+}

@@ -154,20 +154,26 @@
                             {{- item.product.title | escape -}}
                           </a>
 
-                          {%- if item.original_price != item.final_price -%}
+                          {%- liquid
+                            assign line_compare = item.variant.compare_at_price
+                            assign line_disc = 0
+                            if line_compare > item.final_price
+                              assign line_disc = line_compare | minus: item.final_price | times: 100.0 | divided_by: line_compare | round
+                            endif
+                          -%}
+                          {%- if line_compare > item.final_price -%}
+                            {%- comment -%} MRP strikethrough + discount % (matches storefront) {%- endcomment -%}
                             <div class="cart-item__discounted-prices">
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.regular_price' | t }}
-                              </span>
-                              <s class="cart-item__old-price product-option">
-                                {{- item.original_price | money -}}
-                              </s>
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.sale_price' | t }}
-                              </span>
-                              <strong class="cart-item__final-price product-option">
-                                {{ item.final_price | money }}
-                              </strong>
+                              <strong class="cart-item__final-price product-option">{{ item.final_price | money }}</strong>
+                              <s class="cart-item__old-price product-option">{{ line_compare | money }}</s>
+                              <span class="price-item--discount">-{{ line_disc }}%</span>
+                            </div>
+                          {%- elsif item.original_price != item.final_price -%}
+                            <div class="cart-item__discounted-prices">
+                              <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+                              <s class="cart-item__old-price product-option">{{- item.original_price | money -}}</s>
+                              <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+                              <strong class="cart-item__final-price product-option">{{ item.final_price | money }}</strong>
                             </div>
                           {%- else -%}
                             <div class="product-option">
@@ -524,7 +530,14 @@
                     </a>
                     <div class="cart-fbt__info">
                       <a class="cart-fbt__title" href="{{ product.url }}">{{ product.title }}</a>
-                      <div class="cart-fbt__price">{{ product.price | money }}</div>
+                      <div class="cart-fbt__price">
+                        {%- if product.compare_at_price > product.price -%}
+                          {%- assign fbt_disc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+                          {{ product.price | money }} <s>{{ product.compare_at_price | money }}</s> <span class="price-item--discount">-{{ fbt_disc }}%</span>
+                        {%- else -%}
+                          {{ product.price | money }}
+                        {%- endif -%}
+                      </div>
                       <button type="button" class="cart-fbt__add" data-vid="{{ product.selected_or_first_available_variant.id }}">Add +</button>
                     </div>
                   </div>
