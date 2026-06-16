@@ -414,7 +414,7 @@
 .template-collection .kc-card__media {
   display: block;
   position: relative;
-  aspect-ratio: 1 / 1; /* square on every viewport; container holds size before image loads (no layout shift) */
+  aspect-ratio: 3 / 4;
   background: var(--kc-card-bg);
   border-radius: 0;
   overflow: hidden;
@@ -423,12 +423,16 @@
 .template-collection .kc-card__media-link img,
 .template-collection .kc-card__media-link svg {
   position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s ease;
-  padding: 20px 25px;
+  transition: transform .5s ease;
+  padding: 0px 0px;
   background: #fff;
 }
 .template-collection .kc-card:hover .kc-card__media img { transform: scale(1.04); }
