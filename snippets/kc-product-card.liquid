@@ -25,8 +25,17 @@
         {{ 'product-1' | placeholder_svg_tag }}
       {%- endif -%}
     </a>
-    {%- if is_new -%}<span class="kc-badge kc-badge--new">New</span>{%- endif -%}
-    {%- unless product.available -%}<span class="kc-badge kc-badge--sold">Sold Out</span>{%- endunless -%}
+    {%- liquid
+      assign kc_badge_disc = 0
+      if product.compare_at_price > product.price
+        assign kc_badge_disc = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+      endif
+    -%}
+    <div class="kc-card__badges">
+      {%- if kc_badge_disc > 0 -%}<span class="kc-badge kc-badge--disc">{{ kc_badge_disc }}% OFF</span>{%- endif -%}
+      {%- if is_new -%}<span class="kc-badge kc-badge--new">New</span>{%- endif -%}
+      {%- unless product.available -%}<span class="kc-badge kc-badge--sold">Sold Out</span>{%- endunless -%}
+    </div>
 
     {%- comment -%} Hover quick actions {%- endcomment -%}
     <div class="kc-card__actions">
