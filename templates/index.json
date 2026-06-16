@@ -677,28 +677,28 @@
         "image_eG8Umq": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/IMG_6486.jpg",
+            "image": "shopify://shop_images/blackipacsinglet2.jpg",
             "link": "shopify://products/ipac-singlet-black"
           }
         },
         "image_zMpi3P": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/IMG_6498.jpg",
+            "image": "shopify://shop_images/pinkipacsinglet2.jpg",
             "link": "shopify://products/ipac-singlet-pink"
           }
         },
         "image_JaPGBB": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/IMG_6485.jpg",
+            "image": "shopify://shop_images/whiteipacsinglet3.jpg",
             "link": "shopify://products/ipac-singlet-white"
           }
         },
         "image_YXqGcP": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/IMG_6499.jpg",
+            "image": "shopify://shop_images/yellowipacsinglet2.jpg",
             "link": "shopify://products/ipac-singlet-yellow"
           }
         }
@@ -791,7 +791,7 @@
       ],
       "custom_css": [
         "@media screen and (max-width: 767px) {.sf-title-template--27799287628140__service_features_7mK4RG {font-size: 16px !important; }}",
-        "sf-title-template--27799287628140__service_features_7mK4RG {font-size: 17px !important; }"
+        "sf-title-template--27799287628140__service_features_7mK4RG {font-size: 17px !important;}"
       ],
       "name": "Service Features",
       "settings": {
