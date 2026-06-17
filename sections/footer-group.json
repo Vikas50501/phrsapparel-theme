@@ -39,7 +39,7 @@
           "type": "text",
           "settings": {
             "heading": "ABOUT",
-            "subtext": "<p>Tejsavi Business Center, Umm Hurair Road, 1st Floor Office 105, Cabin 10, Dubai, United Arab Emirates.</p>"
+            "subtext": "<p>Tejsavi Business Center, Umm Hurair Road, 1st Floor Office 105, Cabin 10, Dubai, United Arab Emirates.</p><p><a href=\"/pages/contact\">Contact Us</a></p>"
           }
         }
       },
