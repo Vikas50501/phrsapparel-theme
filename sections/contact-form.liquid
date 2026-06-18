@@ -566,11 +566,13 @@
           <p class="ct2-form-sub-{{ section.id }}">{{ section.settings.form_subtitle }}</p>
         {%- endif -%}
 
-        <div id="ct2-msg-{{ section.id }}" class="ct2-msg-{{ section.id }}"></div>
-
-        <form id="ct2-form-{{ section.id }}" novalidate>
-          <input type="hidden" name="form_type" value="contact">
-          <input type="hidden" name="utf8" value="✓">
+        {%- assign ct_form_id = 'ct2-form-' | append: section.id -%}
+        {%- form 'contact', id: ct_form_id -%}
+          {%- if form.posted_successfully? -%}
+            <div class="ct2-msg-{{ section.id }} is-ok" tabindex="-1">{{ section.settings.success_msg }}</div>
+          {%- elsif form.errors -%}
+            <div class="ct2-msg-{{ section.id }} is-err" tabindex="-1">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
           <div class="ct2-fields-{{ section.id }}">
 
             {%- if section.settings.show_split_name -%}
@@ -621,59 +623,13 @@
             </button>
 
           </div>
-        </form>
+        {%- endform -%}
       </div>
     </div>
   </div>
 </div>
 
-<script>
-(function () {
-  var SID  = '{{ section.id }}';
-  var form = document.getElementById('ct2-form-' + SID);
-  var msg  = document.getElementById('ct2-msg-'  + SID);
-  if (!form || !msg) return;
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    msg.className = 'ct2-msg-' + SID;
-    var em = form.querySelector('[name="contact[email]"]');
-    if (!em || !/\S+@\S+\.\S+/.test(em.value.trim())) {
-      msg.textContent = '{{ section.settings.err_email | escape }}';
-      msg.classList.add('is-err'); return;
-    }
-    var btn = form.querySelector('.ct2-submit-' + SID);
-    var span = btn ? btn.querySelector('span') : null;
-    var orig = span ? span.textContent : '';
-    if (span) span.textContent = '{{ section.settings.submit_sending | escape }}';
-    if (btn)  btn.disabled = true;
-    fetch('/contact#contact_form', {
-      method: 'POST', body: new FormData(form),
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    }).then(function (r) {
-      if (btn)  btn.disabled = false;
-      if (span) span.textContent = orig;
-      if (r.ok || r.status === 302) {
-        msg.textContent = '{{ section.settings.success_msg | escape }}';
-        msg.classList.add('is-ok'); form.reset();
-      } else {
-        msg.textContent = '{{ section.settings.err_msg | escape }}';
-        msg.classList.add('is-err');
-      }
-    }).catch(function () {
-      if (btn)  btn.disabled = false;
-      if (span) span.textContent = orig;
-      msg.textContent = '{{ section.settings.err_msg | escape }}';
-      msg.classList.add('is-err');
-    });
-  });
-  document.addEventListener('shopify:section:load', function (ev) {
-    if (ev.detail && ev.detail.sectionId === SID) {
-      form = document.getElementById('ct2-form-' + SID);
-      msg  = document.getElementById('ct2-msg-'  + SID);
-    }
-  });
-})();
-</script>
+{%- comment -%} Uses Shopify's native {% form 'contact' %} — submits to /contact and emails the store contact address. {%- endcomment -%}
 
 {% schema %}
 {
