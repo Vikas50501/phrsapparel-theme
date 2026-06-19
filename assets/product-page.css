@@ -1297,22 +1297,32 @@
 .template-product .kushi-product-card__info {
   padding: 14px 0 0;
 }
+.template-product .kushi-product-card__info { padding: 14px 0 0; }
 .template-product .kushi-product-card__title {
   font-family: var(--kushi-font);
-  font-size: var(--kushi-base-size);
-  font-weight: var(--kushi-weight-medium);
-  margin-bottom: 4px;
-  text-transform: capitalize;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #111;
+  line-height: 1.3;
+  margin-bottom: 5px;
 }
 .template-product .kushi-product-card__price {
   font-family: var(--kushi-font);
-  font-size: var(--kushi-base-size);
-  font-weight: var(--kushi-heading-weight);
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
 }
 .template-product .kushi-product-card__price s {
-  color: rgba(var(--kushi-fg), 0.45);
+  color: #9a9a9a;
   font-weight: 400;
-  margin-left: 6px;
+  margin-left: 0;
+  text-decoration-thickness: 1px;
 }
 
 /* ===== RESPONSIVE ===== */

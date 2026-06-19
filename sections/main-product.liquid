@@ -488,7 +488,11 @@
                   <div class="kushi-product-card__title">{{ prod.title }}</div>
                   <div class="kushi-product-card__price">
                     {{ prod.price | money }}
-                    {%- if prod.compare_at_price > prod.price -%}<s>{{ prod.compare_at_price | money }}</s>{%- endif -%}
+                    {%- if prod.compare_at_price > prod.price -%}
+                      <s>{{ prod.compare_at_price | money }}</s>
+                      {%- assign na_disc = prod.compare_at_price | minus: prod.price | times: 100.0 | divided_by: prod.compare_at_price | round -%}
+                      <span class="price-item--discount">-{{ na_disc }}%</span>
+                    {%- endif -%}
                   </div>
                 </div>
               </a>

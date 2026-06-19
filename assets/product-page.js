@@ -368,6 +368,8 @@
       var priceHtml = formatMoney(p.price);
       if (p.compare_at_price && p.compare_at_price > p.price) {
         priceHtml += ' <s>' + formatMoney(p.compare_at_price) + '</s>';
+        var rvPct = Math.round((1 - p.price / p.compare_at_price) * 100);
+        priceHtml += ' <span class="price-item--discount">-' + rvPct + '%</span>';
       }
       card.innerHTML =
         '<a href="' + p.url + '">' +
