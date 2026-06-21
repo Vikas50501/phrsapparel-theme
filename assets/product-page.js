@@ -46,6 +46,24 @@
     return (window.kushiCurrencySymbol || '$') + (cents / 100).toFixed(2);
   }
 
+  /* Tell the currency converter app (Selo / generic) to re-convert the .money
+     elements after the theme rewrites prices via JS (variant change / load). */
+  function notifyCurrencyApp() {
+    try {
+      var apps = [window.Selo, window.selo, window.Currency, window.CurrencyConverter];
+      apps.forEach(function (a) {
+        if (!a) return;
+        ['convertAll', 'convert', 'reconvert', 'refresh', 'update', 'init'].forEach(function (fn) {
+          if (typeof a[fn] === 'function') { try { a[fn](); } catch (e) {} }
+        });
+      });
+      ['selo:refresh', 'selo:reconvert', 'currency:refresh', 'currency:update'].forEach(function (ev) {
+        document.dispatchEvent(new CustomEvent(ev));
+        window.dispatchEvent(new CustomEvent(ev));
+      });
+    } catch (e) {}
+  }
+
   function updatePriceDisplay(variant) {
     var saleEl = document.getElementById('kushi-price-sale');
     var regularEl = document.getElementById('kushi-price-regular');
@@ -69,6 +87,9 @@
       if (regularEl) regularEl.style.display = 'none';
       if (badgeEl) badgeEl.style.display = 'none';
     }
+
+    /* re-run the currency converter after we changed the price text */
+    setTimeout(notifyCurrencyApp, 60);
   }
 
   function updateVariantId(variant) {
