@@ -258,8 +258,32 @@
   >
     <div class="footer__content-bottom-wrapper page-width">
       <div class="footer__column footer__localization isolate">
-        {%- comment -%} Selo currency converter widget (footer) {%- endcomment -%}
-        <div id="selo-custom-currency-box" class="footer__selo-currency"></div>
+        {%- comment -%} Selo currency converter widget (footer on desktop; relocated into the burger menu on mobile) {%- endcomment -%}
+        <div id="selo-footer-home" class="footer__selo-currency">
+          <div id="selo-custom-currency-box"></div>
+        </div>
+        <script>
+          (function () {
+            function relocate() {
+              var box = document.getElementById('selo-custom-currency-box');
+              var slot = document.getElementById('selo-menu-slot');
+              var home = document.getElementById('selo-footer-home');
+              if (!box) return;
+              var mobile = window.matchMedia('(max-width: 989px)').matches;
+              if (mobile && slot) {
+                if (box.parentNode !== slot) slot.appendChild(box);
+              } else if (home) {
+                if (box.parentNode !== home) home.appendChild(box);
+              }
+            }
+            relocate();
+            var t;
+            window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(relocate, 150); }, { passive: true });
+            document.addEventListener('shopify:section:load', relocate);
+            /* Selo renders async — keep checking briefly so the widget lands in the right place */
+            var tries = 0, iv = setInterval(function () { relocate(); if (++tries > 20) clearInterval(iv); }, 300);
+          })();
+        </script>
         {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
           <localization-form>
             {%- form 'localization', id: 'FooterCountryForm', class: 'localization-form' -%}
