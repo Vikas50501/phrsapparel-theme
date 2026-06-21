@@ -9,6 +9,13 @@
   var variants = productData.variants;
   var currentVariant = null;
 
+  /* Do the variants actually differ in price? If not (e.g. apparel sizes all
+     the same price), we leave the server-rendered price untouched so the
+     currency converter app (Selo) can convert it without the JS overwriting it. */
+  var priceVaries = variants.some(function (v) {
+    return v.price !== variants[0].price || v.compare_at_price !== variants[0].compare_at_price;
+  });
+
   function findVariantFromOptions() {
     var selected = {};
     document.querySelectorAll('.kushi-swatch-element.active').forEach(function(el) {
@@ -70,6 +77,9 @@
     var badgeEl = document.getElementById('kushi-price-badge');
 
     if (!variant) return;
+    /* Skip rewriting the price when all variants share one price — keeps the
+       currency-converted (Selo) price intact on the product page. */
+    if (!priceVaries) return;
 
     if (saleEl) saleEl.textContent = formatMoney(variant.price);
 
