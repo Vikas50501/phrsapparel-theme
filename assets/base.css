@@ -3819,3 +3819,8 @@ p.totals__total-value { font-weight: 700; }
 .header-wrapper .header-localization,
 .announcement-bar-section .localization-form,
 .announcement-bar localization-form { display: none !important; }
+
+/* ===== Remove blank space below footer from empty app-embed containers ===== */
+.shopify-app-block:empty,
+.shopify-section-group-footer-group + div:empty { display: none !important; }
+.footer { margin-bottom: 0 !important; }
