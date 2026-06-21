@@ -3813,3 +3813,9 @@ p.totals__total-value { font-weight: 700; }
   white-space: nowrap;
   vertical-align: middle;
 }
+
+/* ===== Hide native country/currency selector in header + announcement bar ===== */
+.header-wrapper .desktop-localization-wrapper,
+.header-wrapper .header-localization,
+.announcement-bar-section .localization-form,
+.announcement-bar localization-form { display: none !important; }
