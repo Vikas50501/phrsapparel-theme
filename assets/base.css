@@ -3824,3 +3824,14 @@ p.totals__total-value { font-weight: 700; }
 .shopify-app-block:empty,
 .shopify-section-group-footer-group + div:empty { display: none !important; }
 .footer { margin-bottom: 0 !important; }
+
+/* ===== Selo currency widget in header (ensure visible on dark header) ===== */
+.header__selo-currency {
+  display: inline-flex !important;
+  align-items: center;
+  margin-right: 10px;
+  min-height: 20px;
+}
+.header__selo-currency, .header__selo-currency * {
+  color: rgb(var(--color-foreground)) !important;
+}
