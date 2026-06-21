@@ -258,6 +258,8 @@
   >
     <div class="footer__content-bottom-wrapper page-width">
       <div class="footer__column footer__localization isolate">
+        {%- comment -%} Selo currency converter widget (footer) {%- endcomment -%}
+        <div id="selo-custom-currency-box" class="footer__selo-currency"></div>
         {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
           <localization-form>
             {%- form 'localization', id: 'FooterCountryForm', class: 'localization-form' -%}
