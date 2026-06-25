@@ -181,9 +181,13 @@
     return isNaN(n) ? null : n;
   }
   function fmt(amt, cur) {
+    var zero = (cur === 'JPY' || cur === 'KRW' || cur === 'VND' || cur === 'IDR');
     try {
-      return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, minimumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2, maximumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2 }).format(amt);
-    } catch (e) { return (SYM[cur] || cur + ' ') + amt.toFixed(2); }
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol', minimumFractionDigits: zero ? 0 : 2, maximumFractionDigits: zero ? 0 : 2 }).format(amt);
+    } catch (e1) {
+      try { return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, minimumFractionDigits: zero ? 0 : 2, maximumFractionDigits: zero ? 0 : 2 }).format(amt); }
+      catch (e2) { return (SYM[cur] || cur + ' ') + amt.toFixed(zero ? 0 : 2); }
+    }
   }
   var nodes = [], mo = null;   /* text nodes we've touched, with their base-currency originals */
   function setVal(node, v) { if (node.nodeValue !== v) node.nodeValue = v; }
