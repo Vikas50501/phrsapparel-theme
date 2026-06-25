@@ -156,11 +156,13 @@
       }).catch(function () { return null; });
   }
 
-  /* ── Price conversion (leaf elements only) ── */
+  /* ── Price conversion (per text-node, skips % badges) ── */
   var SELECTORS = [
-    '.money', '.price-item--regular', '.price-item--sale', '.price-item',
-    '.kc-on-sale', '.kc-card__price s', '.kushi-price-item--sale', '.kushi-price-item--regular',
-    '.kc-card__price', '.cart-fbt__price', '.totals__total-value', '.product-option', '.cart-item__price'
+    '.kc-card__price', '.kc-on-sale',
+    '.kushi-price-wrapper', '.kushi-price__sale', '.kushi-price-item--sale', '.kushi-price-item--regular',
+    '.price', '.price-item--regular', '.price-item--sale', '.price-item--last',
+    '.money', '.cart-fbt__price', '.cart-item__price-wrapper', '.cart-item__discounted-prices',
+    '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value', '.product-option'
   ].join(',');
 
   function parseNum(t) {
@@ -177,19 +179,28 @@
       return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, minimumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2, maximumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2 }).format(amt);
     } catch (e) { return (SYM[cur] || cur + ' ') + amt.toFixed(2); }
   }
+  var nodes = [];   /* text nodes we've touched, with their base-currency originals */
+  function convertNode(node, rate, cur) {
+    var orig = node.__accOrig;
+    if (orig === undefined) {
+      var t = node.nodeValue;
+      if (!/\d/.test(t) || t.indexOf('%') > -1) return;   /* skip non-prices & discount badges */
+      node.__accOrig = orig = t;
+      nodes.push(node);
+    }
+    if (cur === BASE) { node.nodeValue = orig; return; }
+    var n = parseNum(orig);
+    if (n === null || isNaN(n)) return;
+    node.nodeValue = fmt(n * rate, cur);
+  }
   function convert(cur) {
-    var els = document.querySelectorAll(SELECTORS);
-    if (cur === BASE) { stored.forEach(function (o) { o.el.textContent = o.orig; }); return; }
+    if (cur === BASE) { nodes.forEach(function (nd) { if (nd.__accOrig !== undefined) nd.nodeValue = nd.__accOrig; }); return; }
     if (!rates[cur]) return;
     var rate = rates[cur];
-    els.forEach(function (el) {
-      if (el.children.length > 0) return;                 /* leaf only — don't clobber struck price / badges */
-      var rec = stored.filter(function (o) { return o.el === el; })[0];
-      var orig = rec ? rec.orig : el.textContent.trim();
-      if (!rec) { if (!/\d/.test(orig)) return; stored.push({ el: el, orig: orig }); }
-      var n = parseNum(orig);
-      if (n === null || isNaN(n)) return;
-      el.textContent = fmt(n * rate, cur);
+    var els = document.querySelectorAll(SELECTORS);
+    [].forEach.call(els, function (el) {
+      var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
+      while ((node = w.nextNode())) { convertNode(node, rate, cur); }
     });
   }
 
@@ -273,17 +284,22 @@
     }).observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
+  function reconvertSoon() { [400, 1200, 2500].forEach(function (ms) { setTimeout(function () { if (activeCurrency !== BASE) convert(activeCurrency); }, ms); }); }
+
   function init() {
     var hosts = document.querySelectorAll('.acc-mount');
-    if (!hosts.length) return;
+    if (!hosts.length) { console.warn('[currency] no .acc-mount found in DOM'); return; }
+    window.ACC = { setCountry: setCountry, convert: function () { return convert(activeCurrency); }, get rates() { return rates; }, get active() { return activeCountry + '/' + activeCurrency; } };
     fetchRates().then(function (r) {
       rates = r || {};
+      if (!r) console.warn('[currency] exchange-rate fetch failed — prices will stay in ' + BASE);
       [].forEach.call(hosts, createSelector);
+      observe();
       var saved = null; try { saved = localStorage.getItem('acc_country'); } catch (e) {}
-      if (saved) { setCountry(saved, false); observe(); return; }
+      if (saved) { setCountry(saved, false); reconvertSoon(); return; }
       detectCountry().then(function (cc) {
         if (cc && COUNTRY_CURRENCY[cc]) setCountry(cc, false); else { activeCountry = 'AE'; mounts.forEach(updateTrigger); }
-        observe();
+        reconvertSoon();
       });
     });
   }
