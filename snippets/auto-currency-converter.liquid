@@ -156,13 +156,16 @@
       }).catch(function () { return null; });
   }
 
-  /* ── Price conversion (per text-node, skips % badges) ── */
+  /* ── Price conversion (per text-node, skips % badges) ──
+     Target ONLY price-bearing leaf elements. Never use wrappers that also
+     hold variant/option values (e.g. .product-option, .cart-item__price-wrapper),
+     or sizes like "32" get converted into currency. */
   var SELECTORS = [
     '.kc-card__price', '.kc-on-sale',
-    '.kushi-price-wrapper', '.kushi-price__sale', '.kushi-price-item--sale', '.kushi-price-item--regular',
-    '.price', '.price-item--regular', '.price-item--sale', '.price-item--last',
-    '.money', '.cart-fbt__price', '.cart-item__price-wrapper', '.cart-item__discounted-prices',
-    '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value', '.product-option'
+    '.kushi-price-item--sale', '.kushi-price-item--regular',
+    '.price-item--regular', '.price-item--sale', '.price-item--last',
+    '.money', '.cart-fbt__price',
+    '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value'
   ].join(',');
 
   function parseNum(t) {
@@ -179,7 +182,8 @@
       return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, minimumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2, maximumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2 }).format(amt);
     } catch (e) { return (SYM[cur] || cur + ' ') + amt.toFixed(2); }
   }
-  var nodes = [];   /* text nodes we've touched, with their base-currency originals */
+  var nodes = [], mo = null;   /* text nodes we've touched, with their base-currency originals */
+  function setVal(node, v) { if (node.nodeValue !== v) node.nodeValue = v; }
   function convertNode(node, rate, cur) {
     var orig = node.__accOrig;
     if (orig === undefined) {
@@ -188,20 +192,26 @@
       node.__accOrig = orig = t;
       nodes.push(node);
     }
-    if (cur === BASE) { node.nodeValue = orig; return; }
+    if (cur === BASE) { setVal(node, orig); return; }
     var n = parseNum(orig);
     if (n === null || isNaN(n)) return;
-    node.nodeValue = fmt(n * rate, cur);
+    setVal(node, fmt(n * rate, cur));
   }
   function convert(cur) {
-    if (cur === BASE) { nodes.forEach(function (nd) { if (nd.__accOrig !== undefined) nd.nodeValue = nd.__accOrig; }); return; }
-    if (!rates[cur]) return;
-    var rate = rates[cur];
-    var els = document.querySelectorAll(SELECTORS);
-    [].forEach.call(els, function (el) {
-      var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
-      while ((node = w.nextNode())) { convertNode(node, rate, cur); }
-    });
+    if (mo) mo.disconnect();                               /* don't let our own writes retrigger the observer */
+    try {
+      if (cur === BASE) {
+        nodes.forEach(function (nd) { if (nd.__accOrig !== undefined) setVal(nd, nd.__accOrig); });
+      } else if (rates[cur]) {
+        var rate = rates[cur];
+        [].forEach.call(document.querySelectorAll(SELECTORS), function (el) {
+          var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
+          while ((node = w.nextNode())) { convertNode(node, rate, cur); }
+        });
+      }
+    } finally {
+      if (mo) mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
   }
 
   /* ── State ── */
@@ -277,11 +287,13 @@
 
   /* ── Re-convert on dynamic price changes (variant/cart) ── */
   function observe() {
+    if (mo) return;
     var t;
-    new MutationObserver(function () {
+    mo = new MutationObserver(function () {
       if (activeCurrency === BASE) return;
-      clearTimeout(t); t = setTimeout(function () { convert(activeCurrency); }, 250);
-    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+      clearTimeout(t); t = setTimeout(function () { convert(activeCurrency); }, 300);
+    });
+    mo.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   function reconvertSoon() { [400, 1200, 2500].forEach(function (ms) { setTimeout(function () { if (activeCurrency !== BASE) convert(activeCurrency); }, ms); }); }
