@@ -170,13 +170,15 @@
   ].join(',');
 
   function parseNum(t) {
-    var s = (t || '').replace(/[^\d.,]/g, '');
-    if (!s) return null;
-    if (s.indexOf(',') > -1 && s.indexOf('.') > -1) {
-      return s.lastIndexOf(',') > s.lastIndexOf('.') ? parseFloat(s.replace(/\./g, '').replace(',', '.')) : parseFloat(s.replace(/,/g, ''));
-    }
-    if (s.indexOf(',') > -1) { var p = s.split(','); return p[p.length - 1].length <= 2 ? parseFloat(s.replace(',', '.')) : parseFloat(s.replace(/,/g, '')); }
-    return parseFloat(s);
+    /* Keep only digits + separators, then DROP any leading/trailing separators that
+       come from the currency label itself (e.g. "Dhs." -> leading dot, "د.إ" -> trailing).
+       Then: a final group of 1-2 digits after a separator is the decimal part;
+       everything else is grouping. Handles "Dhs. 1,234.56", "1.234,56", "Rs. 470", etc. */
+    var s = (t || '').replace(/[^\d.,]/g, '').replace(/^[.,]+/, '').replace(/[.,]+$/, '');
+    if (!/\d/.test(s)) return null;
+    var m = s.match(/^(.*)([.,])(\d{1,2})$/);
+    var n = m ? parseFloat(m[1].replace(/[.,]/g, '') + '.' + m[3]) : parseFloat(s.replace(/[.,]/g, ''));
+    return isNaN(n) ? null : n;
   }
   function fmt(amt, cur) {
     try {
@@ -308,10 +310,16 @@
       if (!r) console.warn('[currency] exchange-rate fetch failed — prices will stay in ' + BASE);
       [].forEach.call(hosts, createSelector);
       observe();
+      /* 1) manual choice always wins (no expiry) */
       var saved = null; try { saved = localStorage.getItem('acc_country'); } catch (e) {}
-      if (saved) { setCountry(saved, false); reconvertSoon(); return; }
+      if (saved && COUNTRY_CURRENCY[saved]) { setCountry(saved, false); reconvertSoon(); return; }
+      /* 2) cached geo (12h) — avoids hammering the IP API on every page view */
+      var geo = null; try { var g = JSON.parse(localStorage.getItem('acc_geo') || '{}'); if (g.cc && g.ts && (Date.now() - g.ts < 43200000)) geo = g.cc; } catch (e) {}
+      if (geo && COUNTRY_CURRENCY[geo]) { setCountry(geo, false); reconvertSoon(); return; }
+      /* 3) detect once, then cache */
       detectCountry().then(function (cc) {
-        if (cc && COUNTRY_CURRENCY[cc]) setCountry(cc, false); else { activeCountry = 'AE'; mounts.forEach(updateTrigger); }
+        if (cc && COUNTRY_CURRENCY[cc]) { try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {} setCountry(cc, false); }
+        else { activeCountry = 'AE'; mounts.forEach(updateTrigger); }
         reconvertSoon();
       });
     });
