@@ -28,6 +28,16 @@
         "show_recently_viewed": true
       }
     },
+    "custom_liquid_w4enMa": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "{% capture tamara_country %}{% if localization.country.iso_code == 'SA' %}SA{% else %}AE{% endif %}{% endcapture %}\n\n<script>\n  window.tamaraWidgetConfig = {\n    lang: \"{{ request.locale.iso_code }}\",\n    country: \"{{ tamara_country }}\",\n    publicKey: \"556c6637-d75e-4907-8235-1292e79b63b6\",\n    css: `:host {\n      --font-primary: inherit !important;\n      --font-secondary: inherit !important;\n    }\n    .tamara-summary-widget__amount {\n      font-weight: 700 !important;\n    }\n    `,\n    style: {\n      fontSize: '14px',\n      badgeRatio: 1.2,\n    }\n  }\n</script>\n<script defer type=\"text/javascript\" src=\"https://cdn.tamara.co/widget-v2/tamara-widget.js\"></script>\n<div>\n  <tamara-widget id=\"tamara-widget-custom\" type=\"tamara-summary\" amount=\"{{ product.price | money_without_currency | remove: ',' }}\" config='{\"badgePosition\":\"right\",\"showExtraContent\":\"\"}' inline-type=\"2\">\n  </tamara-widget>\n</div>",
+        "color_scheme": "",
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
     "related-products": {
       "type": "related-products",
       "disabled": true,
@@ -81,6 +91,7 @@
   },
   "order": [
     "main",
+    "custom_liquid_w4enMa",
     "related-products"
   ]
 }
