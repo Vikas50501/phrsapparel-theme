@@ -166,6 +166,8 @@
                 -%}
               </a>
             {%- endif -%}
+            {%- comment -%} Currency/country selector (mobile burger menu) {%- endcomment -%}
+            <div class="acc-mount acc-mount--drawer"></div>
             {%- if localization.available_countries or localization.available_languages -%}
               <div class="menu-drawer__localization header-localization">
                 {%- if localization.available_countries and localization.available_countries.size > 1 -%}
