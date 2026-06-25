@@ -1,0 +1,293 @@
+{%- comment -%}
+  AUTO IP CURRENCY CONVERTER + premium country/currency selector (PHARELIGIONS)
+  - Auto-detects visitor country by IP, converts displayed prices with LIVE rates
+  - Renders a selector into every <div class="acc-mount"></div> (header + footer)
+  - All countries incl. Nigeria (NGN); remembers choice; re-converts on variant/cart changes
+  - Display-only conversion (checkout stays in store base currency — Shopify limitation)
+{%- endcomment -%}
+
+<style>
+  /* ── Trigger pill (sits on dark header/footer) ── */
+  .acc-selector { position: relative; display: inline-flex; font-family: inherit; line-height: 1; }
+  .acc-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(var(--color-foreground, 255 255 255), 0.22);
+    color: rgb(var(--color-foreground, 255 255 255));
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .acc-trigger:hover { border-color: rgba(var(--color-foreground, 255 255 255), 0.5); }
+  .acc-trigger:focus-visible { outline: 2px solid rgb(var(--color-foreground, 255 255 255)); outline-offset: 2px; }
+  .acc-trigger .acc-flag { font-size: 16px; }
+  .acc-trigger .acc-caret { width: 12px; height: 12px; flex-shrink: 0; transition: transform 0.2s ease; opacity: 0.8; }
+  .acc-selector.is-open .acc-trigger .acc-caret { transform: rotate(180deg); }
+  @media (max-width: 749px) { .acc-trigger .acc-country { display: none; } }
+
+  /* ── Dropdown ── */
+  .acc-menu {
+    position: absolute;
+    z-index: 100;
+    width: 290px;
+    max-width: calc(100vw - 32px);
+    background: #ffffff;
+    color: #111111;
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    max-height: min(380px, 70vh);
+    font-family: inherit;
+  }
+  .acc-menu.is-open { display: flex; animation: accFade 0.18s ease-out; }
+  @keyframes accFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .acc-menu[data-dir="down"] { top: calc(100% + 10px); }
+  .acc-menu[data-dir="up"]   { bottom: calc(100% + 10px); }
+  .acc-menu[data-align="right"] { right: 0; }
+  .acc-menu[data-align="left"]  { left: 0; }
+
+  .acc-search { position: sticky; top: 0; background: #fff; padding: 12px; border-bottom: 1px solid #eee; }
+  .acc-search input {
+    width: 100%; box-sizing: border-box;
+    padding: 10px 12px; border: 1px solid #e2e2e2; border-radius: 9px;
+    font-size: 13px; font-family: inherit; outline: none; color: #111;
+  }
+  .acc-search input:focus { border-color: #111; }
+
+  .acc-list { overflow-y: auto; padding: 6px; scrollbar-width: thin; }
+  .acc-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 8px;
+    cursor: pointer; font-size: 13px; color: #222;
+  }
+  .acc-option:hover { background: #f4f4f4; }
+  .acc-option.is-active { background: #111; color: #fff; }
+  .acc-option .acc-flag { font-size: 18px; line-height: 1; }
+  .acc-option .acc-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acc-option .acc-cc { font-size: 12px; color: #999; font-variant-numeric: tabular-nums; }
+  .acc-option.is-active .acc-cc { color: rgba(255,255,255,0.7); }
+  .acc-empty { padding: 18px; text-align: center; color: #888; font-size: 13px; }
+
+  @media (prefers-reduced-motion: reduce) { .acc-menu.is-open { animation: none; } }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  var BASE = {{ cart.currency.iso_code | json }} || 'AED';
+
+  var COUNTRY_CURRENCY = {
+    AF:'AFN',AL:'ALL',DZ:'DZD',AD:'EUR',AO:'AOA',AG:'XCD',AR:'ARS',AM:'AMD',AU:'AUD',AT:'EUR',AZ:'AZN',
+    BS:'BSD',BH:'BHD',BD:'BDT',BB:'BBD',BY:'BYN',BE:'EUR',BZ:'BZD',BJ:'XOF',BT:'BTN',BO:'BOB',BA:'BAM',
+    BW:'BWP',BR:'BRL',BN:'BND',BG:'BGN',BF:'XOF',BI:'BIF',KH:'KHR',CM:'XAF',CA:'CAD',CV:'CVE',CF:'XAF',
+    TD:'XAF',CL:'CLP',CN:'CNY',CO:'COP',KM:'KMF',CG:'XAF',CD:'CDF',CR:'CRC',HR:'EUR',CU:'CUP',CY:'EUR',
+    CZ:'CZK',DK:'DKK',DJ:'DJF',DM:'XCD',DO:'DOP',EC:'USD',EG:'EGP',SV:'USD',GQ:'XAF',ER:'ERN',EE:'EUR',
+    SZ:'SZL',ET:'ETB',FJ:'FJD',FI:'EUR',FR:'EUR',GA:'XAF',GM:'GMD',GE:'GEL',DE:'EUR',GH:'GHS',GR:'EUR',
+    GD:'XCD',GT:'GTQ',GN:'GNF',GW:'XOF',GY:'GYD',HT:'HTG',HN:'HNL',HK:'HKD',HU:'HUF',IS:'ISK',IN:'INR',
+    ID:'IDR',IR:'IRR',IQ:'IQD',IE:'EUR',IL:'ILS',IT:'EUR',JM:'JMD',JP:'JPY',JO:'JOD',KZ:'KZT',KE:'KES',
+    KI:'AUD',KP:'KPW',KR:'KRW',KW:'KWD',KG:'KGS',LA:'LAK',LV:'EUR',LB:'LBP',LS:'LSL',LR:'LRD',LY:'LYD',
+    LI:'CHF',LT:'EUR',LU:'EUR',MO:'MOP',MG:'MGA',MW:'MWK',MY:'MYR',MV:'MVR',ML:'XOF',MT:'EUR',MH:'USD',
+    MR:'MRU',MU:'MUR',MX:'MXN',FM:'USD',MD:'MDL',MC:'EUR',MN:'MNT',ME:'EUR',MA:'MAD',MZ:'MZN',MM:'MMK',
+    NA:'NAD',NR:'AUD',NP:'NPR',NL:'EUR',NZ:'NZD',NI:'NIO',NE:'XOF',NG:'NGN',MK:'MKD',NO:'NOK',OM:'OMR',
+    PK:'PKR',PW:'USD',PA:'PAB',PG:'PGK',PY:'PYG',PE:'PEN',PH:'PHP',PL:'PLN',PT:'EUR',QA:'QAR',RO:'RON',
+    RU:'RUB',RW:'RWF',KN:'XCD',LC:'XCD',VC:'XCD',WS:'WST',SM:'EUR',ST:'STN',SA:'SAR',SN:'XOF',RS:'RSD',
+    SC:'SCR',SL:'SLL',SG:'SGD',SK:'EUR',SI:'EUR',SB:'SBD',SO:'SOS',ZA:'ZAR',SS:'SSP',ES:'EUR',LK:'LKR',
+    SD:'SDG',SR:'SRD',SE:'SEK',CH:'CHF',SY:'SYP',TW:'TWD',TJ:'TJS',TZ:'TZS',TH:'THB',TL:'USD',TG:'XOF',
+    TO:'TOP',TT:'TTD',TN:'TND',TR:'TRY',TM:'TMT',TV:'AUD',UG:'UGX',UA:'UAH',AE:'AED',GB:'GBP',US:'USD',
+    UY:'UYU',UZ:'UZS',VU:'VUV',VE:'VES',VN:'VND',YE:'YER',ZM:'ZMW',ZW:'ZWL'
+  };
+  var SYM = {
+    USD:'$',EUR:'€',GBP:'£',JPY:'¥',CNY:'¥',INR:'₹',KRW:'₩',BRL:'R$',AUD:'A$',CAD:'C$',CHF:'CHF',
+    SEK:'kr',NOK:'kr',DKK:'kr',PLN:'zł',CZK:'Kč',HUF:'Ft',RON:'lei',RUB:'₽',TRY:'₺',ZAR:'R',MXN:'MX$',
+    SGD:'S$',HKD:'HK$',NZD:'NZ$',THB:'฿',MYR:'RM',PHP:'₱',IDR:'Rp',TWD:'NT$',AED:'د.إ',SAR:'﷼',QAR:'﷼',
+    KWD:'د.ك',BHD:'BD',OMR:'﷼',JOD:'JD',EGP:'E£',PKR:'₨',BDT:'৳',LKR:'Rs',NPR:'Rs',NGN:'₦',GHS:'₵',
+    KES:'KSh',TZS:'TSh',UGX:'USh',COP:'$',PEN:'S/',CLP:'$',ARS:'$',VND:'₫',MMK:'K',KHR:'៛',NAD:'N$'
+  };
+  var POPULAR = ['AE','US','GB','IN','SA','EU','CA','AU','NG','PK','BD','EG','SG','MY','ZA','DE','FR','JP','CN','BR','TR','PH','ID','TH','VN','KW','QA','BH','OM'];
+
+  var regionNames = null;
+  try { regionNames = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) {}
+  function countryName(cc) { try { return (regionNames && regionNames.of(cc)) || cc; } catch (e) { return cc; } }
+  function flag(cc) {
+    if (!cc || cc.length !== 2) return '🏳️';
+    return String.fromCodePoint.apply(null, [].map.call(cc.toUpperCase(), function (c) { return 0x1F1E6 + c.charCodeAt(0) - 65; }));
+  }
+  function curOf(cc) { return COUNTRY_CURRENCY[cc] || BASE; }
+
+  var rates = {}, activeCountry = '', activeCurrency = BASE, stored = [], mounts = [];
+
+  /* ── IP detection (fallback chain) ── */
+  function detectCountry() {
+    var apis = [
+      { url: 'https://ipapi.co/json/', get: function (d) { return d.country_code; } },
+      { url: 'https://ipwho.is/', get: function (d) { return d.country_code; } }
+    ];
+    return apis.reduce(function (p, api) {
+      return p.then(function (cc) {
+        if (cc) return cc;
+        return fetch(api.url).then(function (r) { return r.json(); }).then(function (d) {
+          var c = api.get(d); return (c && c.length === 2) ? c.toUpperCase() : null;
+        }).catch(function () { return null; });
+      });
+    }, Promise.resolve(null));
+  }
+
+  /* ── Live exchange rates (cached 1h) ── */
+  function fetchRates() {
+    try {
+      var c = JSON.parse(localStorage.getItem('acc_rates') || '{}');
+      if (c.base === BASE && c.ts && (Date.now() - c.ts < 3600000)) return Promise.resolve(c.rates);
+    } catch (e) {}
+    return fetch('https://open.er-api.com/v6/latest/' + BASE)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.rates) { try { localStorage.setItem('acc_rates', JSON.stringify({ base: BASE, rates: d.rates, ts: Date.now() })); } catch (e) {} return d.rates; }
+        return null;
+      }).catch(function () { return null; });
+  }
+
+  /* ── Price conversion (leaf elements only) ── */
+  var SELECTORS = [
+    '.money', '.price-item--regular', '.price-item--sale', '.price-item',
+    '.kc-on-sale', '.kc-card__price s', '.kushi-price-item--sale', '.kushi-price-item--regular',
+    '.kc-card__price', '.cart-fbt__price', '.totals__total-value', '.product-option', '.cart-item__price'
+  ].join(',');
+
+  function parseNum(t) {
+    var s = (t || '').replace(/[^\d.,]/g, '');
+    if (!s) return null;
+    if (s.indexOf(',') > -1 && s.indexOf('.') > -1) {
+      return s.lastIndexOf(',') > s.lastIndexOf('.') ? parseFloat(s.replace(/\./g, '').replace(',', '.')) : parseFloat(s.replace(/,/g, ''));
+    }
+    if (s.indexOf(',') > -1) { var p = s.split(','); return p[p.length - 1].length <= 2 ? parseFloat(s.replace(',', '.')) : parseFloat(s.replace(/,/g, '')); }
+    return parseFloat(s);
+  }
+  function fmt(amt, cur) {
+    try {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, minimumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2, maximumFractionDigits: (cur === 'JPY' || cur === 'KRW' || cur === 'VND') ? 0 : 2 }).format(amt);
+    } catch (e) { return (SYM[cur] || cur + ' ') + amt.toFixed(2); }
+  }
+  function convert(cur) {
+    var els = document.querySelectorAll(SELECTORS);
+    if (cur === BASE) { stored.forEach(function (o) { o.el.textContent = o.orig; }); return; }
+    if (!rates[cur]) return;
+    var rate = rates[cur];
+    els.forEach(function (el) {
+      if (el.children.length > 0) return;                 /* leaf only — don't clobber struck price / badges */
+      var rec = stored.filter(function (o) { return o.el === el; })[0];
+      var orig = rec ? rec.orig : el.textContent.trim();
+      if (!rec) { if (!/\d/.test(orig)) return; stored.push({ el: el, orig: orig }); }
+      var n = parseNum(orig);
+      if (n === null || isNaN(n)) return;
+      el.textContent = fmt(n * rate, cur);
+    });
+  }
+
+  /* ── State ── */
+  function setCountry(cc, persist) {
+    activeCountry = cc; activeCurrency = curOf(cc);
+    if (persist !== false) { try { localStorage.setItem('acc_country', cc); } catch (e) {} }
+    mounts.forEach(updateTrigger);
+    convert(activeCurrency);
+  }
+
+  /* ── Selector UI (per mount) ── */
+  function updateTrigger(m) {
+    m.trigger.querySelector('.acc-flag').textContent = flag(activeCountry);
+    m.trigger.querySelector('.acc-country').textContent = countryName(activeCountry);
+    m.trigger.querySelector('.acc-cur').textContent = activeCurrency + ' ' + (SYM[activeCurrency] || '');
+    var opts = m.menu.querySelectorAll('.acc-option');
+    [].forEach.call(opts, function (o) { o.classList.toggle('is-active', o.getAttribute('data-cc') === activeCountry); });
+  }
+
+  function buildMenu(m) {
+    var ccs = Object.keys(COUNTRY_CURRENCY);
+    var ordered = POPULAR.filter(function (c) { return COUNTRY_CURRENCY[c]; })
+      .concat(ccs.filter(function (c) { return POPULAR.indexOf(c) === -1; }).sort(function (a, b) { return countryName(a).localeCompare(countryName(b)); }));
+    var html = '';
+    ordered.forEach(function (cc) {
+      var cur = curOf(cc);
+      html += '<div class="acc-option" role="option" data-cc="' + cc + '" data-search="' + (countryName(cc) + ' ' + cur).toLowerCase() + '">' +
+        '<span class="acc-flag">' + flag(cc) + '</span>' +
+        '<span class="acc-name">' + countryName(cc) + '</span>' +
+        '<span class="acc-cc">' + cur + ' ' + (SYM[cur] || '') + '</span></div>';
+    });
+    m.list.innerHTML = html;
+  }
+
+  function positionMenu(m) {
+    var r = m.trigger.getBoundingClientRect();
+    m.menu.setAttribute('data-dir', (r.top > window.innerHeight / 2) ? 'up' : 'down');
+    m.menu.setAttribute('data-align', (r.left > window.innerWidth / 2) ? 'right' : 'left');
+  }
+
+  function createSelector(host) {
+    host.innerHTML = '';
+    var sel = document.createElement('div'); sel.className = 'acc-selector';
+    var trigger = document.createElement('button');
+    trigger.type = 'button'; trigger.className = 'acc-trigger'; trigger.setAttribute('aria-haspopup', 'listbox'); trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = '<span class="acc-flag"></span><span class="acc-label"><span class="acc-country"></span> (<span class="acc-cur"></span>)</span>' +
+      '<svg class="acc-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+    var menu = document.createElement('div'); menu.className = 'acc-menu'; menu.setAttribute('role', 'listbox');
+    menu.innerHTML = '<div class="acc-search"><input type="text" placeholder="Search country or currency…" aria-label="Search"></div><div class="acc-list"></div>';
+    sel.appendChild(trigger); sel.appendChild(menu); host.appendChild(sel);
+
+    var m = { host: host, sel: sel, trigger: trigger, menu: menu, list: menu.querySelector('.acc-list') };
+    mounts.push(m);
+    buildMenu(m);
+
+    function open() { positionMenu(m); sel.classList.add('is-open'); menu.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); var s = menu.querySelector('input'); if (s) { s.value = ''; filter(''); s.focus(); } }
+    function close() { sel.classList.remove('is-open'); menu.classList.remove('is-open'); trigger.setAttribute('aria-expanded', 'false'); }
+    function filter(q) {
+      q = q.toLowerCase(); var any = false;
+      [].forEach.call(m.list.querySelectorAll('.acc-option'), function (o) {
+        var show = !q || o.getAttribute('data-search').indexOf(q) > -1; o.style.display = show ? '' : 'none'; if (show) any = true;
+      });
+      var empty = m.list.querySelector('.acc-empty'); if (!any && !empty) { var e = document.createElement('div'); e.className = 'acc-empty'; e.textContent = 'No matches'; m.list.appendChild(e); } else if (any && empty) { empty.remove(); }
+    }
+
+    trigger.addEventListener('click', function (e) { e.stopPropagation(); sel.classList.contains('is-open') ? close() : open(); });
+    menu.addEventListener('click', function (e) { e.stopPropagation(); var opt = e.target.closest('.acc-option'); if (opt) { setCountry(opt.getAttribute('data-cc')); close(); } });
+    menu.querySelector('input').addEventListener('input', function (e) { filter(e.target.value); });
+    document.addEventListener('click', close);
+    updateTrigger(m);
+    return m;
+  }
+
+  /* ── Re-convert on dynamic price changes (variant/cart) ── */
+  function observe() {
+    var t;
+    new MutationObserver(function () {
+      if (activeCurrency === BASE) return;
+      clearTimeout(t); t = setTimeout(function () { convert(activeCurrency); }, 250);
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+
+  function init() {
+    var hosts = document.querySelectorAll('.acc-mount');
+    if (!hosts.length) return;
+    fetchRates().then(function (r) {
+      rates = r || {};
+      [].forEach.call(hosts, createSelector);
+      var saved = null; try { saved = localStorage.getItem('acc_country'); } catch (e) {}
+      if (saved) { setCountry(saved, false); observe(); return; }
+      detectCountry().then(function (cc) {
+        if (cc && COUNTRY_CURRENCY[cc]) setCountry(cc, false); else { activeCountry = 'AE'; mounts.forEach(updateTrigger); }
+        observe();
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>

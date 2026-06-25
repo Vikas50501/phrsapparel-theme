@@ -258,6 +258,8 @@
   >
     <div class="footer__content-bottom-wrapper page-width">
       <div class="footer__column footer__localization isolate">
+        {%- comment -%} Currency/country selector (footer) {%- endcomment -%}
+        <div class="acc-mount acc-mount--footer"></div>
         {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
           <localization-form>
             {%- form 'localization', id: 'FooterCountryForm', class: 'localization-form' -%}
