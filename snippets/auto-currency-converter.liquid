@@ -7,34 +7,39 @@
 {%- endcomment -%}
 
 <style>
-  /* ── Trigger pill (sits on dark header/footer) ── */
+  /* ── Trigger — styled to read as a header nav item (.link / .header__menu-item) ── */
   .acc-selector { position: relative; display: inline-flex; font-family: inherit; line-height: 1; max-width: 100%; }
   .acc-trigger {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     background: transparent;
     border: 0;
-    color: rgb(var(--color-foreground, 255 255 255));
-    padding: 7px 10px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    color: rgba(var(--color-foreground, 255 255 255), 0.75);  /* match .header__menu-item */
+    padding: 8px 4px;
+    font-family: inherit;
+    font-size: 1.4rem;        /* match nav .link */
+    font-weight: 400;         /* match nav (normal weight) */
+    letter-spacing: normal;   /* match nav (no extra tracking) */
+    line-height: 1;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.2s ease, opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
   }
-  .acc-trigger:hover { background: rgba(var(--color-foreground, 255 255 255), 0.08); }
-  .acc-trigger:focus-visible { outline: 2px solid rgba(var(--color-foreground, 255 255 255), 0.6); outline-offset: 2px; }
+  .acc-trigger:hover,
+  .acc-selector.is-open .acc-trigger { color: rgb(var(--color-foreground, 255 255 255)); }  /* match nav hover */
+  .acc-trigger:focus-visible { outline: 2px solid rgba(var(--color-foreground, 255 255 255), 0.6); outline-offset: 3px; border-radius: 4px; }
   /* flag image — renders on every OS (emoji flags don't show on Windows) */
   .acc-flag {
-    display: inline-block; width: 22px; height: 16px; flex-shrink: 0;
-    border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    display: inline-block; width: 20px; height: 14px; flex-shrink: 0;
+    border-radius: 2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
     background: rgba(127,127,127,0.15);
   }
   .acc-trigger .acc-label { overflow: hidden; text-overflow: ellipsis; }
-  .acc-trigger .acc-caret { width: 12px; height: 12px; flex-shrink: 0; transition: transform 0.2s ease; opacity: 0.7; }
+  .acc-trigger .acc-caret { width: 11px; height: 11px; flex-shrink: 0; transition: transform 0.2s ease; opacity: 0.6; }
   .acc-selector.is-open .acc-trigger .acc-caret { transform: rotate(180deg); }
 
   /* ── Dropdown ── */
@@ -81,36 +86,63 @@
   .acc-option.is-active .acc-cc { color: rgba(255,255,255,0.7); }
   .acc-empty { padding: 18px; text-align: center; color: #888; font-size: 13px; }
 
-  /* ── Header: keep the full label on desktop, compact on small screens ── */
+  /* ── Header: vertically centre within the icon row, match nav, compact on small screens ── */
+  .acc-mount--header { display: inline-flex; align-items: center; margin-right: 4px; }   /* fixes the "rides high" misalignment */
   @media (max-width: 989px) { .acc-mount--header .acc-trigger .acc-country { display: none; } }
 
   /* ── Footer: full width, comfortable tap target ── */
   .acc-mount--footer { display: block; width: 100%; }
   .acc-mount--footer .acc-selector { width: auto; }
   .acc-mount--footer .acc-trigger { padding-left: 0; }
-  .acc-mount--footer .acc-trigger:hover { background: transparent; opacity: 0.7; }
+  .acc-mount--footer .acc-trigger:hover { opacity: 0.7; }
 
-  /* ── Mobile burger-menu variant: full-width row, opens upward, wide menu ── */
+  /* ── Mobile burger-menu variant: full-width row; opens as a centred modal (see modal rules) ── */
   .acc-mount--drawer { display: block; width: 100%; padding: 4px 0; }
   .acc-mount--drawer .acc-selector { width: 100%; }
   .acc-mount--drawer .acc-trigger {
     width: 100%; justify-content: flex-start; gap: 12px;
-    padding: 14px 4px; font-size: 16px; border-radius: 10px;
+    padding: 14px 4px; font-size: 1.6rem; border-radius: 10px;
+    color: rgb(var(--color-foreground, 255 255 255));   /* full strength inside the drawer */
   }
   .acc-mount--drawer .acc-trigger .acc-caret { margin-left: auto; }
-  /* in-flow dropdown so the drawer's own scroll handles it (no clipping) */
-  .acc-mount--drawer .acc-menu {
-    position: static; width: 100%; max-width: 100%; margin-top: 8px;
-    box-shadow: none; border: 1px solid #e6e6e6; max-height: 320px;
-  }
+  .acc-mount--drawer .acc-trigger:active { opacity: 0.6; }
 
-  /* On phones the header pill is hidden (selector lives in the burger menu);
-     menus never overflow the viewport. */
+  /* ── Centred modal dropdown (mobile / drawer) — portalled to <body> so the
+        drawer's translateX transform can't offset a position:fixed child ── */
+  .acc-backdrop {
+    position: fixed; inset: 0; z-index: 99998;
+    background: rgba(15, 23, 42, 0.55);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .acc-backdrop.is-open { opacity: 1; }
+  .acc-menu.acc-menu--modal {
+    position: fixed;
+    top: 50%; left: 50%; right: auto; bottom: auto;
+    width: min(360px, calc(100vw - 32px));
+    max-width: none;
+    max-height: min(76vh, 540px);
+    z-index: 99999;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+    transform: translate(-50%, -50%);
+  }
+  .acc-menu.acc-menu--modal.is-open { display: flex; animation: accZoom 0.2s ease-out; }
+  @keyframes accZoom {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  .acc-menu.acc-menu--modal .acc-search input { font-size: 16px; }  /* ≥16px stops iOS focus-zoom */
+
+  /* On small phones the anchored header menu (landscape edge case) never overflows. */
   @media (max-width: 749px) {
-    .acc-menu { width: min(320px, calc(100vw - 24px)); }
+    .acc-menu:not(.acc-menu--modal) { width: min(320px, calc(100vw - 24px)); }
   }
 
-  @media (prefers-reduced-motion: reduce) { .acc-menu.is-open { animation: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .acc-menu.is-open { animation: none; }
+    .acc-backdrop { transition: none; }
+  }
 </style>
 
 <script>
@@ -155,6 +187,19 @@
   function curOf(cc) { return COUNTRY_CURRENCY[cc] || BASE; }
 
   var rates = {}, activeCountry = '', activeCurrency = BASE, stored = [], mounts = [];
+
+  /* ── Shared backdrop for the centred mobile modal ── */
+  var backdrop = null, openModal = null;
+  function getBackdrop() {
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'acc-backdrop';
+      backdrop.addEventListener('click', function () { if (openModal) openModal.close(); });
+      document.body.appendChild(backdrop);
+    }
+    return backdrop;
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openModal) openModal.close(); });
 
   /* ── IP detection (fallback chain) ── */
   function detectCountry() {
@@ -304,8 +349,39 @@
     mounts.push(m);
     buildMenu(m);
 
-    function open() { positionMenu(m); sel.classList.add('is-open'); menu.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); var s = menu.querySelector('input'); if (s) { s.value = ''; filter(''); s.focus(); } }
-    function close() { sel.classList.remove('is-open'); menu.classList.remove('is-open'); trigger.setAttribute('aria-expanded', 'false'); }
+    /* The drawer selector lives inside .menu-drawer, which uses a translateX
+       transform — a position:fixed child would anchor to it, not the viewport.
+       So in modal mode we portal the menu out to <body> and centre it. */
+    var isModal = host.classList.contains('acc-mount--drawer');
+
+    function open() {
+      var s = menu.querySelector('input');
+      if (isModal) {
+        document.body.appendChild(menu);                 /* portal out of the transformed drawer */
+        getBackdrop().classList.add('is-open');
+        menu.classList.add('acc-menu--modal', 'is-open');
+        openModal = m;
+        if (s) { s.value = ''; filter(''); }             /* don't autofocus on touch — keeps keyboard down */
+      } else {
+        positionMenu(m);
+        menu.classList.add('is-open');
+        if (s) { s.value = ''; filter(''); s.focus(); }
+      }
+      sel.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      sel.classList.remove('is-open');
+      menu.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      if (isModal) {
+        if (backdrop) backdrop.classList.remove('is-open');
+        menu.classList.remove('acc-menu--modal');
+        sel.appendChild(menu);                            /* restore into the selector */
+        if (openModal === m) openModal = null;
+      }
+    }
+    m.close = close;
     function filter(q) {
       q = q.toLowerCase(); var any = false;
       [].forEach.call(m.list.querySelectorAll('.acc-option'), function (o) {
