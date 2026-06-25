@@ -1,3 +1,5 @@
+{% if localization.country.iso_code == 'AE' or localization.country.iso_code == 'SA' %}
+
 {% capture tamara_country %}{% if localization.country.iso_code == 'SA' %}SA{% else %}AE{% endif %}{% endcapture %}
 
 <script>
@@ -20,6 +22,13 @@
 </script>
 <script defer type="text/javascript" src="https://cdn.tamara.co/widget-v2/tamara-widget.js"></script>
 <div>
-  <tamara-widget id="tamara-widget-custom" type="tamara-summary" amount="{{ product.price | money_without_currency | remove: ',' }}" config='{"badgePosition":"right","showExtraContent":""}' inline-type="2">
+  <tamara-widget 
+    id="tamara-widget-custom" 
+    type="tamara-summary" 
+    amount="{{ product.price | money_without_currency | remove: ',' }}" 
+    config='{"badgePosition":"right","showExtraContent":""}' 
+    inline-type="2">
   </tamara-widget>
 </div>
+
+{% endif %}
