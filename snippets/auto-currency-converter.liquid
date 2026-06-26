@@ -201,18 +201,32 @@
   }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openModal) openModal.close(); });
 
-  /* ── IP detection (fallback chain) ── */
+  /* ── IP detection (fallback chain, reliable-first, each with a timeout) ── */
+  function fetchJSON(url, ms) {
+    return new Promise(function (resolve) {
+      var done = false;
+      var timer = setTimeout(function () { if (!done) { done = true; resolve(null); } }, ms || 3500);
+      fetch(url, { mode: 'cors' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (!done) { done = true; clearTimeout(timer); resolve(d); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(timer); resolve(null); } });
+    });
+  }
   function detectCountry() {
+    /* Lightweight & reliable providers first; ipapi.co last (it rate-limits hard). */
     var apis = [
-      { url: 'https://ipapi.co/json/', get: function (d) { return d.country_code; } },
-      { url: 'https://ipwho.is/', get: function (d) { return d.country_code; } }
+      { url: 'https://api.country.is/',               get: function (d) { return d && d.country; } },
+      { url: 'https://ipwho.is/',                      get: function (d) { return d && d.country_code; } },
+      { url: 'https://get.geojs.io/v1/ip/geo.json',    get: function (d) { return d && d.country_code; } },
+      { url: 'https://ipapi.co/json/',                 get: function (d) { return d && d.country_code; } }
     ];
     return apis.reduce(function (p, api) {
       return p.then(function (cc) {
         if (cc) return cc;
-        return fetch(api.url).then(function (r) { return r.json(); }).then(function (d) {
-          var c = api.get(d); return (c && c.length === 2) ? c.toUpperCase() : null;
-        }).catch(function () { return null; });
+        return fetchJSON(api.url, 3500).then(function (d) {
+          var c = api.get(d);
+          return (c && /^[A-Za-z]{2}$/.test(c)) ? c.toUpperCase() : null;
+        });
       });
     }, Promise.resolve(null));
   }
@@ -414,7 +428,21 @@
   function init() {
     var hosts = document.querySelectorAll('.acc-mount');
     if (!hosts.length) { console.warn('[currency] no .acc-mount found in DOM'); return; }
-    window.ACC = { setCountry: setCountry, convert: function () { return convert(activeCurrency); }, get rates() { return rates; }, get active() { return activeCountry + '/' + activeCurrency; } };
+    window.ACC = {
+      setCountry: setCountry,
+      convert: function () { return convert(activeCurrency); },
+      detect: detectCountry,
+      reset: function () {
+        try { localStorage.removeItem('acc_country'); localStorage.removeItem('acc_geo'); } catch (e) {}
+        return detectCountry().then(function (cc) {
+          console.info('[currency] re-detected:', cc);
+          if (cc && COUNTRY_CURRENCY[cc]) { try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {} setCountry(cc, false); }
+          return cc;
+        });
+      },
+      get rates() { return rates; },
+      get active() { return activeCountry + '/' + activeCurrency; }
+    };
     fetchRates().then(function (r) {
       rates = r || {};
       if (!r) console.warn('[currency] exchange-rate fetch failed — prices will stay in ' + BASE);
@@ -428,8 +456,14 @@
       if (geo && COUNTRY_CURRENCY[geo]) { setCountry(geo, false); reconvertSoon(); return; }
       /* 3) detect once, then cache */
       detectCountry().then(function (cc) {
-        if (cc && COUNTRY_CURRENCY[cc]) { try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {} setCountry(cc, false); }
-        else { activeCountry = 'AE'; mounts.forEach(updateTrigger); }
+        if (cc && COUNTRY_CURRENCY[cc]) {
+          console.info('[currency] IP country: ' + cc + ' → ' + curOf(cc));
+          try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {}
+          setCountry(cc, false);
+        } else {
+          console.warn('[currency] IP detection failed (all providers) — defaulting to ' + BASE);
+          activeCountry = 'AE'; mounts.forEach(updateTrigger);
+        }
         reconvertSoon();
       });
     });
