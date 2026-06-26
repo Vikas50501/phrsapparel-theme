@@ -433,7 +433,7 @@
       convert: function () { return convert(activeCurrency); },
       detect: detectCountry,
       reset: function () {
-        try { localStorage.removeItem('acc_country'); localStorage.removeItem('acc_geo'); } catch (e) {}
+        try { localStorage.removeItem('acc_country'); localStorage.removeItem('acc_geo'); sessionStorage.removeItem('acc_checked'); } catch (e) {}
         return detectCountry().then(function (cc) {
           console.info('[currency] re-detected:', cc);
           if (cc && COUNTRY_CURRENCY[cc]) { try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {} setCountry(cc, false); }
@@ -448,19 +448,24 @@
       if (!r) console.warn('[currency] exchange-rate fetch failed — prices will stay in ' + BASE);
       [].forEach.call(hosts, createSelector);
       observe();
-      /* 1) manual choice always wins (no expiry) */
+      /* 1) explicit manual choice always wins (visitor clicked the selector) */
       var saved = null; try { saved = localStorage.getItem('acc_country'); } catch (e) {}
       if (saved && COUNTRY_CURRENCY[saved]) { setCountry(saved, false); reconvertSoon(); return; }
-      /* 2) cached geo (12h) — avoids hammering the IP API on every page view */
+
+      /* 2) apply cached geo INSTANTLY (no flicker) if we have a recent one */
       var geo = null; try { var g = JSON.parse(localStorage.getItem('acc_geo') || '{}'); if (g.cc && g.ts && (Date.now() - g.ts < 43200000)) geo = g.cc; } catch (e) {}
-      if (geo && COUNTRY_CURRENCY[geo]) { setCountry(geo, false); reconvertSoon(); return; }
-      /* 3) detect once, then cache */
+      if (geo && COUNTRY_CURRENCY[geo]) { setCountry(geo, false); reconvertSoon(); }
+
+      /* 3) verify by IP in the BACKGROUND and self-correct (handles VPN / travel /
+            stale cache). Throttled to once per browser session to conserve quota. */
+      var checked = false; try { checked = sessionStorage.getItem('acc_checked') === '1'; } catch (e) {}
+      if (geo && checked) return;   /* fresh cache + already verified this session */
       detectCountry().then(function (cc) {
+        try { sessionStorage.setItem('acc_checked', '1'); } catch (e) {}
         if (cc && COUNTRY_CURRENCY[cc]) {
-          console.info('[currency] IP country: ' + cc + ' → ' + curOf(cc));
           try { localStorage.setItem('acc_geo', JSON.stringify({ cc: cc, ts: Date.now() })); } catch (e) {}
-          setCountry(cc, false);
-        } else {
+          if (cc !== activeCountry) { console.info('[currency] IP country: ' + cc + ' → ' + curOf(cc)); setCountry(cc, false); }
+        } else if (!geo) {
           console.warn('[currency] IP detection failed (all providers) — defaulting to ' + BASE);
           activeCountry = 'AE'; mounts.forEach(updateTrigger);
         }
