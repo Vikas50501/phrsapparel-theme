@@ -255,7 +255,11 @@
     '.kushi-price-item--sale', '.kushi-price-item--regular',
     '.price-item--regular', '.price-item--sale', '.price-item--last',
     '.money', '.cart-fbt__price',
-    '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value'
+    '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value',
+    /* custom sections with their own (often section-id-suffixed) price classes */
+    '[class*="lb-popup-price"]',   /* lookbook hotspot popup */
+    '[class*="rp-price"]',          /* related products */
+    '.lh-sale', '.lh-cost'          /* layouthub blocks */
   ].join(',');
 
   function parseNum(t) {
