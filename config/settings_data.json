@@ -152,14 +152,14 @@
         "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
         "disabled": true,
         "settings": {
+          "greeting_message": "",
           "button_color": "#000000",
           "secondary_color": "#ffffff",
           "ternary_color": "#6a6a6a",
           "button_icon": "chat_bubble",
           "button_text": "chat_with_us",
           "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "lowest",
-          "greeting_message": ""
+          "button_vertical_position": "lowest"
         }
       },
       "14060646107696862457": {
@@ -167,14 +167,14 @@
         "disabled": false,
         "settings": {}
       },
-      "11001999283222651660": {
-        "type": "shopify://apps/selo-currency-converter/blocks/currency-converter/019b1c02-a87c-7909-ad22-1a6a91d03390",
-        "disabled": true,
-        "settings": {}
-      },
       "1804893150726543839": {
         "type": "shopify://apps/nova-multi-currency-converter/blocks/app-embed/a5be3c35-cbd0-46a1-ac3a-1ace57a9c1ce",
         "disabled": true,
+        "settings": {}
+      },
+      "7800736727063894098": {
+        "type": "shopify://apps/rez-preorder-notify-me/blocks/rez/0da60196-81b6-4270-afac-c9294e1641ba",
+        "disabled": false,
         "settings": {}
       }
     },
