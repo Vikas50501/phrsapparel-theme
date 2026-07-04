@@ -658,10 +658,17 @@
   color: rgb(var(--kushi-bg));
 }
 .template-product .kushi-variant-pill.disabled {
-  border-color: rgba(var(--kushi-fg), 0.1);
-  color: rgba(var(--kushi-fg), 0.4);
+  border-color: rgba(var(--kushi-fg), 0.16);
+  color: rgba(var(--kushi-fg), 0.55);
   text-decoration: line-through;
   pointer-events: none;
+}
+/* Selected variant that is ALSO sold out (e.g. a fully sold-out product):
+   .disabled must not black-out the text on the dark active background. */
+.template-product .kushi-variant-pill.active.disabled {
+  background: rgb(var(--kushi-fg));
+  border-color: rgb(var(--kushi-fg));
+  color: rgba(var(--kushi-bg), 0.85);
 }
 
 /* ===== INVENTORY / STOCK ===== */
@@ -1379,8 +1386,8 @@
 .rez-preorder-btn:not(.is-success),
 .rez-btn:not(.is-success) {
   width: 100% !important;
-  min-height: 54px !important;
-  padding: 0 30px !important;
+  min-height: 60px !important;
+  padding: 18px 34px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1407,7 +1414,26 @@
   box-shadow: none !important;
   opacity: 1 !important;
 }
+@media (max-width: 749px) {
+  .rez-preorder-btn:not(.is-success),
+  .rez-btn:not(.is-success) { min-height: 54px !important; padding: 15px 24px !important; }
+}
 @media (max-width: 480px) {
   .rez-preorder-btn:not(.is-success),
-  .rez-btn:not(.is-success) { min-height: 46px !important; }
+  .rez-btn:not(.is-success) { min-height: 50px !important; padding: 14px 20px !important; font-size: 13px !important; }
+}
+
+/* ===== All action buttons: mobile responsiveness ===== */
+@media (max-width: 749px) {
+  .template-product .kushi-buttons-row { gap: 12px; margin-top: 28px; }
+  .template-product .kushi-quantity { height: 54px; }
+  .template-product .kushi-btn-atc { min-width: 100%; min-height: 54px; padding: 0 20px; }
+  .template-product .kushi-payment-buttons { margin-top: 12px; }
+  .template-product .kushi-payment-buttons .shopify-payment-button__button { min-height: 54px; border-radius: var(--kushi-buttons-radius); }
+}
+@media (max-width: 480px) {
+  .template-product .kushi-buttons-row { gap: 10px; }
+  .template-product .kushi-quantity { height: 50px; }
+  .template-product .kushi-btn-atc { min-height: 50px; font-size: 13px; }
+  .template-product .kushi-variant-pill { min-width: 44px; min-height: 44px; }
 }
