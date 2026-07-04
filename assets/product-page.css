@@ -1384,10 +1384,11 @@
    The app applies inline styles (radius/colors), so !important is required. */
 .rez-stock-status { margin-top: 15px; }
 .rez-preorder-btn:not(.is-success),
-.rez-btn:not(.is-success) {
+.rez-btn:not(.is-success),
+button.rez-stock-notification-button:not(.is-success) {
   width: 100% !important;
-  min-height: 60px !important;
-  padding: 18px 34px !important;
+  min-height: 54px !important;
+  padding: 15px 20px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1407,20 +1408,23 @@
   transition: background .2s linear, color .2s linear !important;
 }
 .rez-preorder-btn:not(.is-success):hover,
-.rez-btn:not(.is-success):hover {
+.rez-btn:not(.is-success):hover,
+button.rez-stock-notification-button:not(.is-success):hover {
   background: transparent !important;
   color: rgb(var(--kushi-btn, 18, 18, 18)) !important;
   transform: none !important;
   box-shadow: none !important;
   opacity: 1 !important;
 }
-@media (max-width: 749px) {
-  .rez-preorder-btn:not(.is-success),
-  .rez-btn:not(.is-success) { min-height: 54px !important; padding: 15px 24px !important; }
-}
 @media (max-width: 480px) {
   .rez-preorder-btn:not(.is-success),
-  .rez-btn:not(.is-success) { min-height: 50px !important; padding: 14px 20px !important; font-size: 13px !important; }
+  .rez-btn:not(.is-success),
+  button.rez-stock-notification-button:not(.is-success) { min-height: 50px !important; font-size: 13px !important; }
+}
+
+/* explicit padding for the app's notify button */
+button.rez-stock-notification-button {
+  padding: 15px 20px !important;
 }
 
 /* ===== All action buttons: mobile responsiveness ===== */
