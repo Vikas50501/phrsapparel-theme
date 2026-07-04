@@ -1371,3 +1371,43 @@
     padding: 0 15px;
   }
 }
+
+/* ===== "Notify Me" / back-in-stock button (Rez app) — match the Add to Cart / Sold Out pill =====
+   The app renders this button OUTSIDE .template-product, so var() fallbacks are used.
+   The app applies inline styles (radius/colors), so !important is required. */
+.rez-stock-status { margin-top: 15px; }
+.rez-preorder-btn:not(.is-success),
+.rez-btn:not(.is-success) {
+  width: 100% !important;
+  min-height: 54px !important;
+  padding: 0 30px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px;
+  background: rgb(var(--kushi-btn, 18, 18, 18)) !important;
+  color: rgb(var(--kushi-btn-text, 255, 255, 255)) !important;
+  border: 2px solid rgb(var(--kushi-btn, 18, 18, 18)) !important;
+  border-radius: var(--kushi-buttons-radius, 30px) !important;
+  font-family: var(--kushi-font, Helvetica, "Helvetica Neue", Arial, sans-serif) !important;
+  font-size: var(--kushi-base-size, 14px) !important;
+  font-weight: var(--kushi-heading-weight, 600) !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  transition: background .2s linear, color .2s linear !important;
+}
+.rez-preorder-btn:not(.is-success):hover,
+.rez-btn:not(.is-success):hover {
+  background: transparent !important;
+  color: rgb(var(--kushi-btn, 18, 18, 18)) !important;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+@media (max-width: 480px) {
+  .rez-preorder-btn:not(.is-success),
+  .rez-btn:not(.is-success) { min-height: 46px !important; }
+}
