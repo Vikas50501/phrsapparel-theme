@@ -6,6 +6,7 @@
 {%- endcomment -%}
 
 {{ 'product-page.css' | asset_url | stylesheet_tag }}
+{{ 'collection-page.css' | asset_url | stylesheet_tag }}
 
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign featured_image = product.featured_image -%}
@@ -473,31 +474,12 @@
           <h2 class="kushi-new-arrivals__heading">{{ section.settings.new_arrivals_heading | default: 'Shop The New Arrivals' }}</h2>
           <a href="{{ na_collection.url }}" class="kushi-new-arrivals__link">View All</a>
         </div>
-        <div class="kushi-product-cards">
-          {%- for prod in na_collection.products limit: section.settings.new_arrivals_count -%}
-            <div class="kushi-product-card">
-              <a href="{{ prod.url }}">
-                <div class="kushi-product-card__image">
-                  {%- if prod.featured_image -%}
-                    <img src="{{ prod.featured_image | image_url: width: 400 }}" alt="{{ prod.featured_image.alt | default: prod.title | escape }}" loading="lazy">
-                  {%- else -%}
-                    {{ 'product-1' | placeholder_svg_tag }}
-                  {%- endif -%}
-                </div>
-                <div class="kushi-product-card__info">
-                  <div class="kushi-product-card__title">{{ prod.title }}</div>
-                  <div class="kushi-product-card__price">
-                    {{ prod.price | money }}
-                    {%- if prod.compare_at_price > prod.price -%}
-                      <s>{{ prod.compare_at_price | money }}</s>
-                      {%- assign na_disc = prod.compare_at_price | minus: prod.price | times: 100.0 | divided_by: prod.compare_at_price | round -%}
-                      <span class="price-item--discount">-{{ na_disc }}%</span>
-                    {%- endif -%}
-                  </div>
-                </div>
-              </a>
-            </div>
-          {%- endfor -%}
+        <div class="template-collection">
+          <div class="kushi-shared-grid" id="kushi-na-grid">
+            {%- for prod in na_collection.products limit: section.settings.new_arrivals_count -%}
+              {%- render 'kc-product-card', product: prod -%}
+            {%- endfor -%}
+          </div>
         </div>
       </div>
     </section>
@@ -531,9 +513,82 @@
 <section class="kushi-recently-viewed" id="kushi-recently-viewed-section" style="display:none;">
   <div class="kushi-page-width">
     <h2 class="kushi-recently-viewed__heading">Recently Viewed Products</h2>
-    <div class="kushi-product-cards" id="kushi-recently-viewed-grid"></div>
+    <div class="template-collection">
+      <div class="kushi-shared-grid" id="kushi-recently-viewed-grid"></div>
+    </div>
   </div>
 </section>
+
+<script>
+  /* Wire up kc-card interactions (swatch hover/click, quick add-to-cart) for the
+     New Arrivals + Recently Viewed grids — same behaviour as the collection page. */
+  (function () {
+    var grids = document.querySelectorAll('#kushi-na-grid, #kushi-recently-viewed-grid');
+    if (!grids.length) return;
+
+    function cardImg(el) {
+      var card = el.closest('.kc-card');
+      return card ? { card: card, img: card.querySelector('.kc-card__img') } : null;
+    }
+    function addToCart(btn) {
+      var id = btn.getAttribute('data-variant');
+      if (!id || btn.dataset.loading) return;
+      btn.dataset.loading = '1';
+      var drawer = document.querySelector('cart-drawer');
+      var body = { items: [{ id: parseInt(id, 10), quantity: 1 }] };
+      var sectionIds = [];
+      if (drawer && typeof drawer.getSectionsToRender === 'function') {
+        try { drawer.getSectionsToRender().forEach(function (s) { sectionIds.push(s.id); }); } catch (e) {}
+      }
+      if (sectionIds.length) { body.sections = sectionIds.join(','); body.sections_url = window.location.pathname; }
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/javascript', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.status) return;
+          if (drawer && res.sections && typeof drawer.renderContents === 'function') {
+            drawer.classList.remove('is-empty');
+            drawer.renderContents(res);
+          } else {
+            window.location.href = (window.routes && window.routes.cart_url) ? window.routes.cart_url : '/cart';
+          }
+        })
+        .catch(function () {})
+        .finally(function () { delete btn.dataset.loading; });
+    }
+
+    grids.forEach(function (grid) {
+      grid.addEventListener('mouseover', function (e) {
+        var sw = e.target.closest('.kc-card__swatch');
+        if (!sw || !sw.dataset.img) return;
+        var c = cardImg(sw);
+        if (c && c.img) c.img.src = sw.dataset.img;
+      });
+      grid.addEventListener('mouseout', function (e) {
+        var sw = e.target.closest('.kc-card__swatch');
+        if (!sw) return;
+        var c = cardImg(sw);
+        if (c && c.img) c.img.src = c.card.dataset.current || c.img.getAttribute('data-default');
+      });
+      grid.addEventListener('click', function (e) {
+        var atc = e.target.closest('.kc-card__atc');
+        if (atc) { e.preventDefault(); addToCart(atc); return; }
+        var sw = e.target.closest('.kc-card__swatch');
+        if (!sw) return;
+        var group = sw.parentElement;
+        if (group) group.querySelectorAll('.kc-card__swatch').forEach(function (s) { s.classList.remove('is-active'); });
+        sw.classList.add('is-active');
+        if (sw.dataset.img) {
+          var c = cardImg(sw);
+          if (c && c.img) { c.img.src = sw.dataset.img; c.card.dataset.current = sw.dataset.img; }
+        }
+      });
+    });
+  })();
+</script>
 
 {%- comment -%} ===== SIZE CHART MODAL ===== {%- endcomment -%}
 {%- assign size_chart = product.metafields.custom.size_guide_chart.value -%}

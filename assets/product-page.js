@@ -376,13 +376,22 @@
     var list = [];
     try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) {}
 
+    var isAvailable = productData.available;
+    var isNew = (productData.tags || []).some(function (t) { return (t || '').toLowerCase() === 'new'; });
+    var hasOnlyDefaultVariant = (productData.variants || []).length <= 1;
+    var firstAvailableVariant = (productData.variants || []).filter(function (v) { return v.available; })[0] || (productData.variants || [])[0];
+
     var current = {
       handle: productData.handle,
       title: productData.title,
       url: productData.url,
       price: productData.price,
       compare_at_price: productData.compare_at_price,
-      image: productData.featured_image
+      image: productData.featured_image,
+      available: isAvailable,
+      is_new: isNew,
+      has_only_default_variant: hasOnlyDefaultVariant,
+      variant_id: firstAvailableVariant ? firstAvailableVariant.id : null
     };
 
     list = list.filter(function(p) { return p.handle !== current.handle; });
@@ -393,24 +402,48 @@
     var others = list.filter(function(p) { return p.handle !== current.handle; });
     if (others.length < 1) return;
 
+    function esc(s) { return (s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+    /* Same DOM structure/classes as snippets/kc-product-card.liquid, so it's
+       styled identically by collection-page.css and works with the shared
+       swatch/ATC script + the currency converter's .kc-card__price selector. */
     others.slice(0, 4).forEach(function(p) {
-      var card = document.createElement('div');
-      card.className = 'kushi-product-card';
-      var priceHtml = formatMoney(p.price);
+      var title = esc(p.title);
+      var priceHtml;
       if (p.compare_at_price && p.compare_at_price > p.price) {
-        priceHtml += ' <s>' + formatMoney(p.compare_at_price) + '</s>';
         var rvPct = Math.round((1 - p.price / p.compare_at_price) * 100);
-        priceHtml += ' <span class="price-item--discount">-' + rvPct + '%</span>';
+        priceHtml = '<span class="kc-on-sale">' + formatMoney(p.price) + '</span> <s>' + formatMoney(p.compare_at_price) + '</s> <span class="kc-card__disc">-' + rvPct + '%</span>';
+      } else {
+        priceHtml = formatMoney(p.price);
       }
+
+      var actionsHtml = '<a class="kc-card__action" href="' + p.url + '" title="View product" aria-label="View ' + title + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg></a>';
+      if (p.available) {
+        if (p.has_only_default_variant && p.variant_id) {
+          actionsHtml += '<button type="button" class="kc-card__action kc-card__atc" data-variant="' + p.variant_id + '" title="Add to cart" aria-label="Add ' + title + ' to cart">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></button>';
+        } else {
+          actionsHtml += '<a class="kc-card__action" href="' + p.url + '" title="Choose options" aria-label="Choose options for ' + title + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></a>';
+        }
+      }
+
+      var card = document.createElement('div');
+      card.className = 'kc-card';
       card.innerHTML =
-        '<a href="' + p.url + '">' +
-        '<div class="kushi-product-card__image">' +
-        (p.image ? '<img src="' + p.image + '" alt="' + (p.title || '').replace(/"/g, '&quot;') + '" loading="lazy">' : '') +
+        '<div class="kc-card__media">' +
+        '<a href="' + p.url + '" class="kc-card__media-link" aria-label="' + title + '">' +
+        (p.image ? '<img class="kc-card__img" data-default="' + p.image + '" src="' + p.image + '" alt="' + title + '" loading="lazy">' : '') +
+        '</a>' +
+        (p.is_new ? '<span class="kc-badge kc-badge--new">New</span>' : '') +
+        (p.available ? '' : '<span class="kc-badge kc-badge--sold">Sold Out</span>') +
+        '<div class="kc-card__actions">' + actionsHtml + '</div>' +
         '</div>' +
-        '<div class="kushi-product-card__info">' +
-        '<div class="kushi-product-card__title">' + p.title + '</div>' +
-        '<div class="kushi-product-card__price">' + priceHtml + '</div>' +
-        '</div></a>';
+        '<div class="kc-card__info">' +
+        '<a href="' + p.url + '" class="kc-card__title">' + title + '</a>' +
+        '<div class="kc-card__price">' + priceHtml + '</div>' +
+        '</div>';
       grid.appendChild(card);
     });
 
