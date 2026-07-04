@@ -553,7 +553,7 @@
   <div class="kushi-sticky-atc" id="kushi-sticky-atc">
     <div class="kushi-sticky-atc__info">
       <span class="kushi-sticky-atc__title">{{ product.title }}</span>
-      <span class="kushi-sticky-atc__price money" id="kushi-sticky-price">{{ product.price | money }}</span>
+      <span class="kushi-sticky-atc__price" id="kushi-sticky-price">{{ product.price | money }}</span>
     </div>
     <button type="button" class="kushi-sticky-atc__btn" id="kushi-sticky-btn" onclick="kushiAddToCart()" {% unless product.available %}disabled{% endunless %}>
       {%- if product.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}

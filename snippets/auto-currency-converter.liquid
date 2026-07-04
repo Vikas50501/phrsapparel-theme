@@ -305,6 +305,9 @@
       } else if (rates[cur]) {
         var rate = rates[cur];
         [].forEach.call(document.querySelectorAll(SELECTORS), function (el) {
+          /* skip mirrors of already-converted prices (sticky ATC bar copies the main
+             price's displayed text — converting it again would double-convert) */
+          if (el.closest && el.closest('.kushi-sticky-atc, [data-cvc-skip]')) return;
           var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
           while ((node = w.nextNode())) { convertNode(node, rate, cur); }
         });
