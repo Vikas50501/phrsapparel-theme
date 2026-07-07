@@ -3783,13 +3783,13 @@ p.totals__total-value { font-weight: 700; }
 @media screen and (max-width: 749px) {
   h2.cart__empty-text { font-size: 22px; }
   p.cart__login-title.h3 { font-size: 20px; }
-  a.cart-item__name.h4.break { font-size: 16px; }
 }
 
 @media screen and (min-width: 750px) {
   p.cart__login-title.h3 { font-size: 22px; }
-  a.cart-item__name.h4.break { font-size: 22px; }
 }
+
+a.cart-item__name.h4.break { font-size: 18px; }
 
 @media screen and (max-width: 767px) {
   h2.drawer__heading {
