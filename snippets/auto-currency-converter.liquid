@@ -256,11 +256,17 @@
     '.price-item--regular', '.price-item--sale', '.price-item--last',
     '.money', '.cart-fbt__price',
     '.cart-item__final-price', '.cart-item__old-price', '.totals__total-value',
+    '.price--end',                                          /* full cart page + cart drawer line totals (verified: always pure `| money`, never mixed with other text) */
     /* custom sections with their own (often section-id-suffixed) price classes */
     '[class*="lb-popup-price"]',   /* lookbook hotspot popup */
     '[class*="rp-price"]',          /* related products */
     '.lh-sale', '.lh-cost'          /* layouthub blocks */
   ].join(',');
+  /* NOTE: bare `.price` and `.price-per-item--current` are deliberately excluded —
+     in this theme they sometimes wrap a translated string like "Dhs. 25.00 / each"
+     (quick order list volume pricing), and replacing that whole text node would
+     destroy the " / each" suffix. `.price--end` is safe because it is only ever
+     used to wrap a standalone `{{ ... | money }}` output. */
 
   function parseNum(t) {
     /* Keep only digits + separators, then DROP any leading/trailing separators that
@@ -297,20 +303,42 @@
     if (n === null || isNaN(n)) return;
     setVal(node, fmt(n * rate, cur));
   }
-  function convert(cur) {
+  function skipEl(el) { return !!(el.closest && el.closest('.kushi-sticky-atc, [data-cvc-skip]')); }
+  /* Convert one price element's text (used for both full scans and targeted
+     rescans of a single added/changed node — never touches unrelated DOM). */
+  function convertElement(el, rate, cur) {
+    if (skipEl(el)) return;
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
+    while ((node = w.nextNode())) { convertNode(node, rate, cur); }
+  }
+  /* Scan a subtree (or a single text node) for price elements. Used for the
+     initial/full conversion (root = document.body) AND for targeted rescans
+     of just the nodes a mutation added/changed — avoids re-walking the whole
+     page on every DOM change (cart drawer open, predictive search typing,
+     unrelated app widgets), which is what caused flicker/jank previously. */
+  function scan(root, rate, cur) {
+    if (!root) return;
+    if (root.nodeType === 3) { convertNode(root, rate, cur); return; }
+    if (root.nodeType !== 1) return;
+    if (root.matches && root.matches(SELECTORS)) convertElement(root, rate, cur);
+    if (root.querySelectorAll) {
+      [].forEach.call(root.querySelectorAll(SELECTORS), function (el) { convertElement(el, rate, cur); });
+    }
+  }
+  function pruneDetachedNodes() {
+    /* Drop references to text nodes whose elements were removed from the DOM
+       (cart drawer re-renders replace innerHTML wholesale) so long sessions
+       with lots of cart activity don't leak memory. */
+    nodes = nodes.filter(function (nd) { return document.contains(nd); });
+  }
+  function convert(cur, root) {
     if (mo) mo.disconnect();                               /* don't let our own writes retrigger the observer */
     try {
       if (cur === BASE) {
         nodes.forEach(function (nd) { if (nd.__accOrig !== undefined) setVal(nd, nd.__accOrig); });
       } else if (rates[cur]) {
-        var rate = rates[cur];
-        [].forEach.call(document.querySelectorAll(SELECTORS), function (el) {
-          /* skip mirrors of already-converted prices (sticky ATC bar copies the main
-             price's displayed text — converting it again would double-convert) */
-          if (el.closest && el.closest('.kushi-sticky-atc, [data-cvc-skip]')) return;
-          var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false), node;
-          while ((node = w.nextNode())) { convertNode(node, rate, cur); }
-        });
+        if (!root) pruneDetachedNodes();
+        scan(root || document.body, rates[cur], cur);
       }
     } finally {
       if (mo) mo.observe(document.body, { childList: true, subtree: true, characterData: true });
@@ -419,18 +447,47 @@
     return m;
   }
 
-  /* ── Re-convert on dynamic price changes (variant/cart) ── */
+  /* ── Re-convert on dynamic price changes (AJAX cart, variant swap, quick add,
+     predictive search, infinite scroll, any section re-render) ──
+     Only rescans the nodes a mutation actually touched, not the whole page —
+     keeps this cheap even on pages with heavy unrelated DOM churn. */
   function observe() {
     if (mo) return;
-    var t;
-    mo = new MutationObserver(function () {
-      if (activeCurrency === BASE) return;
-      clearTimeout(t); t = setTimeout(function () { convert(activeCurrency); }, 300);
+    var t, pending = [];
+    mo = new MutationObserver(function (mutList) {
+      if (activeCurrency === BASE) { pending = []; return; }
+      for (var i = 0; i < mutList.length; i++) {
+        var m = mutList[i];
+        if (m.type === 'characterData') {
+          if (m.target && m.target.parentElement) pending.push(m.target.parentElement);
+        } else if (m.type === 'childList' && m.addedNodes.length) {
+          for (var j = 0; j < m.addedNodes.length; j++) pending.push(m.addedNodes[j]);
+        }
+      }
+      clearTimeout(t);
+      t = setTimeout(function () {
+        var roots = pending; pending = [];
+        if (!roots.length || !rates[activeCurrency]) return;
+        if (mo) mo.disconnect();
+        try { roots.forEach(function (r) { scan(r, rates[activeCurrency], activeCurrency); }); }
+        finally { if (mo) mo.observe(document.body, { childList: true, subtree: true, characterData: true }); }
+      }, 250);
     });
     mo.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
-  function reconvertSoon() { [400, 1200, 2500].forEach(function (ms) { setTimeout(function () { if (activeCurrency !== BASE) convert(activeCurrency); }, ms); }); }
+  var reconvertScheduled = false;
+  function reconvertSoon() {
+    if (reconvertScheduled) return;   /* avoid stacking redundant full-page passes when
+                                          multiple init steps ask for a re-check in a row */
+    reconvertScheduled = true;
+    [400, 1200, 2500].forEach(function (ms) {
+      setTimeout(function () {
+        if (activeCurrency !== BASE) convert(activeCurrency);
+        if (ms === 2500) reconvertScheduled = false;
+      }, ms);
+    });
+  }
 
   function init() {
     var hosts = document.querySelectorAll('.acc-mount');
