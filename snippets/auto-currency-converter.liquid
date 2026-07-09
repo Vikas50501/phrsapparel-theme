@@ -318,8 +318,18 @@
      unrelated app widgets), which is what caused flicker/jank previously. */
   function scan(root, rate, cur) {
     if (!root) return;
-    if (root.nodeType === 3) { convertNode(root, rate, cur); return; }
+    if (root.nodeType === 3) {
+      /* A bare text node can arrive here when a script does el.textContent = x
+         (that's a childList mutation whose addedNodes is just the new Text node,
+         with no element wrapper to run the .closest() skip-check against) — so
+         check the PARENT here, or mirrors like the sticky ATC price (which copies
+         the already-converted main price) get converted a second time. */
+      if (root.parentElement && skipEl(root.parentElement)) return;
+      convertNode(root, rate, cur);
+      return;
+    }
     if (root.nodeType !== 1) return;
+    if (skipEl(root)) return;
     if (root.matches && root.matches(SELECTORS)) convertElement(root, rate, cur);
     if (root.querySelectorAll) {
       [].forEach.call(root.querySelectorAll(SELECTORS), function (el) { convertElement(el, rate, cur); });
