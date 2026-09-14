@@ -266,7 +266,7 @@
      in this theme they sometimes wrap a translated string like "Dhs. 25.00 / each"
      (quick order list volume pricing), and replacing that whole text node would
      destroy the " / each" suffix. `.price--end` is safe because it is only ever
-     used to wrap a standalone `{{ ... | money }}` output. */
+     used to wrap a standalone `{{ nil | money }}` output. */
 
   function parseNum(t) {
     /* Keep only digits + separators, then DROP any leading/trailing separators that
@@ -551,3 +551,13 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{{ ... | money }}"
+  to: "{{ nil | money }}"
+  position: 14045..14062
+{% endcomment %}
